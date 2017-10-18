@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2017 Bitprim developers (see AUTHORS)
+#
+# This file is part of Bitprim.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+branches:
+  only:
+    - master
+    - dev
+
+build: false
+
+environment:
+    PYTHON: "C:\\Python27"
+    PYTHON_VERSION: "2.7.8"
+    PYTHON_ARCH: "32"
+
+    CONAN_REFERENCE: "bitprim-node-exe/0.2"
+    CONAN_USERNAME: "bitprim"
+    CONAN_LOGIN_USERNAME: "bitprim-bintray"
+    CONAN_CHANNEL: "stable"
+    VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
+    CONAN_UPLOAD: "https://api.bintray.com/conan/bitprim/bitprim"
+
+    matrix:
+        #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+        #  CONAN_VISUAL_VERSIONS: 12
+        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+          CONAN_VISUAL_VERSIONS: 14
+        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+          CONAN_VISUAL_VERSIONS: 15
+
+        # # - MINGW_CONFIGURATIONS: "4.9@x86_64@seh@posix" #4.9@x86_64@sjlj@posix
+        # - MINGW_CONFIGURATIONS: "5.4@x86_64@seh@posix" #7.1@x86_64@sjlj@posix
+        # - MINGW_CONFIGURATIONS: "7.1@x86_64@seh@posix" #7.1@x86_64@sjlj@posix
+
+install:
+  - set PATH=%PATH%;%PYTHON%/Scripts/
+  - pip.exe install conan --upgrade
+  - pip.exe install conan_package_tools
+  - conan user # It creates the conan data directory
+
+test_script:
+  - python build.py
