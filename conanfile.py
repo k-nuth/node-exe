@@ -65,7 +65,7 @@ class BitprimNodeExeConan(ConanFile):
     default_options = make_default_options_method()
 
     generators = "cmake"
-    # exports_sources = "src/*", "CMakeLists.txt", "cmake/*", "bitprim-nodeConfig.cmake.in", "include/*", "test/*", "console/*"
+    exports_sources = "CMakeLists.txt", "cmake/*", "console/*"
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
