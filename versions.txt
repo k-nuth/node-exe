@@ -4,3 +4,4 @@ bitprim-consensus: v2.0.0-195-gd806f048
 bitprim-database:
 bitprim-blockchain:
 bitprim-network:
+bitprim-node:
