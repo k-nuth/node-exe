@@ -111,13 +111,13 @@ private:
 
 #define BN_USING_CONFIG_FILE \
     "Using config file: %1%"
+
 #define BN_USING_DEFAULT_CONFIG \
     "Using default configuration settings."
-#define BN_VERSION_MESSAGE \
-    "\nVersion Information:\n\n" \
-    "libbitcoin-node:       %1%\n" \
-    "libbitcoin-blockchain: %2%\n" \
-    "libbitcoin:            %3%"
+
+#define BN_VERSION_MESSAGE "Bitprim: %1%"
+
+
 #define BN_LOG_HEADER \
     "================= startup %1% =================="
 

@@ -30,6 +30,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(USE_CONAN "Use Conan Build Tool." OFF)
 option(NO_CONAN_AT_ALL "Conan totally disabled." OFF)
 
+
 if (NO_CONAN_AT_ALL)
   set(USE_CONAN OFF)
 endif()
@@ -37,6 +38,10 @@ endif()
 # Implement --with-litecoin.
 #------------------------------------------------------------------------------
 option(WITH_LITECOIN "Compile with Litecoin support." OFF)
+
+
+set(BITPRIM_BUILD_NUMBER "-" CACHE STRING "Specify the Bitprim Build Number.")
+
 
 # Conan infrastructure.
 #==============================================================================
@@ -141,6 +146,7 @@ add_executable(console.bn
 
 # target_link_libraries(console.bn bitprim-node)
 
+target_compile_definitions(console.bn PUBLIC -DBITPRIM_BUILD_NUMBER="\\"${BITPRIM_BUILD_NUMBER}\\"")
 target_compile_definitions(console.bn PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
 
 if (NOT USE_CONAN)
