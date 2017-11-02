@@ -1,3 +1,3 @@
 bitprim-blockchain: fer
-bitprim-core: v2.9.0-2391-g1a4975b9
+bitprim-core: v2.9.0-2392-gb59159da
 bitprim-database: pepe
