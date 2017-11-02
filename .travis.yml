@@ -77,7 +77,7 @@ install:
   - ./.travis/install.sh
 
 script:
-  - git fetch --unshallow
+  - git fetch --unshallow || true
   - export BITPRIM_BUILD_NUMBER="$(git describe)"
   - echo "${BITPRIM_BUILD_NUMBER}"
 

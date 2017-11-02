@@ -115,7 +115,7 @@ private:
 #define BN_USING_DEFAULT_CONFIG \
     "Using default configuration settings."
 
-#define BN_VERSION_MESSAGE "Bitprim: %1%"
+#define BN_VERSION_MESSAGE "Bitprim %1%"
 
 
 #define BN_LOG_HEADER \
