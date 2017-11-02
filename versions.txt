@@ -1,2 +1,3 @@
 bitprim-core: 
 bitprim-core: 
+bitprim-core: v2.9.0-2384-g566d77f7
