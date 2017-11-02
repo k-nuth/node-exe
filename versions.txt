@@ -1,7 +1,7 @@
 secp256k1: v0.3.0
 bitprim-core: v0.3.0-2-g10f60ae0
 bitprim-consensus: v0.3.0
-bitprim-database: v0.3.0-1-g0fc2db8
+bitprim-database: v0.3.0-2-gbf18d74
 bitprim-blockchain: v0.3.0
 bitprim-network: v0.3.0
 bitprim-node: v0.3.0
