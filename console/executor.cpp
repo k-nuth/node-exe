@@ -110,7 +110,7 @@ void executor::do_settings()
 // }
 
 void executor::do_version() {
-    output_ << format(BN_VERSION_MESSAGE) % BITPRIM_BUILD_NUMBER << std::endl;
+    output_ << format(BN_VERSION_MESSAGE) % BITPRIM_NODE_EXE_VERSION << std::endl;
 }
 
 
