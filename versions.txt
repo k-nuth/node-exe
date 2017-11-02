@@ -1,5 +1,5 @@
 secp256k1: 
-bitprim-core: 
+bitprim-core: v2.9.0-2393-g6129fa58
 bitprim-consensus:
 bitprim-database: 
 bitprim-blockchain: 
