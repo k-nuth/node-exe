@@ -80,6 +80,8 @@ install:
   - ./.travis/install.sh
 
 script:
+  - echo "TRAVIS_COMMIT_MESSAGE ... $TRAVIS_COMMIT_MESSAGE"
+  
   - git fetch --unshallow || true
   - export BITPRIM_BUILD_NUMBER="$(git describe)"
   - echo "${BITPRIM_BUILD_NUMBER}"
