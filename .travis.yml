@@ -45,7 +45,7 @@ osx: &osx
 matrix:
    include:
       - <<: *linux
-        env: CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=lasote/conangcc49
+        env: PUSH_TO_REPOS=true  CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=lasote/conangcc49
 
       - <<: *linux
         env: CONAN_GCC_VERSIONS=5.4 CONAN_DOCKER_IMAGE=lasote/conangcc54
@@ -72,9 +72,7 @@ matrix:
         env: CONAN_APPLE_CLANG_VERSIONS=8.1
 
 install:
-  - pwd
   - cd ${TRAVIS_BUILD_DIR}
-  - pwd
   - chmod +x .travis/install.sh
   - ./.travis/install.sh
 
@@ -83,15 +81,20 @@ script:
   - export BITPRIM_BUILD_NUMBER="$(git describe)"
   - echo "${BITPRIM_BUILD_NUMBER}"
 
-  - pwd
   - cd ${TRAVIS_BUILD_DIR}
-  - pwd
-
-  # - chmod +x .travis/update_version.sh
-  # - ./.travis/update_version.sh
 
   - python ./.travis/update_version.py console/version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION \"$BITPRIM_BUILD_NUMBER\""
   - cat console/version.hpp
+
+  - |
+    if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
+      git config --global user.email "ci@bitprim.org"
+      git config --global user.name "Bitprim CI"
+      git add . console/version.hpp
+      git commit --message "CI automated amend version number taken from VCS [skip ci]" || true
+      git remote add origin-commit https://${GH_TOKEN}@github.com/bitprim/bitprim-node-exe.git > /dev/null 2>&1
+      git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
+    fi  
 
   - chmod +x .travis/run.sh
   - ./.travis/run.sh
