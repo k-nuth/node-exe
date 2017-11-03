@@ -83,6 +83,7 @@ script:
 
   - cd ${TRAVIS_BUILD_DIR}
 
+  - chmod +w console/version.hpp
   - python ./.travis/update_version.py console/version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION \"$BITPRIM_BUILD_NUMBER\""
   - cat console/version.hpp
 
