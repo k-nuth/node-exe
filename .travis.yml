@@ -75,45 +75,53 @@ matrix:
         env: CONAN_APPLE_CLANG_VERSIONS=8.1
 
 install:
-  - cd ${TRAVIS_BUILD_DIR}
-  - chmod +x .travis/install.sh
-  - ./.travis/install.sh
+  - |
+    if [[ $TRAVIS_COMMIT_MESSAGE != *"[NO_TRAVIS]"* ]]; then
+      cd ${TRAVIS_BUILD_DIR}
+      chmod +x .travis/install.sh
+      ./.travis/install.sh
+    fi
 
 script:
-  - echo "TRAVIS_COMMIT_MESSAGE ... $TRAVIS_COMMIT_MESSAGE"
-  
-  - git fetch --unshallow || true
-  - export BITPRIM_BUILD_NUMBER="$(git describe)"
-  - echo "${BITPRIM_BUILD_NUMBER}"
-
-  - cd ${TRAVIS_BUILD_DIR}
+  # - echo "TRAVIS_COMMIT_MESSAGE ... $TRAVIS_COMMIT_MESSAGE"
 
   - |
-    if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
-      git checkout ${TRAVIS_BRANCH}
-    fi  
+    if [[ $TRAVIS_COMMIT_MESSAGE != *"[NO_TRAVIS]"* ]]; then
 
-  - ls -ltra ./console
-  - chmod +rw console/version.hpp
-  - ls -ltra ./console
-  - python ./.travis/update_version.py console/version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION \"$BITPRIM_BUILD_NUMBER\""
-  - ls -ltra ./console
-  - chmod +rw console/version.hpp
-  - ls -ltra ./console
-  - cat console/version.hpp
+      git fetch --unshallow || true
+      export BITPRIM_BUILD_NUMBER="$(git describe)"
+      echo "${BITPRIM_BUILD_NUMBER}"
+
+      cd ${TRAVIS_BUILD_DIR}
+
+      if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
+        git checkout ${TRAVIS_BRANCH}
+      fi  
+
+      ls -ltra ./console
+      chmod +rw console/version.hpp
+      ls -ltra ./console
+      python ./.travis/update_version.py console/version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION \"$BITPRIM_BUILD_NUMBER\""
+      ls -ltra ./console
+      chmod +rw console/version.hpp
+      ls -ltra ./console
+      cat console/version.hpp
+
+      if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
+        git config --global user.email "ci@bitprim.org"
+        git config --global user.name "Bitprim CI"
+        git add . console/version.hpp
+        git commit --message "CI automated amend version number taken from VCS [skip ci]" || true
+        git remote add origin-commit https://${GH_TOKEN}@github.com/bitprim/bitprim-node-exe.git > /dev/null 2>&1
+        git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
+      fi  
+    fi
 
   - |
-    if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
-      git config --global user.email "ci@bitprim.org"
-      git config --global user.name "Bitprim CI"
-      git add . console/version.hpp
-      git commit --message "CI automated amend version number taken from VCS [skip ci]" || true
-      git remote add origin-commit https://${GH_TOKEN}@github.com/bitprim/bitprim-node-exe.git > /dev/null 2>&1
-      git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
-    fi  
-
-  - chmod +x .travis/run.sh
-  - ./.travis/run.sh
+    if [[ $TRAVIS_COMMIT_MESSAGE != *"[NO_TRAVIS]"* ]]; then
+      chmod +x .travis/run.sh
+      ./.travis/run.sh
+    fi
 
 notifications:
   email: false
