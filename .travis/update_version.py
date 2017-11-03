@@ -15,7 +15,7 @@ def replace_version(source_file, search, replace):
             for l in lines:
                 if l.startswith(search):
                     new_file.write(replace)
-                else
+                else:
                     new_file.write(l)
 
     remove(source_file)
