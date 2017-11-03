@@ -72,7 +72,9 @@ matrix:
         env: CONAN_APPLE_CLANG_VERSIONS=8.1
 
 install:
+  - pwd
   - cd ${TRAVIS_BUILD_DIR}
+  - pwd
   - chmod +x .travis/install.sh
   - ./.travis/install.sh
 
@@ -81,7 +83,10 @@ script:
   - export BITPRIM_BUILD_NUMBER="$(git describe)"
   - echo "${BITPRIM_BUILD_NUMBER}"
 
+  - pwd
   - cd ${TRAVIS_BUILD_DIR}
+  - pwd
+
   - chmod +x .travis/run.sh
   - ./.travis/run.sh
 
