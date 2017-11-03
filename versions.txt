@@ -1,4 +1,4 @@
-secp256k1: v0.3.0-2-g7c27041
+secp256k1: v0.3.0-4-ge5df9c9
 bitprim-core: v0.3.0-4-g62e7f98e
 bitprim-consensus: v0.3.0-2-g21d41f94
 bitprim-database: v0.3.0-5-gfbeeb68
