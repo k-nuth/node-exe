@@ -26,7 +26,8 @@
 // #define BITPRIM_NODE_EXE_VERSION "v0.0.0"
 // #endif
 
-#define BITPRIM_NODE_EXE_VERSION "v0.3.0-37-g6aff070"
+#define BITPRIM_NODE_EXE_VERSION "v0.3.0-40-ga422566"
 
 #endif /*LIBBITCOIN_NODE_EXE_VERSION_HPP_*/
+
 
