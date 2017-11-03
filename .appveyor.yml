@@ -56,7 +56,7 @@ install:
 
 test_script:
   - for /f %%i in ('git describe') do set BITPRIM_BUILD_NUMBER=%%i
-  - echo "BITPRIM_BUILD_NUMBER: %BITPRIM_BUILD_NUMBER%"
+  - echo "BITPRIM_BUILD_NUMBER   %BITPRIM_BUILD_NUMBER%"
 
   - python .travis\update_version.py console\version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION \"%BITPRIM_BUILD_NUMBER%\""
   - type console\version.hpp
