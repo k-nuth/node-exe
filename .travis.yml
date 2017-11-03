@@ -87,6 +87,10 @@ script:
   - cd ${TRAVIS_BUILD_DIR}
   - pwd
 
+  - chmod +x .travis/update_version.sh
+  - ./.travis/update_version.sh
+
+
   - chmod +x .travis/run.sh
   - ./.travis/run.sh
 
