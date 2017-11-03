@@ -82,7 +82,12 @@ script:
   - echo "${BITPRIM_BUILD_NUMBER}"
 
   - cd ${TRAVIS_BUILD_DIR}
-  
+
+  - |
+    if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
+      git checkout ${TRAVIS_BRANCH}
+    fi  
+
   - ls -ltra ./console
   - chmod +rw console/version.hpp
   - ls -ltra ./console
