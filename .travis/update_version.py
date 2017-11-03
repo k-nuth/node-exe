@@ -25,19 +25,16 @@ def replace_version(source_file, search, replace):
 
 if __name__ == "__main__":
 
-    print 'Number of arguments:', len(sys.argv), 'arguments.'
-    print 'Argument List:', str(sys.argv)
-    print sys.argv[1:]
+    # print 'Number of arguments:', len(sys.argv), 'arguments.'
+    # print 'Argument List:', str(sys.argv)
+    # print sys.argv[1:]
 
-    for x in sys.argv[1:]:
-        print x
-
-    # args = str(sys.argv)
     args = sys.argv[1:]
+    print(args)
 
-    print 'args[0]:', args[0]
-    print 'args[1]:', args[1]
-    print 'args[2]:', args[2]
+    # print 'args[0]:', args[0]
+    # print 'args[1]:', args[1]
+    # print 'args[2]:', args[2]
 
     replace_version(args[0], args[1], args[2])
 
