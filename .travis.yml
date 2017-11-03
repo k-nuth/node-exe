@@ -90,8 +90,8 @@ script:
   # - chmod +x .travis/update_version.sh
   # - ./.travis/update_version.sh
 
-  - python ./.travis/update_version.py console/version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION $BITPRIM_BUILD_NUMBER"
-
+  - python ./.travis/update_version.py console/version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION \"$BITPRIM_BUILD_NUMBER\""
+  - cat console/version.hpp
 
   - chmod +x .travis/run.sh
   - ./.travis/run.sh
