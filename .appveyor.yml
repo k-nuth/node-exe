@@ -29,10 +29,10 @@ environment:
     PYTHON_VERSION: "2.7.8"
     PYTHON_ARCH: "32"
 
-    CONAN_REFERENCE: "bitprim-node-exe/0.2"
+    CONAN_REFERENCE: "bitprim-node-exe/0.3"
     CONAN_USERNAME: "bitprim"
     CONAN_LOGIN_USERNAME: "bitprim-bintray"
-    CONAN_CHANNEL: "stable"
+    CONAN_CHANNEL: "testing"
     VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
     CONAN_UPLOAD: "https://api.bintray.com/conan/bitprim/bitprim"
 
@@ -55,4 +55,10 @@ install:
   - conan user # It creates the conan data directory
 
 test_script:
+  - for /f %%i in ('git describe') do set BITPRIM_BUILD_NUMBER=%%i
+  - echo "BITPRIM_BUILD_NUMBER   %BITPRIM_BUILD_NUMBER%"
+
+  - python .travis\update_version.py console\version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION \"%BITPRIM_BUILD_NUMBER%\""
+  - type console\version.hpp
+
   - python build.py

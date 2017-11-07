@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBBITCOIN_NODE_EXECUTOR_HPP
-#define LIBBITCOIN_NODE_EXECUTOR_HPP
+#ifndef LIBBITCOIN_NODE_EXE_EXECUTOR_HPP
+#define LIBBITCOIN_NODE_EXE_EXECUTOR_HPP
 
 #include <future>
 #include <iostream>
 #include <bitcoin/node.hpp>
+
+#include "version.hpp"
 
 namespace libbitcoin {
 namespace node {
@@ -111,15 +113,22 @@ private:
 
 #define BN_USING_CONFIG_FILE \
     "Using config file: %1%"
+
 #define BN_USING_DEFAULT_CONFIG \
     "Using default configuration settings."
-#define BN_VERSION_MESSAGE \
-    "\nVersion Information:\n\n" \
-    "libbitcoin-node:       %1%\n" \
-    "libbitcoin-blockchain: %2%\n" \
-    "libbitcoin:            %3%"
+
+#define BN_VERSION_MESSAGE "Bitprim %1%"
+
+
 #define BN_LOG_HEADER \
     "================= startup %1% =================="
+
+
+// #ifdef BITPRIM_BUILD_NUMBER
+// #define BITPRIM_NODE_EXE_VERSION BITPRIM_BUILD_NUMBER
+// #else
+// #define BITPRIM_NODE_EXE_VERSION "v0.0.0"
+// #endif
 
 } // namespace node
 } // namespace libbitcoin

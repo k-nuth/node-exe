@@ -101,13 +101,18 @@ void executor::do_settings()
     print.settings(output_);
 }
 
-void executor::do_version()
-{
-    output_ << format(BN_VERSION_MESSAGE) %
-        LIBBITCOIN_NODE_VERSION %
-        LIBBITCOIN_BLOCKCHAIN_VERSION %
-        LIBBITCOIN_VERSION << std::endl;
+// void executor::do_version()
+// {
+//     output_ << format(BN_VERSION_MESSAGE) %
+//         LIBBITCOIN_NODE_VERSION %
+//         LIBBITCOIN_BLOCKCHAIN_VERSION %
+//         LIBBITCOIN_VERSION << std::endl;
+// }
+
+void executor::do_version() {
+    output_ << format(BN_VERSION_MESSAGE) % BITPRIM_NODE_EXE_VERSION << std::endl;
 }
+
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 // Emit to the log.

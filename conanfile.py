@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import os
 from conans import ConanFile, CMake
 
 # import cpuid
@@ -48,7 +49,7 @@ def make_default_options_method():
 
 class BitprimNodeExeConan(ConanFile):
     name = "bitprim-node-exe"
-    version = "0.2"
+    version = "0.3"
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
@@ -69,7 +70,7 @@ class BitprimNodeExeConan(ConanFile):
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
-    requires = (("bitprim-node/0.2@bitprim/stable"))
+    requires = (("bitprim-node/0.3@bitprim/testing"))
 
     def build(self):
         cmake = CMake(self)
@@ -85,6 +86,7 @@ class BitprimNodeExeConan(ConanFile):
             else:
                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
 
+        cmake.definitions["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
         cmake.configure(source_dir=self.conanfile_directory)
         cmake.build()
 
