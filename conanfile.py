@@ -70,7 +70,7 @@ class BitprimNodeExeConan(ConanFile):
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
-    requires = (("bitprim-node/0.3@bitprim/testing"))
+    requires = (("bitprim-node/0.3@bitprim/stable"))
 
     def build(self):
         cmake = CMake(self)
