@@ -105,7 +105,12 @@ script:
         echo ${TRAVIS_BRANCH}
         echo ${TRAVIS_TAG}
 
-        git checkout ${TRAVIS_BRANCH}
+
+        if [[ "${TRAVIS_BRANCH}" == "${TRAVIS_TAG}" ]]; then
+          git checkout master
+        else
+          git checkout ${TRAVIS_BRANCH}
+        fi  
       fi  
 
       ls -ltra ./console
@@ -125,11 +130,11 @@ script:
         git remote add origin-commit https://${GH_TOKEN}@github.com/bitprim/bitprim-node-exe.git > /dev/null 2>&1
 
         if [[ "${TRAVIS_BRANCH}" == "${TRAVIS_TAG}" ]]; then
-          git push --quiet --set-upstream origin-commit master 
-          # git push --quiet --set-upstream origin-commit master  || true
+          git push --quiet --set-upstream origin-commit master  || true
+          # git push --quiet --set-upstream origin-commit master 
         else
-          # git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
-          git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH} 
+          git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
+          # git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH} 
         fi  
 
       fi  
