@@ -125,9 +125,11 @@ script:
         git remote add origin-commit https://${GH_TOKEN}@github.com/bitprim/bitprim-node-exe.git > /dev/null 2>&1
 
         if [[ "${TRAVIS_BRANCH}" == "${TRAVIS_TAG}" ]]; then
-          git push --quiet --set-upstream origin-commit master  || true
+          git push --quiet --set-upstream origin-commit master 
+          # git push --quiet --set-upstream origin-commit master  || true
         else
-          git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
+          # git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
+          git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH} 
         fi  
 
       fi  
