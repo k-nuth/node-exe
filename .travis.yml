@@ -88,6 +88,9 @@ install:
 script:
   # - echo "TRAVIS_COMMIT_MESSAGE ... $TRAVIS_COMMIT_MESSAGE"
 
+  - echo ${TRAVIS_BRANCH}
+  - echo ${TRAVIS_TAG}
+
   - |
     if [[ $TRAVIS_COMMIT_MESSAGE != *"[NO_TRAVIS]"* ]]; then
 
@@ -98,6 +101,10 @@ script:
       cd ${TRAVIS_BUILD_DIR}
 
       if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
+        echo TRAVIS_TAG
+        echo ${TRAVIS_BRANCH}
+        echo ${TRAVIS_TAG}
+
         git checkout ${TRAVIS_BRANCH}
       fi  
 
@@ -116,7 +123,13 @@ script:
         git add . console/version.hpp
         git commit --message "CI automated amend version number taken from VCS [skip ci]" || true
         git remote add origin-commit https://${GH_TOKEN}@github.com/bitprim/bitprim-node-exe.git > /dev/null 2>&1
-        git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
+
+        if [[ "${TRAVIS_BRANCH}" == "${TRAVIS_TAG}" ]]; then
+          git push --quiet --set-upstream origin-commit master  || true
+        else
+          git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
+        fi  
+
       fi  
     fi
 
