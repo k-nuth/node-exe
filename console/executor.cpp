@@ -208,6 +208,14 @@ bool executor::run()
         return false;
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
 
+#ifdef LITECOIN
+        const auto testnet = (metadata_.configured.network.identifier == 4056470269u); //Litecoin
+#else
+        const auto testnet = (metadata_.configured.network.identifier == 118034699u);  //Bitcoin
+#endif //LITECOIN
+
+    metadata_.configured.node.testnet = testnet;
+
     // Now that the directory is verified we can create the node for it.
     node_ = std::make_shared<full_node>(metadata_.configured);
 
