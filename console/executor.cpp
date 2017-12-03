@@ -27,6 +27,10 @@
 #include <boost/core/null_deleter.hpp>
 #include <bitcoin/node.hpp>
 
+#ifdef BITPRIM_WITH_RPC
+#include <bitprim/rpc/manager.hpp>
+#endif
+
 namespace libbitcoin {
 namespace node {
 
@@ -228,10 +232,27 @@ bool executor::run()
         std::bind(&executor::handle_started,
             this, _1));
 
+    #ifdef BITPRIM_WITH_RPC
+    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, node_->chain_bitprim(), metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port);
+    auto rpc_thread = std::thread([&message_manager](){
+        message_manager.start();
+    });
+    #endif
+
     // Wait for stop.
     stopping_.get_future().wait();
 
+
+
     LOG_INFO(LOG_NODE) << BN_NODE_STOPPING;
+
+#ifdef BITPRIM_WITH_RPC
+    if (!message_manager.is_stopped()) {
+        message_manager.stop();
+        rpc_thread.join();
+    }
+#endif
+
 
     // Close must be called from main thread.
     if (node_->close())

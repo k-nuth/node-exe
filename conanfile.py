@@ -35,7 +35,7 @@ def option_on_off(option):
     return "ON" if option else "OFF"
 
 def make_default_options_method():
-    defs = ("with_litecoin=False",)
+    defs = ("with_litecoin=False","with_rpc=False",)
 
     gmp_opt = ""
     if cpuid_installed:
@@ -57,6 +57,7 @@ class BitprimNodeExeConan(ConanFile):
 
     options = {
         "with_litecoin": [True, False],
+        "with_rpc": [True, False],
         "microarchitecture": "ANY" #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
     }
     
@@ -70,7 +71,7 @@ class BitprimNodeExeConan(ConanFile):
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
-    requires = (("bitprim-node/0.3@bitprim/testing"))
+    requires = (("bitprim-node/0.3@bitprim/testing"),("bitprim-rpc/0.4@bitprim/testing"))
 
     def build(self):
         cmake = CMake(self)
@@ -79,6 +80,7 @@ class BitprimNodeExeConan(ConanFile):
         cmake.definitions["NO_CONAN_AT_ALL"] = "OFF"
         cmake.definitions["CMAKE_VERBOSE_MAKEFILE"] = "OFF"
         cmake.definitions["WITH_LITECOIN"] = option_on_off(self.options.with_litecoin)
+        cmake.definitions["WITH_RPC"] = option_on_off(self.options.with_rpc)
 
         if self.settings.compiler == "gcc":
             if float(str(self.settings.compiler.version)) >= 5:
