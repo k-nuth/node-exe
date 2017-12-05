@@ -232,24 +232,26 @@ bool executor::run()
         std::bind(&executor::handle_started,
             this, _1));
 
-    #ifdef BITPRIM_WITH_RPC
+#ifdef BITPRIM_WITH_RPC
+    std::string message = "RPC port: " + std::to_string(metadata_.configured.node.rpc_port) + ". ZMQ port: " + std::to_string(metadata_.configured.node.subscriber_port);
+    LOG_INFO(LOG_NODE) << message;
     bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, node_->chain_bitprim(), metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port);
     auto rpc_thread = std::thread([&message_manager](){
         message_manager.start();
     });
-    #endif
+#endif
 
     // Wait for stop.
     stopping_.get_future().wait();
-
-
 
     LOG_INFO(LOG_NODE) << BN_NODE_STOPPING;
 
 #ifdef BITPRIM_WITH_RPC
     if (!message_manager.is_stopped()) {
+        LOG_INFO(LOG_NODE) << BN_RPC_STOPPING;
         message_manager.stop();
         rpc_thread.join();
+        LOG_INFO(LOG_NODE) << BN_RPC_STOPPED;
     }
 #endif
 
