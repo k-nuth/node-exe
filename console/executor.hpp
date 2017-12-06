@@ -111,6 +111,11 @@ private:
 #define BN_NODE_STOPPED \
     "Node stopped successfully."
 
+#define BN_RPC_STOPPING \
+    "RPC-ZMQ service is stopping..."
+#define BN_RPC_STOPPED \
+    "RPC-ZMQ service stopped successfully"
+
 #define BN_USING_CONFIG_FILE \
     "Using config file: %1%"
 
