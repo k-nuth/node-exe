@@ -27,6 +27,10 @@
 #include <boost/core/null_deleter.hpp>
 #include <bitcoin/node.hpp>
 
+#ifdef BITPRIM_WITH_RPC
+#include <bitprim/rpc/manager.hpp>
+#endif
+
 namespace libbitcoin {
 namespace node {
 
@@ -208,6 +212,14 @@ bool executor::run()
         return false;
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
 
+#ifdef LITECOIN
+        const auto testnet = (metadata_.configured.network.identifier == 4056470269u); //Litecoin
+#else
+        const auto testnet = (metadata_.configured.network.identifier == 118034699u);  //Bitcoin
+#endif //LITECOIN
+
+    metadata_.configured.node.testnet = testnet;
+
     // Now that the directory is verified we can create the node for it.
     node_ = std::make_shared<full_node>(metadata_.configured);
 
@@ -220,10 +232,29 @@ bool executor::run()
         std::bind(&executor::handle_started,
             this, _1));
 
+#ifdef BITPRIM_WITH_RPC
+    std::string message = "RPC port: " + std::to_string(metadata_.configured.node.rpc_port) + ". ZMQ port: " + std::to_string(metadata_.configured.node.subscriber_port);
+    LOG_INFO(LOG_NODE) << message;
+    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, node_->chain_bitprim(), metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port);
+    auto rpc_thread = std::thread([&message_manager](){
+        message_manager.start();
+    });
+#endif
+
     // Wait for stop.
     stopping_.get_future().wait();
 
     LOG_INFO(LOG_NODE) << BN_NODE_STOPPING;
+
+#ifdef BITPRIM_WITH_RPC
+    if (!message_manager.is_stopped()) {
+        LOG_INFO(LOG_NODE) << BN_RPC_STOPPING;
+        message_manager.stop();
+        rpc_thread.join();
+        LOG_INFO(LOG_NODE) << BN_RPC_STOPPED;
+    }
+#endif
+
 
     // Close must be called from main thread.
     if (node_->close())

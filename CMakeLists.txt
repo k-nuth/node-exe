@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.4)
 # bitprim-node-exe
 #==============================================================================
 project(bitprim-node-exe
-        VERSION 0.3.0
+        VERSION 0.4.0
         LANGUAGES CXX C)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -30,6 +30,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(USE_CONAN "Use Conan Build Tool." OFF)
 option(NO_CONAN_AT_ALL "Conan totally disabled." OFF)
 
+# Implement --with_rpc
+#------------------------------------------------------------------------------
+option(WITH_RPC "Compile with RPC-ZMQ support." OFF)
+if (WITH_RPC)
+  add_definitions(-DBITPRIM_WITH_RPC)
+endif()
 
 if (NO_CONAN_AT_ALL)
   set(USE_CONAN OFF)
@@ -63,6 +69,15 @@ if (NOT USE_CONAN)
   if (NOT TARGET bitprim-node)
     find_package(bitprim-node 3.0.0 REQUIRED)
   endif()
+
+  if (WITH_RPC)
+    # Require bitprim-rpc of at least version 3.0.0
+    #------------------------------------------------------------------------------
+    if (NOT TARGET bitprim-rpc)
+      find_package(bitprim-rpc 3.0.0 REQUIRED)
+    endif()
+  endif()
+
 endif()
 
 if (WITH_LITECOIN)
@@ -152,6 +167,9 @@ target_compile_definitions(console.bn PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STA
 
 if (NOT USE_CONAN)
   target_link_libraries(console.bn PUBLIC bitprim-node)
+  if(WITH_RPC)
+    target_link_libraries(console.bn PUBLIC bitprim-rpc)
+  endif()
 endif()
 
 if (NOT NO_CONAN_AT_ALL)

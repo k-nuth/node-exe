@@ -1,5 +1,6 @@
 import os
 from conan.packager import ConanMultiPackager
+import copy
 
 if __name__ == "__main__":
     builder = ConanMultiPackager(username="bitprim", channel="stable",
@@ -16,7 +17,14 @@ if __name__ == "__main__":
 
             env_vars["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
                 
-            filtered_builds.append([settings, options, env_vars, build_requires])
+            opt1 = copy.deepcopy(options)
+            opt2 = copy.deepcopy(options)
+
+            opt1["bitprim-node-exe:with_rpc"] = "True"
+            opt2["bitprim-node-exe:with_rpc"] = "False"
+
+            filtered_builds.append([settings, opt1, env_vars, build_requires])
+            filtered_builds.append([settings, opt2, env_vars, build_requires])
 
     builder.builds = filtered_builds
     builder.run()
