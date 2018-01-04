@@ -133,11 +133,12 @@ bool executor::do_initchain()
 
         //TODO: BITPRIM: hardcoded identifiers
         // Unfortunately we are limited to a choice of hardcoded chains.
-#ifdef LITECOIN
-        const auto testnet = (metadata_.configured.network.identifier == 4056470269u); //Litecoin
-#else
-        const auto testnet = (metadata_.configured.network.identifier == 118034699u);  //Bitcoin
-#endif //LITECOIN
+// #ifdef LITECOIN
+//         const auto testnet = (metadata_.configured.network.identifier == 4056470269u); //Litecoin
+// #else
+//         const auto testnet = (metadata_.configured.network.identifier == 118034699u);  //Bitcoin
+// #endif //LITECOIN
+        bool const testnet = is_testnet(metadata_.configured.network.identifier, metadata_.configured.network.bitcoin_cash);
 
         const auto genesis = testnet ? block::genesis_testnet() :
             block::genesis_mainnet();
@@ -212,11 +213,12 @@ bool executor::run()
         return false;
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
 
-#ifdef LITECOIN
-        const auto testnet = (metadata_.configured.network.identifier == 4056470269u); //Litecoin
-#else
-        const auto testnet = (metadata_.configured.network.identifier == 118034699u);  //Bitcoin
-#endif //LITECOIN
+// #ifdef LITECOIN
+//         const auto testnet = (metadata_.configured.network.identifier == 4056470269u); //Litecoin
+// #else
+//         const auto testnet = (metadata_.configured.network.identifier == 118034699u);  //Bitcoin
+// #endif //LITECOIN
+    bool const testnet = is_testnet(metadata_.configured.network.identifier, metadata_.configured.network.bitcoin_cash);
 
     metadata_.configured.node.testnet = testnet;
 
