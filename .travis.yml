@@ -23,7 +23,6 @@ branches:
   - dev
   - /^v\d+\.\d+\.\d+$/
   
-
 env:
    global:
      - CONAN_REFERENCE: "bitprim-node-exe/0.5"
