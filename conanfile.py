@@ -53,6 +53,7 @@ class BitprimNodeExeConan(ConanFile):
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
+    
     settings = "os", "compiler", "build_type", "arch"
 
     options = {
