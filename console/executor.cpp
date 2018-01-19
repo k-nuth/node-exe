@@ -30,6 +30,7 @@
 
 #ifdef BITPRIM_WITH_RPC
 #include <bitprim/rpc/manager.hpp>
+#include <unordered_set>
 #endif
 
 namespace libbitcoin {
@@ -238,7 +239,11 @@ bool executor::run()
 #ifdef BITPRIM_WITH_RPC
     std::string message = "RPC port: " + std::to_string(metadata_.configured.node.rpc_port) + ". ZMQ port: " + std::to_string(metadata_.configured.node.subscriber_port);
     LOG_INFO(LOG_NODE) << message;
-    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, node_->chain_bitprim(), metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port);
+    std::unordered_set<std::string> rpc_allowed_ips;
+    for (const auto & ip : metadata_.configured.node.rpc_allow_ip){
+        rpc_allowed_ips.insert(ip);
+    }
+    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, node_->chain_bitprim(), metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips);
     auto rpc_thread = std::thread([&message_manager](){
         message_manager.start();
     });

@@ -49,7 +49,7 @@ def make_default_options_method():
 
 class BitprimNodeExeConan(ConanFile):
     name = "bitprim-node-exe"
-    version = "0.5"
+    version = "0.6"
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
@@ -72,8 +72,11 @@ class BitprimNodeExeConan(ConanFile):
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
-    requires = (("bitprim-node/0.5@bitprim/stable"),
-                ("bitprim-rpc/0.5@bitprim/stable"))
+    requires = (("bitprim-node/0.6@bitprim/stable"))
+
+    def requirements(self):
+        if self.options.with_rpc:
+            self.requires("bitprim-rpc/0.6@bitprim/stable")
 
     def build(self):
         cmake = CMake(self)
