@@ -67,14 +67,14 @@ endif()
 #------------------------------------------------------------------------------
 if (NOT USE_CONAN)
   if (NOT TARGET bitprim-node)
-    find_package(bitprim-node 3.0.0 REQUIRED)
+    find_package(bitprim-node 0.6.0 REQUIRED)
   endif()
 
   if (WITH_RPC)
-    # Require bitprim-rpc of at least version 3.0.0
+    # Require bitprim-rpc of at least version 0.6.0
     #------------------------------------------------------------------------------
     if (NOT TARGET bitprim-rpc)
-      find_package(bitprim-rpc 3.0.0 REQUIRED)
+      find_package(bitprim-rpc 0.6.0 REQUIRED)
     endif()
   endif()
 
