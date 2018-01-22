@@ -26,7 +26,8 @@
 #include <mutex>
 #include <boost/core/null_deleter.hpp>
 #include <bitcoin/node.hpp>
-#include <bitcoin/bitcoin/bitcoin_cash_support.hpp>
+#include <bitcoin/bitcoin/multi_crypto_support.hpp>
+
 
 #ifdef BITPRIM_WITH_RPC
 #include <bitprim/rpc/manager.hpp>
