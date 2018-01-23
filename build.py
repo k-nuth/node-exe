@@ -38,37 +38,37 @@ if __name__ == "__main__":
             opt7 = copy.deepcopy(options)
             opt8 = copy.deepcopy(options)
 
-            opt1["bitprim-node-exe:microarchitecture"] = "x86_64"
-            opt1["bitprim-node-exe:with_rpc"] = "True"
+            # opt1["bitprim-node-exe:microarchitecture"] = "x86_64"
+            # opt1["bitprim-node-exe:with_rpc"] = "True"
 
             opt2["bitprim-node-exe:microarchitecture"] = "x86_64"
             opt2["bitprim-node-exe:with_rpc"] = "False"
             
-            opt3["bitprim-node-exe:microarchitecture"] = ''.join(cpuid.cpu_microarchitecture())
-            opt3["bitprim-node-exe:with_rpc"] = "True"
+            # opt3["bitprim-node-exe:microarchitecture"] = ''.join(cpuid.cpu_microarchitecture())
+            # opt3["bitprim-node-exe:with_rpc"] = "True"
 
             opt4["bitprim-node-exe:microarchitecture"] = ''.join(cpuid.cpu_microarchitecture())
             opt4["bitprim-node-exe:with_rpc"] = "False"
 
-            opt5["bitprim-node-exe:microarchitecture"] = "haswell"
-            opt5["bitprim-node-exe:with_rpc"] = "True"
+            # opt5["bitprim-node-exe:microarchitecture"] = "haswell"
+            # opt5["bitprim-node-exe:with_rpc"] = "True"
 
             opt6["bitprim-node-exe:microarchitecture"] = "haswell"
             opt6["bitprim-node-exe:with_rpc"] = "False"
 
-            opt7["bitprim-node-exe:microarchitecture"] = "skylake"
-            opt7["bitprim-node-exe:with_rpc"] = "True"
+            # opt7["bitprim-node-exe:microarchitecture"] = "skylake"
+            # opt7["bitprim-node-exe:with_rpc"] = "True"
 
             opt8["bitprim-node-exe:microarchitecture"] = "skylake"
             opt8["bitprim-node-exe:with_rpc"] = "False"
 
-            filtered_builds.append([settings, opt1, env_vars, build_requires])
+            # filtered_builds.append([settings, opt1, env_vars, build_requires])
             filtered_builds.append([settings, opt2, env_vars, build_requires])
-            filtered_builds.append([settings, opt3, env_vars, build_requires])
+            # filtered_builds.append([settings, opt3, env_vars, build_requires])
             filtered_builds.append([settings, opt4, env_vars, build_requires])
-            filtered_builds.append([settings, opt5, env_vars, build_requires])
+            # filtered_builds.append([settings, opt5, env_vars, build_requires])
             filtered_builds.append([settings, opt6, env_vars, build_requires])
-            filtered_builds.append([settings, opt7, env_vars, build_requires])
+            # filtered_builds.append([settings, opt7, env_vars, build_requires])
             filtered_builds.append([settings, opt8, env_vars, build_requires])
 
 
