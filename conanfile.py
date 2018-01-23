@@ -116,6 +116,7 @@ class BitprimNodeExeConan(ConanFile):
             if self.options.with_rpc:
                 self.requires("bitprim-rpc/0.7@bitprim/testing")
 
+
     def configure(self):
         self.output.info('def configure(self):')
 
@@ -148,7 +149,37 @@ class BitprimNodeExeConan(ConanFile):
 
 
     def package_id(self):
-        self.output.info('def configure(self):')
+        self.output.info('def package_id(self):')
+
+        self.output.info(self.info.requires)
+        self.output.info(self.info.requires.sha)
+        self.output.info(self.info.requires.serialize)
+        self.output.info(self.info.requires.pkg_names)
+
+        # self.output.info(self.info.requires['bitprim-node/0.7@bitprim/testing'])
+        # self.output.info(self.info.requires['bitprim-node'])
+
+        # self.info.requires.remove('bitprim-node')
+        # self.info.requires.remove('bitprim-rpc')
+
+        self.info.requires.clear()
+
+        self.output.info(self.info.requires)
+        self.output.info(self.info.requires.sha)
+        self.output.info(self.info.requires.serialize)
+        self.output.info(self.info.requires.pkg_names)
+
+        # for x in self.info.requires:
+        #     self.output.info(x)
+
+
+        # if self.settings.get_safe("compiler") is not None:
+        #     self.requires("bitprim-node/0.7@bitprim/testing")
+        #     if self.options.with_rpc:
+        #         self.requires("bitprim-rpc/0.7@bitprim/testing")
+
+
+
         # self.settings.remove("compiler")
         # self.settings.remove("build_type")
         self.info.settings.compiler = "ANY"
