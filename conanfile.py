@@ -190,8 +190,8 @@ class BitprimNodeExeConan(ConanFile):
         
 
     def deploy(self):
-        self.copy("bn.exe")     # copy from current package
-        self.copy("bn")         # copy from current package
+        self.copy("bn.exe", src="bin")     # copy from current package
+        self.copy("bn", src="bin")         # copy from current package
         # self.copy_deps("*.dll") # copy from dependencies        
 
 
