@@ -52,10 +52,11 @@ microarchitecture_default = 'x86_64'
 
 def get_cpuid():
     try:
+        print("*** cpuid OK")
         cpuid = importlib.import_module('cpuid')
         return cpuid
     except ImportError:
-        # print("*** cpuid could not be imported")
+        print("*** cpuid could not be imported")
         return None
 
 def get_cpu_microarchitecture_or_default(default):
@@ -142,10 +143,19 @@ class BitprimNodeExeConan(ConanFile):
             #     self.settings.clear()
             #     self.options.remove("static")
 
-
         if self.options.microarchitecture == "_DUMMY_":
             self.options.microarchitecture = get_cpu_microarchitecture()
-        self.output.info("Compiling for microarchitecture: %s" % (self.options.microarchitecture,))
+
+            if get_cpuid() == None:
+                march_from = 'default'
+            else:
+                march_from = 'taken from cpuid'
+
+        else:
+            march_from = 'user defined'
+        
+        self.options["*"].microarchitecture = self.options.microarchitecture
+        self.output.info("Compiling for microarchitecture (%s): %s" % (march_from, self.options.microarchitecture))
 
 
     def package_id(self):
@@ -185,6 +195,9 @@ class BitprimNodeExeConan(ConanFile):
         self.info.settings.compiler = "ANY"
         self.info.settings.build_type = "ANY"
 
+
+        self.output.info(self.info.options)
+        self.output.info(self.info.options.sha)
 
         self.output.info(self.info.package_id())
         
