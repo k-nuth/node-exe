@@ -19,32 +19,55 @@
 
 import os
 from conans import ConanFile, CMake
-
-# import cpuid
-cpuid_installed = False
 import importlib
-try:
-    cpuid = importlib.import_module('cpuid')
-    cpuid_installed = True
-except ImportError:
-    # print("*** cpuid could not be imported")
-    cpuid_installed = False
+
+# # import cpuid
+# cpuid_installed = False
+# import importlib
+# try:
+#     cpuid = importlib.import_module('cpuid')
+#     cpuid_installed = True
+# except ImportError:
+#     # print("*** cpuid could not be imported")
+#     cpuid_installed = False
 
 
 def option_on_off(option):
     return "ON" if option else "OFF"
 
-def make_default_options_method():
-    defs = ("with_litecoin=False","with_rpc=False",)
+# def make_default_options_method():
+#     defs = ("with_litecoin=False","with_rpc=False",)
 
-    march_opt = ""
-    if cpuid_installed:
-        march_opt = "microarchitecture=%s" % (''.join(cpuid.cpu_microarchitecture()))
+#     march_opt = ""
+#     if cpuid_installed:
+#         march_opt = "microarchitecture=%s" % (''.join(cpuid.cpu_microarchitecture()))
+#     else:
+#         march_opt = "microarchitecture=x86_64"
+
+#     new_defs = defs + (march_opt,)
+#     return new_defs
+
+
+microarchitecture_default = 'x86_64'
+
+def get_cpuid():
+    try:
+        cpuid = importlib.import_module('cpuid')
+        return cpuid
+    except ImportError:
+        # print("*** cpuid could not be imported")
+        return None
+
+def get_cpu_microarchitecture_or_default(default):
+    cpuid = get_cpuid()
+    if cpuid != None:
+        # return '%s%s' % cpuid.cpu_microarchitecture()
+        return '%s' % (''.join(cpuid.cpu_microarchitecture()))
     else:
-        march_opt = "microarchitecture=x86_64"
+        return default
 
-    new_defs = defs + (march_opt,)
-    return new_defs
+def get_cpu_microarchitecture():
+    return get_cpu_microarchitecture_or_default(microarchitecture_default)
 
 
 class BitprimNodeExeConan(ConanFile):
@@ -54,8 +77,8 @@ class BitprimNodeExeConan(ConanFile):
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
 
-    # settings = "os", "compiler", "build_type", "arch"
-    settings = "os", "arch"
+    settings = "os", "compiler", "build_type", "arch"
+    # settings = "os", "arch"
 
     options = {
         "with_litecoin": [True, False],
@@ -66,7 +89,11 @@ class BitprimNodeExeConan(ConanFile):
     # default_options = "with_litecoin=False", \
     #     "microarchitecture=x86_64"
 
-    default_options = make_default_options_method()
+    # default_options = make_default_options_method()
+    default_options = "with_litecoin=False",  \
+                      "with_rpc=False",  \
+                      "microarchitecture=_DUMMY_"
+
 
     generators = "cmake"
     exports_sources = "CMakeLists.txt", "cmake/*", "console/*"
@@ -76,51 +103,56 @@ class BitprimNodeExeConan(ConanFile):
     # requires = (("bitprim-node/0.7@bitprim/testing"))
 
     def requirements(self):
-        print('def requirements(self):')
+        self.output.info('def requirements(self):')
 
         if self.settings.get_safe("compiler") is not None:
-            print('compiler exists')
-            print(self.settings.compiler)
+            self.output.info('compiler exists')
+            self.output.info(self.settings.compiler)
         else:
-            print('compiler removed')
-            
+            self.output.info('compiler removed')
 
         if self.settings.get_safe("compiler") is not None:
             self.requires("bitprim-node/0.7@bitprim/testing")
             if self.options.with_rpc:
                 self.requires("bitprim-rpc/0.7@bitprim/testing")
 
-    # def configure(self):
-    #     print('def configure(self):')
+    def configure(self):
+        self.output.info('def configure(self):')
 
-    #     print(self.settings.os)
-    #     print(self.settings.arch)
+        self.output.info(self.settings.os)
+        self.output.info(self.settings.arch)
 
-    #     if self.settings.compiler != None:
-    #         print(self.settings.compiler)
-    #     else:
-    #         print('compiler None')
+        if self.settings.compiler != None:
+            self.output.info(self.settings.compiler)
+        else:
+            self.output.info('compiler None')
 
-    #     if self.settings.compiler == None:
-    #         if self.settings.arch == 'x86_64':
-    #             if self.settings.os in ('Linux', 'Windows', 'Macos'):
-    #                 self.settings.remove("compiler")
-    #                 self.settings.remove("build_type")
-    #                 # del self.settings.compiler
-    #                 # del self.settings.build_type
+        if self.settings.compiler == None:
+            if self.settings.arch == 'x86_64':
+                if self.settings.os in ('Linux', 'Windows', 'Macos'):
+                    self.settings.remove("compiler")
+                    self.settings.remove("build_type")
+                    # del self.settings.compiler
+                    # del self.settings.build_type
 
 
-    #         # # If header only, the compiler, etc, does not affect the package!
-    #         # if self.options.header_only:
-    #         #     self.settings.clear()
-    #         #     self.options.remove("static")
+            # # If header only, the compiler, etc, does not affect the package!
+            # if self.options.header_only:
+            #     self.settings.clear()
+            #     self.options.remove("static")
 
-    # def package_id(self):
-    #     print('def configure(self):')
-    #     # self.settings.remove("compiler")
-    #     # self.settings.remove("build_type")
-    #     self.info.settings.compiler = "ANY"
-    #     self.info.settings.build_type = "ANY"
+
+        if self.options.microarchitecture == "_DUMMY_":
+            self.options.microarchitecture = get_cpu_microarchitecture()
+        self.output.info("Compiling for microarchitecture: %s" % (self.options.microarchitecture,))
+
+
+    def package_id(self):
+        self.output.info('def configure(self):')
+        # self.settings.remove("compiler")
+        # self.settings.remove("build_type")
+        self.info.settings.compiler = "ANY"
+        self.info.settings.build_type = "ANY"
 
 
     def build(self):
