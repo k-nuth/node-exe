@@ -53,7 +53,9 @@ class BitprimNodeExeConan(ConanFile):
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
-    settings = "os", "compiler", "build_type", "arch"
+
+    # settings = "os", "compiler", "build_type", "arch"
+    settings = "os", "arch"
 
     options = {
         "with_litecoin": [True, False],
@@ -88,36 +90,37 @@ class BitprimNodeExeConan(ConanFile):
             if self.options.with_rpc:
                 self.requires("bitprim-rpc/0.7@bitprim/testing")
 
-    def configure(self):
-        print('def configure(self):')
+    # def configure(self):
+    #     print('def configure(self):')
 
-        print(self.settings.os)
-        print(self.settings.arch)
+    #     print(self.settings.os)
+    #     print(self.settings.arch)
 
-        if self.settings.compiler != None:
-            print(self.settings.compiler)
-        else:
-            print('compiler None')
+    #     if self.settings.compiler != None:
+    #         print(self.settings.compiler)
+    #     else:
+    #         print('compiler None')
 
-        if self.settings.compiler == None:
-            if self.settings.arch == 'x86_64':
-                if self.settings.os in ('Linux', 'Windows', 'Macos'):
-                    self.settings.remove("compiler")
-                    self.settings.remove("build_type")
-                    # del self.settings.compiler
-                    # del self.settings.build_type
+    #     if self.settings.compiler == None:
+    #         if self.settings.arch == 'x86_64':
+    #             if self.settings.os in ('Linux', 'Windows', 'Macos'):
+    #                 self.settings.remove("compiler")
+    #                 self.settings.remove("build_type")
+    #                 # del self.settings.compiler
+    #                 # del self.settings.build_type
 
 
-            # # If header only, the compiler, etc, does not affect the package!
-            # if self.options.header_only:
-            #     self.settings.clear()
-            #     self.options.remove("static")
+    #         # # If header only, the compiler, etc, does not affect the package!
+    #         # if self.options.header_only:
+    #         #     self.settings.clear()
+    #         #     self.options.remove("static")
 
-    def package_id(self):
-        # self.settings.remove("compiler")
-        # self.settings.remove("build_type")
-        self.info.settings.compiler = "ANY"
-        self.info.settings.build_type = "ANY"
+    # def package_id(self):
+    #     print('def configure(self):')
+    #     # self.settings.remove("compiler")
+    #     # self.settings.remove("build_type")
+    #     self.info.settings.compiler = "ANY"
+    #     self.info.settings.build_type = "ANY"
 
 
     def build(self):
