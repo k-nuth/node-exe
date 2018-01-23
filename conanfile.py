@@ -186,6 +186,15 @@ class BitprimNodeExeConan(ConanFile):
         self.info.settings.build_type = "ANY"
 
 
+        self.output.info(self.info.package_id())
+        
+
+    def deploy(self):
+        self.copy("bn.exe")     # copy from current package
+        self.copy("bn")         # copy from current package
+        # self.copy_deps("*.dll") # copy from dependencies        
+
+
     def build(self):
         cmake = CMake(self)
         
