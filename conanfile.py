@@ -37,13 +37,13 @@ def option_on_off(option):
 def make_default_options_method():
     defs = ("with_litecoin=False","with_rpc=False",)
 
-    gmp_opt = ""
+    march_opt = ""
     if cpuid_installed:
-        gmp_opt = "microarchitecture=%s" % (''.join(cpuid.cpu_microarchitecture()))
+        march_opt = "microarchitecture=%s" % (''.join(cpuid.cpu_microarchitecture()))
     else:
-        gmp_opt = "microarchitecture=x86_64"
+        march_opt = "microarchitecture=x86_64"
 
-    new_defs = defs + (gmp_opt,)
+    new_defs = defs + (march_opt,)
     return new_defs
 
 
