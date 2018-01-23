@@ -78,6 +78,7 @@ class BitprimNodeExeConan(ConanFile):
 
         if self.settings.get_safe("compiler") is not None:
             print('compiler exists')
+            print(self.settings.compiler)
         else:
             print('compiler removed')
             
@@ -101,11 +102,10 @@ class BitprimNodeExeConan(ConanFile):
         if self.settings.compiler == None:
             if self.settings.arch == 'x86_64':
                 if self.settings.os in ('Linux', 'Windows', 'Macos'):
-                    # self.settings.remove("compiler")
-                    # self.settings.remove("build_type")
-                    del self.settings.compiler
-                    del self.settings.build_type
-
+                    self.settings.remove("compiler")
+                    self.settings.remove("build_type")
+                    # del self.settings.compiler
+                    # del self.settings.build_type
 
 
             # # If header only, the compiler, etc, does not affect the package!
