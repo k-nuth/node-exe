@@ -71,11 +71,54 @@ class BitprimNodeExeConan(ConanFile):
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
-    requires = (("bitprim-node/0.7@bitprim/testing"))
+    # requires = (("bitprim-node/0.7@bitprim/testing"))
 
     def requirements(self):
-        if self.options.with_rpc:
-            self.requires("bitprim-rpc/0.7@bitprim/testing")
+        print('def requirements(self):')
+
+        if self.settings.get_safe("compiler") is not None:
+            print('compiler exists')
+        else:
+            print('compiler removed')
+            
+
+        if self.settings.get_safe("compiler") is not None:
+            self.requires("bitprim-node/0.7@bitprim/testing")
+            if self.options.with_rpc:
+                self.requires("bitprim-rpc/0.7@bitprim/testing")
+
+    def configure(self):
+        print('def configure(self):')
+
+        print(self.settings.os)
+        print(self.settings.arch)
+
+        if self.settings.compiler != None:
+            print(self.settings.compiler)
+        else:
+            print('compiler None')
+
+        if self.settings.compiler == None:
+            if self.settings.arch == 'x86_64':
+                if self.settings.os in ('Linux', 'Windows', 'Macos'):
+                    # self.settings.remove("compiler")
+                    # self.settings.remove("build_type")
+                    del self.settings.compiler
+                    del self.settings.build_type
+
+
+
+            # # If header only, the compiler, etc, does not affect the package!
+            # if self.options.header_only:
+            #     self.settings.clear()
+            #     self.options.remove("static")
+
+    def package_id(self):
+        # self.settings.remove("compiler")
+        # self.settings.remove("build_type")
+        self.info.settings.compiler = "ANY"
+        self.info.settings.build_type = "ANY"
+
 
     def build(self):
         cmake = CMake(self)
