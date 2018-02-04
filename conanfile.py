@@ -84,7 +84,8 @@ class BitprimNodeExeConan(ConanFile):
     options = {
         "with_litecoin": [True, False],
         "with_rpc": [True, False],
-        "microarchitecture": "ANY" #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
+        "microarchitecture": "ANY", #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
+        "no_compilation": [True, False],
     }
     
     # default_options = "with_litecoin=False", \
@@ -93,7 +94,8 @@ class BitprimNodeExeConan(ConanFile):
     # default_options = make_default_options_method()
     default_options = "with_litecoin=False",  \
                       "with_rpc=False",  \
-                      "microarchitecture=_DUMMY_"
+                      "microarchitecture=_DUMMY_",  \
+                      "no_compilation=False"
 
 
     generators = "cmake"
@@ -104,38 +106,36 @@ class BitprimNodeExeConan(ConanFile):
     # requires = (("bitprim-node/0.7@bitprim/testing"))
 
     def requirements(self):
-        self.output.info('def requirements(self):')
+        # self.output.info('def requirements(self):')
 
-        if self.settings.get_safe("compiler") is not None:
-            self.output.info('compiler exists')
-            self.output.info(self.settings.compiler)
-        else:
-            self.output.info('compiler removed')
+        # if self.settings.get_safe("compiler") is not None:
+        #     self.output.info('compiler exists')
+        #     self.output.info(self.settings.compiler)
+        # else:
+        #     self.output.info('compiler removed')
 
-        if self.settings.get_safe("compiler") is not None:
+        if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
             self.requires("bitprim-node/0.7@bitprim/testing")
             if self.options.with_rpc:
                 self.requires("bitprim-rpc/0.7@bitprim/testing")
 
 
     def configure(self):
-        self.output.info('def configure(self):')
+        # self.output.info('def configure(self):')
 
-        self.output.info(self.settings.os)
-        self.output.info(self.settings.arch)
+        # self.output.info(self.settings.os)
+        # self.output.info(self.settings.arch)
 
-        if self.settings.compiler != None:
-            self.output.info(self.settings.compiler)
-        else:
-            self.output.info('compiler None')
+        # if self.settings.compiler != None:
+        #     self.output.info(self.settings.compiler)
+        # else:
+        #     self.output.info('compiler None')
 
-        if self.settings.compiler == None:
-            if self.settings.arch == 'x86_64':
-                if self.settings.os in ('Linux', 'Windows', 'Macos'):
-                    self.settings.remove("compiler")
-                    self.settings.remove("build_type")
-                    # del self.settings.compiler
-                    # del self.settings.build_type
+        if self.options.no_compilation or (self.settings.compiler == None and self.settings.arch == 'x86_64' and self.settings.os in ('Linux', 'Windows', 'Macos')):
+            self.settings.remove("compiler")
+            self.settings.remove("build_type")
+            # del self.settings.compiler
+            # del self.settings.build_type
 
 
             # # If header only, the compiler, etc, does not affect the package!
@@ -159,47 +159,43 @@ class BitprimNodeExeConan(ConanFile):
 
 
     def package_id(self):
-        self.output.info('def package_id(self):')
-
-        self.output.info(self.info.requires)
-        self.output.info(self.info.requires.sha)
-        self.output.info(self.info.requires.serialize)
-        self.output.info(self.info.requires.pkg_names)
-
-        # self.output.info(self.info.requires['bitprim-node/0.7@bitprim/testing'])
-        # self.output.info(self.info.requires['bitprim-node'])
-
-        # self.info.requires.remove('bitprim-node')
-        # self.info.requires.remove('bitprim-rpc')
-
         self.info.requires.clear()
-
-        self.output.info(self.info.requires)
-        self.output.info(self.info.requires.sha)
-        self.output.info(self.info.requires.serialize)
-        self.output.info(self.info.requires.pkg_names)
-
-        # for x in self.info.requires:
-        #     self.output.info(x)
-
-
-        # if self.settings.get_safe("compiler") is not None:
-        #     self.requires("bitprim-node/0.7@bitprim/testing")
-        #     if self.options.with_rpc:
-        #         self.requires("bitprim-rpc/0.7@bitprim/testing")
-
-
-
         # self.settings.remove("compiler")
         # self.settings.remove("build_type")
         self.info.settings.compiler = "ANY"
         self.info.settings.build_type = "ANY"
+        self.info.options.no_compilation = "ANY"
+
+        # self.output.info('def package_id(self):')
+
+        # self.output.info(self.info.requires)
+        # self.output.info(self.info.requires.sha)
+        # self.output.info(self.info.requires.serialize)
+        # self.output.info(self.info.requires.pkg_names)
+
+        # # self.output.info(self.info.requires['bitprim-node/0.7@bitprim/testing'])
+        # # self.output.info(self.info.requires['bitprim-node'])
+
+        # # self.info.requires.remove('bitprim-node')
+        # # self.info.requires.remove('bitprim-rpc')
+
+        # self.output.info(self.info.requires)
+        # self.output.info(self.info.requires.sha)
+        # self.output.info(self.info.requires.serialize)
+        # self.output.info(self.info.requires.pkg_names)
+
+        # # for x in self.info.requires:
+        # #     self.output.info(x)
 
 
-        self.output.info(self.info.options)
-        self.output.info(self.info.options.sha)
+        # # if self.settings.get_safe("compiler") is not None:
+        # #     self.requires("bitprim-node/0.7@bitprim/testing")
+        # #     if self.options.with_rpc:
+        # #         self.requires("bitprim-rpc/0.7@bitprim/testing")
 
-        self.output.info(self.info.package_id())
+        # self.output.info(self.info.options)
+        # self.output.info(self.info.options.sha)
+        # self.output.info(self.info.package_id())
         
 
     def deploy(self):
@@ -222,6 +218,9 @@ class BitprimNodeExeConan(ConanFile):
                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
             else:
                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
+        elif self.settings.compiler == "clang":
+            if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+                cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
 
         cmake.definitions["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
         cmake.configure(source_dir=self.source_folder)

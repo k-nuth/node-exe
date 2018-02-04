@@ -38,6 +38,7 @@ if __name__ == "__main__":
             opt7 = copy.deepcopy(options)
             opt8 = copy.deepcopy(options)
 
+            #TODO(fernando): Enable with_rpc
             # opt1["bitprim-node-exe:microarchitecture"] = "x86_64"
             # opt1["bitprim-node-exe:with_rpc"] = "True"
 
