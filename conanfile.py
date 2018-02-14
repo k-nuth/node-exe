@@ -21,31 +21,9 @@ import os
 from conans import ConanFile, CMake
 import importlib
 
-# # import cpuid
-# cpuid_installed = False
-# import importlib
-# try:
-#     cpuid = importlib.import_module('cpuid')
-#     cpuid_installed = True
-# except ImportError:
-#     # print("*** cpuid could not be imported")
-#     cpuid_installed = False
-
 
 def option_on_off(option):
     return "ON" if option else "OFF"
-
-# def make_default_options_method():
-#     defs = ("with_litecoin=False","with_rpc=False",)
-
-#     march_opt = ""
-#     if cpuid_installed:
-#         march_opt = "microarchitecture=%s" % (''.join(cpuid.cpu_microarchitecture()))
-#     else:
-#         march_opt = "microarchitecture=x86_64"
-
-#     new_defs = defs + (march_opt,)
-#     return new_defs
 
 
 microarchitecture_default = 'x86_64'
@@ -82,28 +60,25 @@ class BitprimNodeExeConan(ConanFile):
     # settings = "os", "arch"
 
     options = {
-        "with_litecoin": [True, False],
+        "currency": ['BCH', 'BTC', 'LTC'],
         "with_rpc": [True, False],
         "microarchitecture": "ANY", #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
         "no_compilation": [True, False],
     }
-    
-    # default_options = "with_litecoin=False", \
-    #     "microarchitecture=x86_64"
 
-    # default_options = make_default_options_method()
-    default_options = "with_litecoin=False",  \
+    # "with_litecoin": [True, False],
+    
+    default_options = "currency=BCH", \
                       "with_rpc=False",  \
                       "microarchitecture=_DUMMY_",  \
                       "no_compilation=False"
-
+    
+    # "with_litecoin=False",  \
 
     generators = "cmake"
-    exports_sources = "CMakeLists.txt", "cmake/*", "console/*"
+    exports_sources = "CMakeLists.txt", "cmake/*", "console/*", "bitprimbuildinfo.cmake"
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
-
-    # requires = (("bitprim-node/0.7@bitprim/testing"))
 
     def requirements(self):
         # self.output.info('def requirements(self):')
@@ -157,6 +132,8 @@ class BitprimNodeExeConan(ConanFile):
         self.options["*"].microarchitecture = self.options.microarchitecture
         self.output.info("Compiling for microarchitecture (%s): %s" % (march_from, self.options.microarchitecture))
 
+        self.options["*"].currency = self.options.currency
+
 
     def package_id(self):
         self.info.requires.clear()
@@ -207,11 +184,16 @@ class BitprimNodeExeConan(ConanFile):
     def build(self):
         cmake = CMake(self)
         
-        cmake.definitions["USE_CONAN"] = "ON"
-        cmake.definitions["NO_CONAN_AT_ALL"] = "OFF"
-        cmake.definitions["CMAKE_VERBOSE_MAKEFILE"] = "OFF"
-        cmake.definitions["WITH_LITECOIN"] = option_on_off(self.options.with_litecoin)
+        cmake.definitions["USE_CONAN"] = option_on_off(True)
+        cmake.definitions["NO_CONAN_AT_ALL"] = option_on_off(False)
+
+        # cmake.definitions["CMAKE_VERBOSE_MAKEFILE"] = "OFF"
+        cmake.verbose = False
+        
+        # cmake.definitions["WITH_LITECOIN"] = option_on_off(self.options.with_litecoin)
         cmake.definitions["WITH_RPC"] = option_on_off(self.options.with_rpc)
+
+        cmake.definitions["CURRENCY"] = self.options.currency
 
         if self.settings.compiler == "gcc":
             if float(str(self.settings.compiler.version)) >= 5:
