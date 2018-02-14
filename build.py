@@ -37,18 +37,18 @@ if __name__ == "__main__":
             opts_btc_rpc_off = copy.deepcopy(options)
             # opts_ltc_rpc_off = copy.deepcopy(options)
 
-            opts_bch_rpc_on["bitprim-core:currency"] = "BCH"
+            opts_bch_rpc_on["bitprim-node-exe:currency"] = "BCH"
             opts_bch_rpc_on["bitprim-node-exe:with_rpc"] = "True"
-            opts_btc_rpc_on["bitprim-core:currency"] = "BTC"
+            opts_btc_rpc_on["bitprim-node-exe:currency"] = "BTC"
             opts_btc_rpc_on["bitprim-node-exe:with_rpc"] = "True"
-            # opts_ltc_rpc_on["bitprim-core:currency"] = "LTC"
+            # opts_ltc_rpc_on["bitprim-node-exe:currency"] = "LTC"
             # opts_ltc_rpc_on["bitprim-node-exe:with_rpc"] = "True"
 
-            opts_bch_rpc_off["bitprim-core:currency"] = "BCH"
+            opts_bch_rpc_off["bitprim-node-exe:currency"] = "BCH"
             opts_bch_rpc_off["bitprim-node-exe:with_rpc"] = "False"
-            opts_btc_rpc_off["bitprim-core:currency"] = "BTC"
+            opts_btc_rpc_off["bitprim-node-exe:currency"] = "BTC"
             opts_btc_rpc_off["bitprim-node-exe:with_rpc"] = "False"
-            # opts_ltc_rpc_off["bitprim-core:currency"] = "LTC"
+            # opts_ltc_rpc_off["bitprim-node-exe:currency"] = "LTC"
             # opts_ltc_rpc_off["bitprim-node-exe:with_rpc"] = "False"
 
             marchs = ["x86_64", ''.join(cpuid.cpu_microarchitecture()), "haswell", "skylake"]
