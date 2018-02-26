@@ -26,7 +26,8 @@
 #include <mutex>
 #include <boost/core/null_deleter.hpp>
 #include <bitcoin/node.hpp>
-#include <bitcoin/bitcoin/bitcoin_cash_support.hpp>
+#include <bitcoin/bitcoin/multi_crypto_support.hpp>
+
 
 #ifdef BITPRIM_WITH_RPC
 #include <bitprim/rpc/manager.hpp>
@@ -243,7 +244,7 @@ bool executor::run()
     for (const auto & ip : metadata_.configured.node.rpc_allow_ip){
         rpc_allowed_ips.insert(ip);
     }
-    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, node_->chain_bitprim(), metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips);
+    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips);
     auto rpc_thread = std::thread([&message_manager](){
         message_manager.start();
     });

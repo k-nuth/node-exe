@@ -19,64 +19,189 @@
 
 import os
 from conans import ConanFile, CMake
-
-# import cpuid
-cpuid_installed = False
 import importlib
-try:
-    cpuid = importlib.import_module('cpuid')
-    cpuid_installed = True
-except ImportError:
-    # print("*** cpuid could not be imported")
-    cpuid_installed = False
+
+# # import cpuid
+# cpuid_installed = False
+# import importlib
+# try:
+#     cpuid = importlib.import_module('cpuid')
+#     cpuid_installed = True
+# except ImportError:
+#     # print("*** cpuid could not be imported")
+#     cpuid_installed = False
 
 
 def option_on_off(option):
     return "ON" if option else "OFF"
 
-def make_default_options_method():
-    defs = ("with_litecoin=False","with_rpc=False",)
+# def make_default_options_method():
+#     defs = ("with_litecoin=False","with_rpc=False",)
 
-    gmp_opt = ""
-    if cpuid_installed:
-        gmp_opt = "microarchitecture=%s" % (''.join(cpuid.cpu_microarchitecture()))
+#     march_opt = ""
+#     if cpuid_installed:
+#         march_opt = "microarchitecture=%s" % (''.join(cpuid.cpu_microarchitecture()))
+#     else:
+#         march_opt = "microarchitecture=x86_64"
+
+#     new_defs = defs + (march_opt,)
+#     return new_defs
+
+
+microarchitecture_default = 'x86_64'
+
+def get_cpuid():
+    try:
+        print("*** cpuid OK")
+        cpuid = importlib.import_module('cpuid')
+        return cpuid
+    except ImportError:
+        print("*** cpuid could not be imported")
+        return None
+
+def get_cpu_microarchitecture_or_default(default):
+    cpuid = get_cpuid()
+    if cpuid != None:
+        # return '%s%s' % cpuid.cpu_microarchitecture()
+        return '%s' % (''.join(cpuid.cpu_microarchitecture()))
     else:
-        gmp_opt = "microarchitecture=x86_64"
+        return default
 
-    new_defs = defs + (gmp_opt,)
-    return new_defs
+def get_cpu_microarchitecture():
+    return get_cpu_microarchitecture_or_default(microarchitecture_default)
 
 
 class BitprimNodeExeConan(ConanFile):
     name = "bitprim-node-exe"
-    version = "0.6"
+    version = "0.7"
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
-    
     settings = "os", "compiler", "build_type", "arch"
+    # settings = "os", "arch"
 
     options = {
         "with_litecoin": [True, False],
         "with_rpc": [True, False],
-        "microarchitecture": "ANY" #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
+        "microarchitecture": "ANY", #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
+        "no_compilation": [True, False],
     }
     
     # default_options = "with_litecoin=False", \
     #     "microarchitecture=x86_64"
 
-    default_options = make_default_options_method()
+    # default_options = make_default_options_method()
+    default_options = "with_litecoin=False",  \
+                      "with_rpc=False",  \
+                      "microarchitecture=_DUMMY_",  \
+                      "no_compilation=False"
+
 
     generators = "cmake"
     exports_sources = "CMakeLists.txt", "cmake/*", "console/*"
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
-    requires = (("bitprim-node/0.6@bitprim/stable"))
+    # requires = (("bitprim-node/0.7@bitprim/testing"))
 
     def requirements(self):
-        if self.options.with_rpc:
-            self.requires("bitprim-rpc/0.6@bitprim/stable")
+        # self.output.info('def requirements(self):')
+
+        # if self.settings.get_safe("compiler") is not None:
+        #     self.output.info('compiler exists')
+        #     self.output.info(self.settings.compiler)
+        # else:
+        #     self.output.info('compiler removed')
+
+        if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
+            self.requires("bitprim-node/0.7@bitprim/stable")
+            if self.options.with_rpc:
+                self.requires("bitprim-rpc/0.7@bitprim/stable")
+
+
+    def configure(self):
+        # self.output.info('def configure(self):')
+
+        # self.output.info(self.settings.os)
+        # self.output.info(self.settings.arch)
+
+        # if self.settings.compiler != None:
+        #     self.output.info(self.settings.compiler)
+        # else:
+        #     self.output.info('compiler None')
+
+        if self.options.no_compilation or (self.settings.compiler == None and self.settings.arch == 'x86_64' and self.settings.os in ('Linux', 'Windows', 'Macos')):
+            self.settings.remove("compiler")
+            self.settings.remove("build_type")
+            # del self.settings.compiler
+            # del self.settings.build_type
+
+
+            # # If header only, the compiler, etc, does not affect the package!
+            # if self.options.header_only:
+            #     self.settings.clear()
+            #     self.options.remove("static")
+
+        if self.options.microarchitecture == "_DUMMY_":
+            self.options.microarchitecture = get_cpu_microarchitecture()
+
+            if get_cpuid() == None:
+                march_from = 'default'
+            else:
+                march_from = 'taken from cpuid'
+
+        else:
+            march_from = 'user defined'
+        
+        self.options["*"].microarchitecture = self.options.microarchitecture
+        self.output.info("Compiling for microarchitecture (%s): %s" % (march_from, self.options.microarchitecture))
+
+
+    def package_id(self):
+        self.info.requires.clear()
+        # self.settings.remove("compiler")
+        # self.settings.remove("build_type")
+        self.info.settings.compiler = "ANY"
+        self.info.settings.build_type = "ANY"
+        self.info.options.no_compilation = "ANY"
+
+        # self.output.info('def package_id(self):')
+
+        # self.output.info(self.info.requires)
+        # self.output.info(self.info.requires.sha)
+        # self.output.info(self.info.requires.serialize)
+        # self.output.info(self.info.requires.pkg_names)
+
+        # # self.output.info(self.info.requires['bitprim-node/0.7@bitprim/testing'])
+        # # self.output.info(self.info.requires['bitprim-node'])
+
+        # # self.info.requires.remove('bitprim-node')
+        # # self.info.requires.remove('bitprim-rpc')
+
+        # self.output.info(self.info.requires)
+        # self.output.info(self.info.requires.sha)
+        # self.output.info(self.info.requires.serialize)
+        # self.output.info(self.info.requires.pkg_names)
+
+        # # for x in self.info.requires:
+        # #     self.output.info(x)
+
+
+        # # if self.settings.get_safe("compiler") is not None:
+        # #     self.requires("bitprim-node/0.7@bitprim/testing")
+        # #     if self.options.with_rpc:
+        # #         self.requires("bitprim-rpc/0.7@bitprim/testing")
+
+        # self.output.info(self.info.options)
+        # self.output.info(self.info.options.sha)
+        # self.output.info(self.info.package_id())
+        
+
+    def deploy(self):
+        self.copy("bn.exe", src="bin")     # copy from current package
+        self.copy("bn", src="bin")         # copy from current package
+        # self.copy_deps("*.dll") # copy from dependencies        
+
 
     def build(self):
         cmake = CMake(self)
@@ -92,6 +217,9 @@ class BitprimNodeExeConan(ConanFile):
                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
             else:
                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
+        elif self.settings.compiler == "clang":
+            if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+                cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
 
         cmake.definitions["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
         cmake.configure(source_dir=self.source_folder)
