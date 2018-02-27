@@ -25,6 +25,18 @@ import importlib
 def option_on_off(option):
     return "ON" if option else "OFF"
 
+def get_content(path):
+    print(os.path.dirname(os.path.abspath(__file__)))
+    print(os.getcwd())
+    with open(path, 'r') as f:
+        return f.read()
+
+def get_version():
+    return get_content('conan_version')
+
+def get_channel():
+    return get_content('conan_channel')
+
 
 microarchitecture_default = 'x86_64'
 
@@ -51,7 +63,10 @@ def get_cpu_microarchitecture():
 
 class BitprimNodeExeConan(ConanFile):
     name = "bitprim-node-exe"
-    version = "0.7"
+
+    # version = "0.7"
+    version = get_version()
+
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
@@ -76,7 +91,10 @@ class BitprimNodeExeConan(ConanFile):
     # "with_litecoin=False",  \
 
     generators = "cmake"
+
+    exports = "conan_channel", "conan_version"
     exports_sources = "CMakeLists.txt", "cmake/*", "console/*", "bitprimbuildinfo.cmake"
+
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
@@ -90,9 +108,9 @@ class BitprimNodeExeConan(ConanFile):
         #     self.output.info('compiler removed')
 
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
-            self.requires("bitprim-node/0.7@bitprim/testing")
+            self.requires("bitprim-node/0.8@bitprim/%s" % get_channel()))
             if self.options.with_rpc:
-                self.requires("bitprim-rpc/0.7@bitprim/testing")
+                self.requires("bitprim-rpc/0.8@bitprim/%s" % get_channel()))
 
 
     def configure(self):
@@ -150,7 +168,7 @@ class BitprimNodeExeConan(ConanFile):
         # self.output.info(self.info.requires.serialize)
         # self.output.info(self.info.requires.pkg_names)
 
-        # # self.output.info(self.info.requires['bitprim-node/0.7@bitprim/testing'])
+        # # self.output.info(self.info.requires['bitprim-node/0.8@bitprim/%s' % get_channel())])
         # # self.output.info(self.info.requires['bitprim-node'])
 
         # # self.info.requires.remove('bitprim-node')
@@ -166,9 +184,9 @@ class BitprimNodeExeConan(ConanFile):
 
 
         # # if self.settings.get_safe("compiler") is not None:
-        # #     self.requires("bitprim-node/0.7@bitprim/testing")
+        # #     self.requires("bitprim-node/0.8@bitprim/%s" % get_channel()))
         # #     if self.options.with_rpc:
-        # #         self.requires("bitprim-rpc/0.7@bitprim/testing")
+        # #         self.requires("bitprim-rpc/0.8@bitprim/%s" % get_channel()))
 
         # self.output.info(self.info.options)
         # self.output.info(self.info.options.sha)
