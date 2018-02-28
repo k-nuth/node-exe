@@ -25,10 +25,12 @@ import importlib
 def option_on_off(option):
     return "ON" if option else "OFF"
 
-def get_content(path):
-    print(os.path.dirname(os.path.abspath(__file__)))
-    print(os.getcwd())
-    with open(path, 'r') as f:
+def get_content(file_name):
+    # print(os.path.dirname(os.path.abspath(__file__)))
+    # print(os.getcwd())
+    # print(file_name)
+    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
+    with open(file_path, 'r') as f:
         return f.read()
 
 def get_version():
@@ -153,7 +155,10 @@ class BitprimNodeExeConan(ConanFile):
         self.output.info("Compiling for microarchitecture (%s): %s" % (march_from, self.options.microarchitecture))
 
         self.options["*"].currency = self.options.currency
+        self.output.info("Compiling for currency: %s" % (self.options.currency,))
+
         self.options["*"].with_rpc = self.options.with_rpc
+        self.output.info("Compiling with RPC support: %s" % (self.options.with_rpc,))
 
     def package_id(self):
         self.info.requires.clear()
