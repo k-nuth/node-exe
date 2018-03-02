@@ -73,7 +73,7 @@ def get_cpu_microarchitecture():
 
 class BitprimNodeExeConan(ConanFile):
     name = "bitprim-node-exe"
-    version = "0.7"
+    version = "0.8"
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
@@ -103,7 +103,7 @@ class BitprimNodeExeConan(ConanFile):
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
-    # requires = (("bitprim-node/0.7@bitprim/testing"))
+    # requires = (("bitprim-node/0.8@bitprim/testing"))
 
     def requirements(self):
         # self.output.info('def requirements(self):')
@@ -115,9 +115,9 @@ class BitprimNodeExeConan(ConanFile):
         #     self.output.info('compiler removed')
 
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
-            self.requires("bitprim-node/0.7@bitprim/testing")
+            self.requires("bitprim-node/0.8@bitprim/testing")
             if self.options.with_rpc:
-                self.requires("bitprim-rpc/0.7@bitprim/testing")
+                self.requires("bitprim-rpc/0.8@bitprim/testing")
 
 
     def configure(self):
