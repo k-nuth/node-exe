@@ -117,9 +117,9 @@ void executor::do_settings()
 // }
 
 void executor::do_version() {
-    output_ << format(BN_VERSION_MESSAGE) % BITPRIM_NODE_EXE_VERSION << std::endl;
+    // output_ << format(BN_VERSION_MESSAGE) % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_MICROARCHITECTURE_STR % BITPRIM_NODE_EXE_VERSION << std::endl;
+    output_ << format(BN_VERSION_MESSAGE) % BITPRIM_NODE_EXE_VERSION % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_MICROARCHITECTURE_STR << std::endl;
 }
-
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 // Emit to the log.
@@ -204,6 +204,14 @@ bool executor::run()
 
     LOG_INFO(LOG_NODE) << BN_NODE_INTERRUPT;
     LOG_INFO(LOG_NODE) << BN_NODE_STARTING;
+    LOG_INFO(LOG_NODE) << format(BN_VERSION_MESSAGE_INIT) % BITPRIM_NODE_EXE_VERSION;
+    LOG_INFO(LOG_NODE) << format(BN_CRYPTOCURRENCY_INIT) % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_CURRENCY_STR;
+    LOG_INFO(LOG_NODE) << format(BN_MICROARCHITECTURE_INIT) % BITPRIM_MICROARCHITECTURE_STR;
+
+
+
+    //Log Cryotocurrency
+    //Log Microarchitecture
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
     if (!verify_directory())
@@ -223,9 +231,7 @@ bool executor::run()
         metadata_.configured.network.statistics_server);
 
     // The callback may be returned on the same thread.
-    node_->start(
-        std::bind(&executor::handle_started,
-            this, _1));
+    node_->start(std::bind(&executor::handle_started, this, _1));
 
 #ifdef BITPRIM_WITH_RPC
     std::string message = "RPC port: " + std::to_string(metadata_.configured.node.rpc_port) + ". ZMQ port: " + std::to_string(metadata_.configured.node.subscriber_port);
@@ -254,12 +260,12 @@ bool executor::run()
     }
 #endif
 
-
     // Close must be called from main thread.
-    if (node_->close())
+    if (node_->close()) {
         LOG_INFO(LOG_NODE) << BN_NODE_STOPPED;
-    else
+    } else {
         LOG_INFO(LOG_NODE) << BN_NODE_STOP_FAIL;
+    }
 
     return true;
 }

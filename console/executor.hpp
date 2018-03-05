@@ -122,7 +122,13 @@ private:
 #define BN_USING_DEFAULT_CONFIG \
     "Using default configuration settings."
 
-#define BN_VERSION_MESSAGE "Bitprim %1%"
+#define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  microarchitecture: %3%"
+
+#define BN_VERSION_MESSAGE_INIT "Node version: %1%"
+
+#define BN_CRYPTOCURRENCY_INIT "Currency: %1% - %2%"
+
+#define BN_MICROARCHITECTURE_INIT "Compiled for microarchitecture: %1%"
 
 
 #define BN_LOG_HEADER \
