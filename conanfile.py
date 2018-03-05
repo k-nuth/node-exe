@@ -223,6 +223,7 @@ class BitprimNodeExeConan(ConanFile):
         cmake.definitions["WITH_RPC"] = option_on_off(self.options.with_rpc)
 
         cmake.definitions["CURRENCY"] = self.options.currency
+        cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
 
         if self.settings.compiler == "gcc":
             if float(str(self.settings.compiler.version)) >= 5:
