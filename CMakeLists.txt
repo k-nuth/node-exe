@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.4)
 # bitprim-node-exe
 #==============================================================================
 project(bitprim-node-exe
-        VERSION 0.7.0
+        VERSION 0.8.0
         LANGUAGES CXX C)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -67,14 +67,14 @@ endif()
 #------------------------------------------------------------------------------
 if (NOT USE_CONAN)
   if (NOT TARGET bitprim-node)
-    find_package(bitprim-node 0.7.0 REQUIRED)
+    find_package(bitprim-node 0.8.0 REQUIRED)
   endif()
 
   if (WITH_RPC)
-    # Require bitprim-rpc of at least version 0.7.0
+    # Require bitprim-rpc of at least version 0.8.0
     #------------------------------------------------------------------------------
     if (NOT TARGET bitprim-rpc)
-      find_package(bitprim-rpc 0.7.0 REQUIRED)
+      find_package(bitprim-rpc 0.8.0 REQUIRED)
     endif()
   endif()
 
