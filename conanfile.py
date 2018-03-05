@@ -108,9 +108,9 @@ class BitprimNodeExeConan(ConanFile):
         #     self.output.info('compiler removed')
 
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
-            self.requires("bitprim-node/0.8@bitprim/%s" % get_channel()))
+            self.requires("bitprim-node/0.8@bitprim/%s" % get_channel())
             if self.options.with_rpc:
-                self.requires("bitprim-rpc/0.8@bitprim/%s" % get_channel()))
+                self.requires("bitprim-rpc/0.8@bitprim/%s" % get_channel())
 
 
     def configure(self):
