@@ -134,13 +134,6 @@ if __name__ == "__main__":
             opts_btc_rpc_off = copy.deepcopy(options)
             # opts_ltc_rpc_off = copy.deepcopy(options)
 
-            opts_bch_rpc_on["*:currency"] = "BCH"
-            opts_bch_rpc_on["*:with_rpc"] = "True"
-            opts_btc_rpc_on["*:currency"] = "BTC"
-            opts_btc_rpc_on["*:with_rpc"] = "True"
-            # opts_ltc_rpc_on["*:currency"] = "LTC"
-            # opts_ltc_rpc_on["*:with_rpc"] = "True"
-
             opts_bch_rpc_off["*:currency"] = "BCH"
             opts_bch_rpc_off["*:with_rpc"] = "False"
             opts_btc_rpc_off["*:currency"] = "BTC"
@@ -148,13 +141,22 @@ if __name__ == "__main__":
             # opts_ltc_rpc_off["*:currency"] = "LTC"
             # opts_ltc_rpc_off["*:with_rpc"] = "False"
 
+            opts_bch_rpc_on["*:currency"] = "BCH"
+            opts_bch_rpc_on["*:with_rpc"] = "True"
+            opts_btc_rpc_on["*:currency"] = "BTC"
+            opts_btc_rpc_on["*:with_rpc"] = "True"
+            # opts_ltc_rpc_on["*:currency"] = "LTC"
+            # opts_ltc_rpc_on["*:with_rpc"] = "True"
+
             marchs = ["x86_64", ''.join(cpuid.cpu_microarchitecture()), "haswell", "skylake"]
-            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_bch_rpc_on, env_vars, build_requires)
-            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_btc_rpc_on, env_vars, build_requires)
-            # handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_ltc_rpc_on, env_vars, build_requires)
+
             handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_bch_rpc_off, env_vars, build_requires)
             handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_btc_rpc_off, env_vars, build_requires)
             # handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_ltc_rpc_off, env_vars, build_requires)
+
+            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_bch_rpc_on, env_vars, build_requires)
+            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_btc_rpc_on, env_vars, build_requires)
+            # handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_ltc_rpc_on, env_vars, build_requires)
 
     builder.builds = filtered_builds
     builder.run()
