@@ -328,7 +328,7 @@ void executor::initialize_output() {
     LOG_INFO(LOG_NODE) << format(BN_MICROARCHITECTURE_INIT) % BITPRIM_MICROARCHITECTURE_STR;
 
     LOG_INFO(LOG_NODE) << "identifier: " << metadata_.configured.network.identifier;
-    LOG_INFO(LOG_NODE) << format(BN_NETWORK_INIT) % (get_network() == config::settings::testnet ? "Testnet" : "Mainnet");
+    LOG_INFO(LOG_NODE) << format(BN_NETWORK_INIT) % (get_network(metadata_.configured.network.identifier) == config::settings::testnet ? "Testnet" : "Mainnet");
 }
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
