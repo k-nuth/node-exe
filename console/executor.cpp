@@ -61,8 +61,7 @@ executor::executor(parser& metadata, std::istream& input,
     const auto& network = metadata_.configured.network;
     const auto verbose = network.verbose;
 
-    const log::rotable_file debug_file
-    {
+    const log::rotable_file debug_file {
         network.debug_file,
         network.archive_directory,
         network.rotation_size,
@@ -71,8 +70,7 @@ executor::executor(parser& metadata, std::istream& input,
         network.maximum_archive_files
     };
 
-    const log::rotable_file error_file
-    {
+    const log::rotable_file error_file {
         network.error_file,
         network.archive_directory,
         network.rotation_size,
@@ -92,16 +90,14 @@ executor::executor(parser& metadata, std::istream& input,
 // ----------------------------------------------------------------------------
 // Emit directly to standard output (not the log).
 
-void executor::do_help()
-{
+void executor::do_help() {
     const auto options = metadata_.load_options();
     printer help(options, application_name, BN_INFORMATION_MESSAGE);
     help.initialize();
     help.commandline(output_);
 }
 
-void executor::do_settings()
-{
+void executor::do_settings() {
     const auto settings = metadata_.load_settings();
     printer print(settings, application_name, BN_SETTINGS_MESSAGE);
     print.initialize();
@@ -123,23 +119,17 @@ void executor::do_version() {
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 // Emit to the log.
-bool executor::do_initchain()
-{
+bool executor::do_initchain() {
     initialize_output();
 
     error_code ec;
     const auto& directory = metadata_.configured.database.directory;
 
-    if (create_directories(directory, ec))
-    {
+    if (create_directories(directory, ec)) {
         LOG_INFO(LOG_NODE) << format(BN_INITIALIZING_CHAIN) % directory;
 
-        // bool const testnet = is_testnet(metadata_.configured.network.identifier, metadata_.configured.network.bitcoin_cash);
         bool const testnet = get_network() == config::settings::testnet;
-
-        const auto genesis = testnet ? block::genesis_testnet() :
-            block::genesis_mainnet();
-
+        const auto genesis = testnet ? block::genesis_testnet() : block::genesis_mainnet();
         const auto& settings = metadata_.configured.database;
         const auto result = data_base(settings).create(genesis);
 
@@ -147,8 +137,7 @@ bool executor::do_initchain()
         return result;
     }
 
-    if (ec.value() == directory_exists)
-    {
+    if (ec.value() == directory_exists) {
         LOG_ERROR(LOG_NODE) << format(BN_INITCHAIN_EXISTS) % directory;
         return false;
     }
@@ -162,31 +151,26 @@ bool executor::do_initchain()
 // Menu selection.
 // ----------------------------------------------------------------------------
 
-bool executor::menu()
-{
+bool executor::menu() {
     const auto& config = metadata_.configured;
 
-    if (config.help)
-    {
+    if (config.help) {
         do_help();
         return true;
     }
 
-    if (config.settings)
-    {
+    if (config.settings) {
         do_settings();
         return true;
     }
 
-    if (config.version)
-    {
+    if (config.version) {
         do_version();
         return true;
     }
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
-    if (config.initchain)
-    {
+    if (config.initchain) {
         return do_initchain();
     }
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
@@ -198,24 +182,18 @@ bool executor::menu()
 // Run.
 // ----------------------------------------------------------------------------
 
-bool executor::run()
-{
+bool executor::run() {
     initialize_output();
 
     LOG_INFO(LOG_NODE) << BN_NODE_INTERRUPT;
     LOG_INFO(LOG_NODE) << BN_NODE_STARTING;
-    LOG_INFO(LOG_NODE) << format(BN_VERSION_MESSAGE_INIT) % BITPRIM_NODE_EXE_VERSION;
-    LOG_INFO(LOG_NODE) << format(BN_CRYPTOCURRENCY_INIT) % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_CURRENCY_STR;
-    LOG_INFO(LOG_NODE) << format(BN_MICROARCHITECTURE_INIT) % BITPRIM_MICROARCHITECTURE_STR;
-
-
 
     //Log Cryotocurrency
     //Log Microarchitecture
-
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
-    if (!verify_directory())
+    if ( ! verify_directory()) {
         return false;
+    }
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
 
     // bool const testnet = is_testnet(metadata_.configured.network.identifier, metadata_.configured.network.bitcoin_cash);
@@ -227,8 +205,7 @@ bool executor::run()
     node_ = std::make_shared<full_node>(metadata_.configured);
 
     // Initialize broadcast to statistics server if configured.
-    log::initialize_statsd(node_->thread_pool(),
-        metadata_.configured.network.statistics_server);
+    log::initialize_statsd(node_->thread_pool(), metadata_.configured.network.statistics_server);
 
     // The callback may be returned on the same thread.
     node_->start(std::bind(&executor::handle_started, this, _1));
@@ -271,10 +248,8 @@ bool executor::run()
 }
 
 // Handle the completion of the start sequence and begin the run sequence.
-void executor::handle_started(const code& ec)
-{
-    if (ec)
-    {
+void executor::handle_started(const code& ec) {
+    if (ec) {
         LOG_ERROR(LOG_NODE) << format(BN_NODE_START_FAIL) % ec.message();
         stop(ec);
         return;
@@ -283,21 +258,15 @@ void executor::handle_started(const code& ec)
     LOG_INFO(LOG_NODE) << BN_NODE_SEEDED;
 
     // This is the beginning of the stop sequence.
-    node_->subscribe_stop(
-        std::bind(&executor::handle_stopped,
-            this, _1));
+    node_->subscribe_stop(std::bind(&executor::handle_stopped, this, _1));
 
     // This is the beginning of the run sequence.
-    node_->run(
-        std::bind(&executor::handle_running,
-            this, _1));
+    node_->run(std::bind(&executor::handle_running, this, _1));
 }
 
 // This is the end of the run sequence.
-void executor::handle_running(const code& ec)
-{
-    if (ec)
-    {
+void executor::handle_running(const code& ec) {
+    if (ec) {
         LOG_INFO(LOG_NODE) << format(BN_NODE_START_FAIL) % ec.message();
         stop(ec);
         return;
@@ -307,32 +276,30 @@ void executor::handle_running(const code& ec)
 }
 
 // This is the end of the stop sequence.
-void executor::handle_stopped(const code& ec)
-{
+void executor::handle_stopped(const code& ec) {
     stop(ec);
 }
 
 // Stop signal.
 // ----------------------------------------------------------------------------
 
-void executor::handle_stop(int code)
-{
+void executor::handle_stop(int code) {
     // Reinitialize after each capture to prevent hard shutdown.
     // Do not capture failure signals as calling stop can cause flush lock file
     // to clear due to the aborted thread dropping the flush lock mutex.
     std::signal(SIGINT, handle_stop);
     std::signal(SIGTERM, handle_stop);
 
-    if (code == initialize_stop)
+    if (code == initialize_stop) {
         return;
+    }
 
     LOG_INFO(LOG_NODE) << format(BN_NODE_SIGNALED) % code;
     stop(error::success);
 }
 
 // Manage the race between console stop and server stop.
-void executor::stop(const code& ec)
-{
+void executor::stop(const code& ec) {
     static std::once_flag stop_mutex;
     std::call_once(stop_mutex, [&](){ stopping_.set_value(ec); });
 }
@@ -341,35 +308,41 @@ void executor::stop(const code& ec)
 // ----------------------------------------------------------------------------
 
 // Set up logging.
-void executor::initialize_output()
-{
-    const auto header = format(BN_LOG_HEADER) % local_time();
+void executor::initialize_output() {
+    auto const header = format(BN_LOG_HEADER) % local_time();
     LOG_DEBUG(LOG_NODE) << header;
     LOG_INFO(LOG_NODE) << header;
     LOG_WARNING(LOG_NODE) << header;
     LOG_ERROR(LOG_NODE) << header;
     LOG_FATAL(LOG_NODE) << header;
 
-    const auto& file = metadata_.configured.file;
+    auto const& file = metadata_.configured.file;
 
-    if (file.empty())
+    if (file.empty()) {
         LOG_INFO(LOG_NODE) << BN_USING_DEFAULT_CONFIG;
-    else
+    } else {
         LOG_INFO(LOG_NODE) << format(BN_USING_CONFIG_FILE) % file;
+    }
+
+    LOG_INFO(LOG_NODE) << format(BN_VERSION_MESSAGE_INIT) % BITPRIM_NODE_EXE_VERSION;
+    LOG_INFO(LOG_NODE) << format(BN_CRYPTOCURRENCY_INIT) % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_CURRENCY_STR;
+    LOG_INFO(LOG_NODE) << format(BN_MICROARCHITECTURE_INIT) % BITPRIM_MICROARCHITECTURE_STR;
+
+    LOG_INFO(LOG_NODE) << "identifier: " << metadata_.configured.network.identifier;
+    LOG_INFO(LOG_NODE) << format(BN_NETWORK_INIT) % (get_network() == config::settings::testnet ? "Testnet" : "Mainnet");
 }
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 // Use missing directory as a sentinel indicating lack of initialization.
-bool executor::verify_directory()
-{
+bool executor::verify_directory() {
     error_code ec;
     const auto& directory = metadata_.configured.database.directory;
 
-    if (exists(directory, ec))
+    if (exists(directory, ec)) {
         return true;
+    }
 
-    if (ec.value() == directory_not_found)
-    {
+    if (ec.value() == directory_not_found) {
         LOG_ERROR(LOG_NODE) << format(BN_UNINITIALIZED_CHAIN) % directory;
         return false;
     }
@@ -380,5 +353,4 @@ bool executor::verify_directory()
 }
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 
-} // namespace node
-} // namespace libbitcoin
+}} // namespace libbitcoin::node
