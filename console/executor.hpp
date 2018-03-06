@@ -130,7 +130,7 @@ private:
 
 #define BN_MICROARCHITECTURE_INIT "Compiled for microarchitecture: %1%"
 
-#define BN_NETWORK_INIT "Network: %1%"
+#define BN_NETWORK_INIT "Network: %1% (%2%)"
 
 
 #define BN_LOG_HEADER \
