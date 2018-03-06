@@ -134,8 +134,7 @@ bool executor::do_initchain()
     {
         LOG_INFO(LOG_NODE) << format(BN_INITIALIZING_CHAIN) % directory;
 
-        // bool const testnet = is_testnet(metadata_.configured.network.identifier, metadata_.configured.network.bitcoin_cash);
-        bool const testnet = get_network() == config::settings::testnet;
+        bool const testnet = get_network(metadata_.configured.network.identifier) == config::settings::testnet;
 
         const auto genesis = testnet ? block::genesis_testnet() :
             block::genesis_mainnet();
@@ -218,8 +217,7 @@ bool executor::run()
         return false;
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
 
-    // bool const testnet = is_testnet(metadata_.configured.network.identifier, metadata_.configured.network.bitcoin_cash);
-    bool const testnet = get_network() == config::settings::testnet;
+    bool const testnet = get_network(metadata_.configured.network.identifier) == config::settings::testnet;
 
     metadata_.configured.node.testnet = testnet;
 
