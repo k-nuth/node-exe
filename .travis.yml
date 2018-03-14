@@ -22,14 +22,7 @@ branches:
   - master
   - dev
   - /^v\d+\.\d+\.\d+$/
-    
-env:
-   global:
-     - CONAN_REFERENCE: "bitprim-node-exe/0.8"
-     - CONAN_USERNAME: "bitprim"
-     - CONAN_LOGIN_USERNAME: "bitprim-bintray"
-     - CONAN_CHANNEL: "testing"
-     - CONAN_UPLOAD: "https://api.bintray.com/conan/bitprim/bitprim"
+  - feature_compile_time_currencies
 
 linux: &linux
    os: linux
