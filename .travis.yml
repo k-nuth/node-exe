@@ -17,12 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# branches:
-#   only:
-#   - master
-#   - dev
-#   - /^v\d+\.\d+\.\d+$/
-#   - feature_compile_time_currencies
+branches:
+  only:
+  - master
+  - dev
+  - /^v\d+\.\d+\.\d+$/
+  - feature_2018_may_hardfork
 
 linux: &linux
    os: linux

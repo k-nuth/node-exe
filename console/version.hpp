@@ -30,7 +30,3 @@
 
 #endif /*LIBBITCOIN_NODE_EXE_VERSION_HPP_*/
 
-
-
-
-
