@@ -181,7 +181,7 @@ class BitprimNodeExeConan(ConanFile):
         # self.output.info(self.info.requires.serialize)
         # self.output.info(self.info.requires.pkg_names)
 
-        # # self.output.info(self.info.requires['bitprim-node/0.9@bitprim/%s' % get_channel())])
+        # # self.output.info(self.info.requires['bitprim-node/0.9.1@bitprim/%s' % get_channel())])
         # # self.output.info(self.info.requires['bitprim-node'])
 
         # # self.info.requires.remove('bitprim-node')
