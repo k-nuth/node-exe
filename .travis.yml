@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017 Bitprim developers (see AUTHORS)
+# Copyright (c) 2017-2018 Bitprim Inc.
 #
 # This file is part of Bitprim.
 #
@@ -22,7 +22,6 @@ branches:
   - master
   - dev
   - /^v\d+\.\d+\.\d+$/
-  - feature_2018_may_hardfork
 
 linux: &linux
    os: linux
@@ -40,7 +39,16 @@ osx: &osx
 matrix:
    include:
       - <<: *linux
-        env: PUSH_TO_REPOS=true  CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=lasote/conangcc49
+        env: PUSH_TO_REPOS=true  
+             CONAN_GCC_VERSIONS=4.9 
+             CONAN_DOCKER_IMAGE=lasote/conangcc49
+             BITPRIM_CI_CURRENCY=BCH
+
+      - <<: *linux
+        env: PUSH_TO_REPOS=true  
+             CONAN_GCC_VERSIONS=4.9 
+             CONAN_DOCKER_IMAGE=lasote/conangcc49
+             BITPRIM_CI_CURRENCY=BTC
 
       # - <<: *linux
       #   env: CONAN_GCC_VERSIONS=5 CONAN_DOCKER_IMAGE=lasote/conangcc54
@@ -60,6 +68,12 @@ matrix:
       - <<: *osx
         osx_image: xcode7.3
         env: CONAN_APPLE_CLANG_VERSIONS=7.3
+             BITPRIM_CI_CURRENCY=BCH
+
+      - <<: *osx
+        osx_image: xcode7.3
+        env: CONAN_APPLE_CLANG_VERSIONS=7.3
+             BITPRIM_CI_CURRENCY=BTC
 
       # - <<: *osx
       #   osx_image: xcode8.2

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017 Bitprim developers (see AUTHORS)
+# Copyright (c) 2017-2018 Bitprim Inc.
 #
 # This file is part of Bitprim.
 #
@@ -22,7 +22,6 @@ branches:
     - master
     - dev
     - /^v\d+\.\d+\.\d+$/
-    - feature_2018_may_hardfork
 
 build: false
 
@@ -33,8 +32,16 @@ environment:
     matrix:
         #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
         #  CONAN_VISUAL_VERSIONS: 12
+
         - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
           CONAN_VISUAL_VERSIONS: 14
+          BITPRIM_CI_CURRENCY: BCH
+
+        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+          CONAN_VISUAL_VERSIONS: 14
+          BITPRIM_CI_CURRENCY: BTC
+
+
         # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
         #   CONAN_VISUAL_VERSIONS: 15
         #   VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
