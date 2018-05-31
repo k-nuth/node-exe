@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017 Bitprim developers (see AUTHORS)
+# Copyright (c) 2017-2018 Bitprim Inc.
 #
 # This file is part of Bitprim.
 #
@@ -87,16 +87,12 @@ class BitprimNodeExeConan(ConanFile):
         "verbose": [True, False],
     }
 
-    # "with_litecoin": [True, False],
-    
     default_options = "currency=BCH", \
                       "with_rpc=False",  \
                       "microarchitecture=_DUMMY_",  \
                       "no_compilation=False",  \
                       "verbose=False"
     
-    # "with_litecoin=False",  \
-
     generators = "cmake"
 
     exports = "conan_channel", "conan_version", "conan_req_version"
@@ -222,7 +218,6 @@ class BitprimNodeExeConan(ConanFile):
         # cmake.verbose = False
         cmake.verbose = self.options.verbose
         
-        # cmake.definitions["WITH_LITECOIN"] = option_on_off(self.options.with_litecoin)
         cmake.definitions["WITH_RPC"] = option_on_off(self.options.with_rpc)
 
         cmake.definitions["CURRENCY"] = self.options.currency

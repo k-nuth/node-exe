@@ -100,10 +100,6 @@ def handle_microarchs(opt_name, microarchs, filtered_builds, settings, options, 
         filtered_builds.append([settings, opts_copy, env_vars, build_requires])
 
 if __name__ == "__main__":
-    # builder = ConanMultiPackager(username="bitprim", channel="testing",
-    #                              remotes="https://api.bintray.com/conan/bitprim/bitprim",
-    #                              archs=["x86_64"])
-
     builder, name = get_builder()
 
     # builder.add_common_builds(shared_option_name="bitprim-node:shared")
@@ -116,37 +112,18 @@ if __name__ == "__main__":
 
             env_vars["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
 
+            options["*:currency"] = os.getenv('BITPRIM_CI_CURRENCY', '---')
 
-            opts_bch_rpc_on = copy.deepcopy(options)
-            opts_btc_rpc_on = copy.deepcopy(options)
-            # opts_ltc_rpc_on = copy.deepcopy(options)
-            opts_bch_rpc_off = copy.deepcopy(options)
-            opts_btc_rpc_off = copy.deepcopy(options)
-            # opts_ltc_rpc_off = copy.deepcopy(options)
+            rpc_off = copy.deepcopy(options)
+            rpc_off["*:with_rpc"] = "False"
 
-            opts_bch_rpc_off["*:currency"] = "BCH"
-            opts_bch_rpc_off["*:with_rpc"] = "False"
-            opts_btc_rpc_off["*:currency"] = "BTC"
-            opts_btc_rpc_off["*:with_rpc"] = "False"
-            # opts_ltc_rpc_off["*:currency"] = "LTC"
-            # opts_ltc_rpc_off["*:with_rpc"] = "False"
-
-            opts_bch_rpc_on["*:currency"] = "BCH"
-            opts_bch_rpc_on["*:with_rpc"] = "True"
-            opts_btc_rpc_on["*:currency"] = "BTC"
-            opts_btc_rpc_on["*:with_rpc"] = "True"
-            # opts_ltc_rpc_on["*:currency"] = "LTC"
-            # opts_ltc_rpc_on["*:with_rpc"] = "True"
+            rpc_on = copy.deepcopy(options)
+            rpc_on["*:with_rpc"] = "True"
 
             marchs = ["x86_64", ''.join(cpuid.cpu_microarchitecture()), "haswell", "skylake"]
 
-            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_bch_rpc_off, env_vars, build_requires)
-            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_btc_rpc_off, env_vars, build_requires)
-            # handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_ltc_rpc_off, env_vars, build_requires)
-
-            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_bch_rpc_on, env_vars, build_requires)
-            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_btc_rpc_on, env_vars, build_requires)
-            # handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_ltc_rpc_on, env_vars, build_requires)
+            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_off, env_vars, build_requires)
+            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on, env_vars, build_requires)
 
     builder.builds = filtered_builds
     builder.run()
