@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.4)
 # bitprim-node-exe
 #==============================================================================
 project(bitprim-node-exe
-        VERSION 0.11.0
+        VERSION 0.10.1
         LANGUAGES CXX C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -98,14 +98,14 @@ endif()
 #------------------------------------------------------------------------------
 if (NOT USE_CONAN)
   if (NOT TARGET bitprim-node)
-    find_package(bitprim-node 0.11.0 REQUIRED)
+    find_package(bitprim-node 0.10.1 REQUIRED)
   endif()
 
   if (WITH_RPC)
-    # Require bitprim-rpc of at least version 0.11.0
+    # Require bitprim-rpc of at least version 0.10.1
     #------------------------------------------------------------------------------
     if (NOT TARGET bitprim-rpc)
-      find_package(bitprim-rpc 0.11.0 REQUIRED)
+      find_package(bitprim-rpc 0.10.1 REQUIRED)
     endif()
   endif()
 
