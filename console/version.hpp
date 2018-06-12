@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2017-2018 Bitprim Inc.
  *
- * This file is part of libbitcoin.
+ * This file is part of Bitprim.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBBITCOIN_NODE_EXE_VERSION_HPP_
-#define LIBBITCOIN_NODE_EXE_VERSION_HPP_
+#ifndef BITPRIM_NODE_EXE_VERSION_HPP_
+#define BITPRIM_NODE_EXE_VERSION_HPP_
 
 
 // #ifdef BITPRIM_BUILD_NUMBER
@@ -28,7 +28,9 @@
 
 #define BITPRIM_NODE_EXE_VERSION "v0.10.0-2-gd4b5bc1"
 
-#endif /*LIBBITCOIN_NODE_EXE_VERSION_HPP_*/
+#endif /*BITPRIM_NODE_EXE_VERSION_HPP_*/
+
+
 
 
 

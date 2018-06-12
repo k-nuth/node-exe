@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2017-2018 Bitprim Inc.
  *
- * This file is part of libbitcoin.
+ * This file is part of Bitprim.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,53 +16,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+
+#include <cstdio>
 #include <iostream>
+
 #include <bitcoin/node.hpp>
+#include <boost/iostreams/device/file_descriptor.hpp>
 #include "executor.hpp"
 
 BC_USE_LIBBITCOIN_MAIN
 
-/**
- * Invoke this program with the raw arguments provided on the command line.
- * All console input and output streams for the application originate here.
- * @param argc  The number of elements in the argv array.
- * @param argv  The array of arguments, including the process.
- * @return      The numeric result to return via console exit.
- */
-//int bc::main(int argc, char* argv[])
-//{
-//    using namespace bc;
-//    using namespace bc::node;
-//
-//    set_utf8_stdio();
-//    node::parser metadata(config::settings::mainnet);
-//    const auto& args = const_cast<const char**>(argv);
-//
-//    if (!metadata.parse(argc, args, cerr))
-//        return console_result::failure;
-//
-//    executor host(metadata, cin, cout, cerr);
-//    return host.menu() ? console_result::okay : console_result::failure;
-//}
-
-
-
-#include <boost/iostreams/device/file_descriptor.hpp>
-#include <cstdio>
-
-int bc::main(int argc, char* argv[])
-{
+int bc::main(int argc, char* argv[]) {
     using namespace bc;
     using namespace bc::node;
+    using namespace bitprim;
+    using namespace bitprim::node_exe;
 
     set_utf8_stdio();
-    node::parser metadata(config::settings::mainnet);
     const auto& args = const_cast<const char**>(argv);
 
-    if (!metadata.parse(argc, args, cerr))
+    node::parser metadata(libbitcoin::config::settings::mainnet);
+    if ( ! metadata.parse(argc, args, cerr)) {
         return console_result::failure;
+    }
 
     executor host(metadata, cin, cout, cerr);
     return host.menu() ? console_result::okay : console_result::failure;
 }
-

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2017-2018 Bitprim Inc.
  *
- * This file is part of libbitcoin.
+ * This file is part of Bitprim.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBBITCOIN_NODE_EXE_EXECUTOR_HPP
-#define LIBBITCOIN_NODE_EXE_EXECUTOR_HPP
+#ifndef BITPRIM_NODE_EXE_EXECUTOR_HPP_
+#define BITPRIM_NODE_EXE_EXECUTOR_HPP_
 
 #include <future>
 #include <iostream>
@@ -25,33 +25,34 @@
 
 #include "version.hpp"
 
-namespace libbitcoin {
-namespace node {
+namespace bitprim { namespace node_exe {
 
-class executor
-{
+class executor {
 public:
-    executor(parser& metadata, std::istream&, std::ostream& output,
-        std::ostream& error);
+    executor(libbitcoin::node::parser& metadata, std::istream&, std::ostream& output, std::ostream& error);
 
     /// This class is not copyable.
-    executor(const executor&) = delete;
-    void operator=(const executor&) = delete;
+    executor(executor const&) = delete;
+    void operator=(executor const&) = delete;
 
     /// Invoke the menu command indicated by the metadata.
     bool menu();
 
 private:
-    static void stop(const code& ec);
-    static void handle_stop(int code);
+    static 
+    void stop(libbitcoin::code const& ec);
+    
+    static 
+    void handle_stop(int code);
 
-    void handle_started(const code& ec);
-    void handle_running(const code& ec);
-    void handle_stopped(const code& ec);
+    void handle_started(libbitcoin::code const& ec);
+    void handle_running(libbitcoin::code const& ec);
+    void handle_stopped(libbitcoin::code const& ec);
 
     void do_help();
     void do_settings();
     void do_version();
+    std::string network_name() const;
     void initialize_output();
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
@@ -62,12 +63,12 @@ private:
     bool run();
 
     // Termination state.
-    static std::promise<code> stopping_;
+    static std::promise<libbitcoin::code> stopping_;
 
-    parser& metadata_;
+    libbitcoin::node::parser& metadata_;
     std::ostream& output_;
     std::ostream& error_;
-    full_node::ptr node_;
+    libbitcoin::node::full_node::ptr node_;
 };
 
 // Localizable messages.
@@ -122,13 +123,19 @@ private:
 #define BN_USING_DEFAULT_CONFIG \
     "Using default configuration settings."
 
+#ifdef NDEBUG
 #define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  microarchitecture: %3%"
+#else
+#define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  microarchitecture: %3%\n  (Debug Build)"
+#endif
 
 #define BN_VERSION_MESSAGE_INIT "Node version: %1%"
 
 #define BN_CRYPTOCURRENCY_INIT "Currency: %1% - %2%"
 
 #define BN_MICROARCHITECTURE_INIT "Compiled for microarchitecture: %1%"
+
+#define BN_DEBUG_BUILD_INIT "(Debug Build)"
 
 #define BN_NETWORK_INIT "Network: %1% (%2%)"
 
@@ -143,7 +150,6 @@ private:
 // #define BITPRIM_NODE_EXE_VERSION "v0.0.0"
 // #endif
 
-} // namespace node
-} // namespace libbitcoin
+}} // namespace bitprim::node_exe
 
-#endif
+#endif /*BITPRIM_NODE_EXE_EXECUTOR_HPP_*/

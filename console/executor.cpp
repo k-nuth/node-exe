@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2017-2018 Bitprim Inc.
  *
- * This file is part of libbitcoin.
+ * This file is part of Bitprim.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,8 +34,7 @@
 #include <unordered_set>
 #endif
 
-namespace libbitcoin {
-namespace node {
+namespace bitprim { namespace node_exe {
 
 using boost::format;
 using namespace boost;
@@ -46,22 +45,21 @@ using namespace bc::database;
 using namespace bc::network;
 using namespace std::placeholders;
 
-static const auto application_name = "bn";
+static auto const application_name = "bn";
 static constexpr int initialize_stop = 0;
 static constexpr int directory_exists = 0;
 static constexpr int directory_not_found = 2;
-static const auto mode = std::ofstream::out | std::ofstream::app;
+static auto const mode = std::ofstream::out | std::ofstream::app;
 
-std::promise<code> executor::stopping_;
+std::promise<libbitcoin::code> executor::stopping_;
 
-executor::executor(parser& metadata, std::istream& input,
-    std::ostream& output, std::ostream& error)
-  : metadata_(metadata), output_(output), error_(error)
+executor::executor(libbitcoin::node::parser& metadata, std::istream& input, std::ostream& output, std::ostream& error)
+    : metadata_(metadata), output_(output), error_(error)
 {
-    const auto& network = metadata_.configured.network;
-    const auto verbose = network.verbose;
+    auto const& network = metadata_.configured.network;
+    auto const verbose = network.verbose;
 
-    const log::rotable_file debug_file {
+    const libbitcoin::log::rotable_file debug_file {
         network.debug_file,
         network.archive_directory,
         network.rotation_size,
@@ -70,7 +68,7 @@ executor::executor(parser& metadata, std::istream& input,
         network.maximum_archive_files
     };
 
-    const log::rotable_file error_file {
+    const libbitcoin::log::rotable_file error_file {
         network.error_file,
         network.archive_directory,
         network.rotation_size,
@@ -79,10 +77,10 @@ executor::executor(parser& metadata, std::istream& input,
         network.maximum_archive_files
     };
 
-    log::stream console_out(&output_, null_deleter());
-    log::stream console_err(&error_, null_deleter());
+    libbitcoin::log::stream console_out(&output_, null_deleter());
+    libbitcoin::log::stream console_err(&error_, null_deleter());
 
-    log::initialize(debug_file, error_file, console_out, console_err, verbose);
+    libbitcoin::log::initialize(debug_file, error_file, console_out, console_err, verbose);
     handle_stop(initialize_stop);
 }
 
@@ -91,29 +89,20 @@ executor::executor(parser& metadata, std::istream& input,
 // Emit directly to standard output (not the log).
 
 void executor::do_help() {
-    const auto options = metadata_.load_options();
+    auto const options = metadata_.load_options();
     printer help(options, application_name, BN_INFORMATION_MESSAGE);
     help.initialize();
     help.commandline(output_);
 }
 
 void executor::do_settings() {
-    const auto settings = metadata_.load_settings();
+    auto const settings = metadata_.load_settings();
     printer print(settings, application_name, BN_SETTINGS_MESSAGE);
     print.initialize();
     print.settings(output_);
 }
 
-// void executor::do_version()
-// {
-//     output_ << format(BN_VERSION_MESSAGE) %
-//         LIBBITCOIN_NODE_VERSION %
-//         LIBBITCOIN_BLOCKCHAIN_VERSION %
-//         LIBBITCOIN_VERSION << std::endl;
-// }
-
 void executor::do_version() {
-    // output_ << format(BN_VERSION_MESSAGE) % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_MICROARCHITECTURE_STR % BITPRIM_NODE_EXE_VERSION << std::endl;
     output_ << format(BN_VERSION_MESSAGE) % BITPRIM_NODE_EXE_VERSION % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_MICROARCHITECTURE_STR << std::endl;
 }
 
@@ -123,15 +112,15 @@ bool executor::do_initchain() {
     initialize_output();
 
     error_code ec;
-    const auto& directory = metadata_.configured.database.directory;
+    auto const& directory = metadata_.configured.database.directory;
 
     if (create_directories(directory, ec)) {
         LOG_INFO(LOG_NODE) << format(BN_INITIALIZING_CHAIN) % directory;
 
-        bool const testnet = get_network(metadata_.configured.network.identifier) == config::settings::testnet;
-        const auto genesis = testnet ? block::genesis_testnet() : block::genesis_mainnet();
-        const auto& settings = metadata_.configured.database;
-        const auto result = data_base(settings).create(genesis);
+        bool const testnet = libbitcoin::get_network(metadata_.configured.network.identifier) == libbitcoin::config::settings::testnet;
+        auto const genesis = testnet ? block::genesis_testnet() : block::genesis_mainnet();
+        auto const& settings = metadata_.configured.database;
+        auto const result = data_base(settings).create(genesis);
 
         LOG_INFO(LOG_NODE) << BN_INITCHAIN_COMPLETE;
         return result;
@@ -152,7 +141,7 @@ bool executor::do_initchain() {
 // ----------------------------------------------------------------------------
 
 bool executor::menu() {
-    const auto& config = metadata_.configured;
+    auto const& config = metadata_.configured;
 
     if (config.help) {
         do_help();
@@ -196,15 +185,15 @@ bool executor::run() {
     }
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
 
-    bool const testnet = get_network(metadata_.configured.network.identifier) == config::settings::testnet;
+    bool const testnet = libbitcoin::get_network(metadata_.configured.network.identifier) == libbitcoin::config::settings::testnet;
 
     metadata_.configured.node.testnet = testnet;
 
     // Now that the directory is verified we can create the node for it.
-    node_ = std::make_shared<full_node>(metadata_.configured);
+    node_ = std::make_shared<libbitcoin::node::full_node>(metadata_.configured);
 
     // Initialize broadcast to statistics server if configured.
-    log::initialize_statsd(node_->thread_pool(), metadata_.configured.network.statistics_server);
+    libbitcoin::log::initialize_statsd(node_->thread_pool(), metadata_.configured.network.statistics_server);
 
     // The callback may be returned on the same thread.
     node_->start(std::bind(&executor::handle_started, this, _1));
@@ -213,11 +202,14 @@ bool executor::run() {
     std::string message = "RPC port: " + std::to_string(metadata_.configured.node.rpc_port) + ". ZMQ port: " + std::to_string(metadata_.configured.node.subscriber_port);
     LOG_INFO(LOG_NODE) << message;
     std::unordered_set<std::string> rpc_allowed_ips;
-    for (const auto & ip : metadata_.configured.node.rpc_allow_ip){
+    
+    for (auto const& ip : metadata_.configured.node.rpc_allow_ip) {
         rpc_allowed_ips.insert(ip);
     }
+
     bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips);
-    auto rpc_thread = std::thread([&message_manager](){
+    
+    auto rpc_thread = std::thread([&message_manager]() {
         message_manager.start();
     });
 #endif
@@ -247,7 +239,7 @@ bool executor::run() {
 }
 
 // Handle the completion of the start sequence and begin the run sequence.
-void executor::handle_started(const code& ec) {
+void executor::handle_started(libbitcoin::code const& ec) {
     if (ec) {
         LOG_ERROR(LOG_NODE) << format(BN_NODE_START_FAIL) % ec.message();
         stop(ec);
@@ -264,7 +256,7 @@ void executor::handle_started(const code& ec) {
 }
 
 // This is the end of the run sequence.
-void executor::handle_running(const code& ec) {
+void executor::handle_running(libbitcoin::code const& ec) {
     if (ec) {
         LOG_INFO(LOG_NODE) << format(BN_NODE_START_FAIL) % ec.message();
         stop(ec);
@@ -275,7 +267,7 @@ void executor::handle_running(const code& ec) {
 }
 
 // This is the end of the stop sequence.
-void executor::handle_stopped(const code& ec) {
+void executor::handle_stopped(libbitcoin::code const& ec) {
     stop(ec);
 }
 
@@ -294,11 +286,11 @@ void executor::handle_stop(int code) {
     }
 
     LOG_INFO(LOG_NODE) << format(BN_NODE_SIGNALED) % code;
-    stop(error::success);
+    stop(libbitcoin::error::success);
 }
 
 // Manage the race between console stop and server stop.
-void executor::stop(const code& ec) {
+void executor::stop(libbitcoin::code const& ec) {
     static std::once_flag stop_mutex;
     std::call_once(stop_mutex, [&](){ stopping_.set_value(ec); });
 }
@@ -306,9 +298,19 @@ void executor::stop(const code& ec) {
 // Utilities.
 // ----------------------------------------------------------------------------
 
+std::string executor::network_name() const {
+    switch (libbitcoin::get_network(metadata_.configured.network.identifier)) {
+        case libbitcoin::config::settings::testnet:
+            return "Testnet";
+        case libbitcoin::config::settings::mainnet:
+            return "Mainnet";
+    }
+    return "Unknown";
+}
+
 // Set up logging.
 void executor::initialize_output() {
-    auto const header = format(BN_LOG_HEADER) % local_time();
+    auto const header = format(BN_LOG_HEADER) % libbitcoin::local_time();
     LOG_DEBUG(LOG_NODE) << header;
     LOG_INFO(LOG_NODE) << header;
     LOG_WARNING(LOG_NODE) << header;
@@ -326,8 +328,12 @@ void executor::initialize_output() {
     LOG_INFO(LOG_NODE) << format(BN_VERSION_MESSAGE_INIT) % BITPRIM_NODE_EXE_VERSION;
     LOG_INFO(LOG_NODE) << format(BN_CRYPTOCURRENCY_INIT) % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_CURRENCY_STR;
     LOG_INFO(LOG_NODE) << format(BN_MICROARCHITECTURE_INIT) % BITPRIM_MICROARCHITECTURE_STR;
+#ifndef NDEBUG
+    LOG_INFO(LOG_NODE) << BN_DEBUG_BUILD_INIT;
+#endif
+
     LOG_INFO(LOG_NODE) << format(BN_NETWORK_INIT) % 
-            (get_network(metadata_.configured.network.identifier) == config::settings::testnet ? "Testnet" : "Mainnet") %
+            network_name() %
             metadata_.configured.network.identifier;
 }
 
@@ -335,7 +341,7 @@ void executor::initialize_output() {
 // Use missing directory as a sentinel indicating lack of initialization.
 bool executor::verify_directory() {
     error_code ec;
-    const auto& directory = metadata_.configured.database.directory;
+    auto const& directory = metadata_.configured.database.directory;
 
     if (exists(directory, ec)) {
         return true;
@@ -346,10 +352,10 @@ bool executor::verify_directory() {
         return false;
     }
 
-    const auto message = ec.message();
+    auto const message = ec.message();
     LOG_ERROR(LOG_NODE) << format(BN_INITCHAIN_TRY) % directory % message;
     return false;
 }
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 
-}} // namespace libbitcoin::node
+}} // namespace bitprim::node_exe
