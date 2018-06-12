@@ -52,6 +52,7 @@ environment:
 
 install:
   - set PATH=%PATH%;%PYTHON%/Scripts/
+
   - pip.exe install conan --upgrade
   # - pip.exe install conan==1.0.0b5   #Fixed Beta version...
 
