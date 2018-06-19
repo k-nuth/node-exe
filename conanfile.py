@@ -210,24 +210,21 @@ class BitprimNodeExeConan(ConanFile):
         
         cmake.definitions["USE_CONAN"] = option_on_off(True)
         cmake.definitions["NO_CONAN_AT_ALL"] = option_on_off(False)
-
-        # cmake.definitions["CMAKE_VERBOSE_MAKEFILE"] = "OFF"
-        # cmake.verbose = False
         cmake.verbose = self.options.verbose
-        
         cmake.definitions["WITH_RPC"] = option_on_off(self.options.with_rpc)
-
         cmake.definitions["CURRENCY"] = self.options.currency
         cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
 
-        if self.settings.compiler == "gcc":
-            if float(str(self.settings.compiler.version)) >= 5:
-                cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
-            else:
-                cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
-        elif self.settings.compiler == "clang":
-            if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
-                cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+        # if self.settings.compiler is not None:
+        if self.settings.get_safe("compiler") is not None:
+            if self.settings.compiler == "gcc":
+                if float(str(self.settings.compiler.version)) >= 5:
+                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+                else:
+                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
+            elif self.settings.compiler == "clang":
+                if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
 
         cmake.definitions["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
         cmake.configure(source_dir=self.source_folder)
