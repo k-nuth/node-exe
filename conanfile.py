@@ -108,9 +108,9 @@ class BitprimNodeExeConan(ConanFile):
         #     self.output.info('compiler removed')
 
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
-            self.requires("bitprim-node/0.10.1@bitprim/%s" % get_channel())
+            self.requires("bitprim-node/0.10.2@bitprim/%s" % get_channel())
             if self.options.with_rpc:
-                self.requires("bitprim-rpc/0.10.1@bitprim/%s" % get_channel())
+                self.requires("bitprim-rpc/0.10.2@bitprim/%s" % get_channel())
 
 
     def configure(self):
@@ -174,7 +174,7 @@ class BitprimNodeExeConan(ConanFile):
         # self.output.info(self.info.requires.serialize)
         # self.output.info(self.info.requires.pkg_names)
 
-        # # self.output.info(self.info.requires['bitprim-node/0.10.1@bitprim/%s' % get_channel())])
+        # # self.output.info(self.info.requires['bitprim-node/0.10.2@bitprim/%s' % get_channel())])
         # # self.output.info(self.info.requires['bitprim-node'])
 
         # # self.info.requires.remove('bitprim-node')
@@ -190,9 +190,9 @@ class BitprimNodeExeConan(ConanFile):
 
 
         # # if self.settings.get_safe("compiler") is not None:
-        # #     self.requires("bitprim-node/0.10.1@bitprim/%s" % get_channel()))
+        # #     self.requires("bitprim-node/0.10.2@bitprim/%s" % get_channel()))
         # #     if self.options.with_rpc:
-        # #         self.requires("bitprim-rpc/0.10.1@bitprim/%s" % get_channel()))
+        # #         self.requires("bitprim-rpc/0.10.2@bitprim/%s" % get_channel()))
 
         # self.output.info(self.info.options)
         # self.output.info(self.info.options.sha)
@@ -210,24 +210,21 @@ class BitprimNodeExeConan(ConanFile):
         
         cmake.definitions["USE_CONAN"] = option_on_off(True)
         cmake.definitions["NO_CONAN_AT_ALL"] = option_on_off(False)
-
-        # cmake.definitions["CMAKE_VERBOSE_MAKEFILE"] = "OFF"
-        # cmake.verbose = False
         cmake.verbose = self.options.verbose
-        
         cmake.definitions["WITH_RPC"] = option_on_off(self.options.with_rpc)
-
         cmake.definitions["CURRENCY"] = self.options.currency
         cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
 
-        if self.settings.compiler == "gcc":
-            if float(str(self.settings.compiler.version)) >= 5:
-                cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
-            else:
-                cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
-        elif self.settings.compiler == "clang":
-            if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
-                cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+        # if self.settings.compiler is not None:
+        if self.settings.get_safe("compiler") is not None:
+            if self.settings.compiler == "gcc":
+                if float(str(self.settings.compiler.version)) >= 5:
+                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+                else:
+                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
+            elif self.settings.compiler == "clang":
+                if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
 
         cmake.definitions["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
         cmake.configure(source_dir=self.source_folder)

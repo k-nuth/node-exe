@@ -26,28 +26,6 @@
 // #define BITPRIM_NODE_EXE_VERSION "v0.0.0"
 // #endif
 
-#define BITPRIM_NODE_EXE_VERSION "v0.10.1-1-g2e8e0fc"
+#define BITPRIM_NODE_EXE_VERSION "v0.3.0-426-g558cd32"
 
 #endif /*BITPRIM_NODE_EXE_VERSION_HPP_*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
