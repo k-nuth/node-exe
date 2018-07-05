@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.4)
 # bitprim-node-exe
 #==============================================================================
 project(bitprim-node-exe
-        VERSION 0.11.0
+        VERSION 0
         LANGUAGES CXX C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -51,15 +51,15 @@ if (NO_CONAN_AT_ALL)
   set(USE_CONAN OFF)
 endif()
 
-# Implement --with-litecoin.
-#------------------------------------------------------------------------------
-# option(WITH_LITECOIN "Compile with Litecoin support." OFF)
+set(BITPRIM_PROJECT_VERSION "-" CACHE STRING "Specify the Bitprim Project Version.")
+# message(${BITPRIM_PROJECT_VERSION})
 
-set(BITPRIM_BUILD_NUMBER "-" CACHE STRING "Specify the Bitprim Build Number.")
+set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Cryptocurrency (x86_64|...).")
+message( STATUS "Bitprim: Compiling for ${MICROARCHITECTURE}")
+add_definitions(-DBITPRIM_MICROARCHITECTURE=${MICROARCHITECTURE})
+add_definitions(-DBITPRIM_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
 
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
-
-# -DBITPRIM_BUILD_NUMBER=\"-\"
 
 if (${CURRENCY} STREQUAL "BCH")
   add_definitions(-DBITPRIM_CURRENCY_BCH)
@@ -79,41 +79,34 @@ endif()
 
 message(STATUS "Bitprim: Cryptocurrency: ${CURRENCY}")
 
-set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Cryptocurrency (x86_64|...).")
-message( STATUS "Bitprim: Compiling for ${MICROARCHITECTURE}")
-add_definitions(-DBITPRIM_MICROARCHITECTURE=${MICROARCHITECTURE})
-add_definitions(-DBITPRIM_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
-
 
 # Conan infrastructure
 #==============================================================================
-if (EXISTS ${CMAKE_SOURCE_DIR}/bitprimbuildinfo.cmake)
-    include(${CMAKE_SOURCE_DIR}/bitprimbuildinfo.cmake)
+if(EXISTS ${CMAKE_SOURCE_DIR}/ci_utils/cmake/bitprimbuildinfo.cmake)
+    include(${CMAKE_SOURCE_DIR}/ci_utils/cmake/bitprimbuildinfo.cmake)
 else()
     message( STATUS "bitprimbuildinfo doent exists")
 endif()
+
+
 
 # Check dependencies.
 #==============================================================================
 #------------------------------------------------------------------------------
 if (NOT USE_CONAN)
   if (NOT TARGET bitprim-node)
-    find_package(bitprim-node 0.11.0 REQUIRED)
+    find_package(bitprim-node 0 REQUIRED)
   endif()
 
   if (WITH_RPC)
-    # Require bitprim-rpc of at least version 0.11.0
+    # Require bitprim-rpc of at least version 0
     #------------------------------------------------------------------------------
     if (NOT TARGET bitprim-rpc)
-      find_package(bitprim-rpc 0.11.0 REQUIRED)
+      find_package(bitprim-rpc 0 REQUIRED)
     endif()
   endif()
-
 endif()
 
-# if (WITH_LITECOIN)
-#   add_definitions(-DLITECOIN)
-# endif()
 
 # Set flags.
 #==============================================================================
@@ -121,7 +114,8 @@ include(CheckCXXCompilerFlag)
 
 # Including common functions
 #------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/ci_utils/cmake)
+
 include(BitprimTools)
 
 
@@ -178,10 +172,9 @@ _add_cxx_compile_flag(-fvisibility-inlines-hidden _has_visibility_inlines_hidden
 
 # Target Windows Vista. Enabled in msvc only.
 #------------------------------------------------------------------------------
-if (MSVC)
+if (MSVC) # OR MINGW)
   add_definitions(-D_WIN32_WINNT=0x0600)
 endif()
-
 
 # Build
 #==============================================================================
@@ -192,8 +185,10 @@ add_executable(console.bn
 
 # target_link_libraries(console.bn bitprim-node)
 
-# target_compile_definitions(console.bn PUBLIC -DBITPRIM_BUILD_NUMBER="\\"${BITPRIM_BUILD_NUMBER}\\"")
-target_compile_definitions(console.bn PUBLIC -DBITPRIM_BUILD_NUMBER="${BITPRIM_BUILD_NUMBER}")
+
+# target_compile_definitions(console.bn PUBLIC -DBITPRIM_BUILD_NUMBER="${BITPRIM_BUILD_NUMBER}")
+
+target_compile_definitions(console.bn PUBLIC -DBITPRIM_PROJECT_VERSION="\\"${BITPRIM_PROJECT_VERSION}\\"") #TODO(fernando): manage with Conan????
 target_compile_definitions(console.bn PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
 
 if (NOT USE_CONAN)
