@@ -18,51 +18,11 @@
 #
 
 import os
+# import sys
 from conans import ConanFile, CMake
 from conans import __version__ as conan_version
 from conans.model.version import Version
-import importlib
-
-
-def option_on_off(option):
-    return "ON" if option else "OFF"
-
-def get_content(file_name):
-    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
-    with open(file_path, 'r') as f:
-        return f.read().replace('\n', '').replace('\r', '')
-
-def get_version():
-    return get_content('conan_version')
-
-def get_channel():
-    return get_content('conan_channel')
-
-def get_conan_req_version():
-    return get_content('conan_req_version')
-
-microarchitecture_default = 'x86_64'
-
-def get_cpuid():
-    try:
-        # print("*** cpuid OK")
-        cpuid = importlib.import_module('cpuid')
-        return cpuid
-    except ImportError:
-        print("*** cpuid could not be imported")
-        return None
-
-def get_cpu_microarchitecture_or_default(default):
-    cpuid = get_cpuid()
-    if cpuid != None:
-        # return '%s%s' % cpuid.cpu_microarchitecture()
-        return '%s' % (''.join(cpuid.cpu_microarchitecture()))
-    else:
-        return default
-
-def get_cpu_microarchitecture():
-    return get_cpu_microarchitecture_or_default(microarchitecture_default)
-
+from ci_utils import option_on_off, get_version, get_conan_req_version, march_conan_manip, pass_march_to_compiler
 
 class BitprimNodeExeConan(ConanFile):
     name = "bitprim-node-exe"
@@ -71,84 +31,75 @@ class BitprimNodeExeConan(ConanFile):
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
     settings = "os", "compiler", "build_type", "arch"
-    # settings = "os", "arch"
 
-    if conan_version < Version(get_conan_req_version()):
-        raise Exception ("Conan version should be greater or equal than %s" % (get_conan_req_version(), ))
+    if Version(conan_version) < Version(get_conan_req_version()):
+        raise Exception ("Conan version should be greater or equal than %s. Detected: %s." % (get_conan_req_version(), conan_version))
 
     options = {
         "currency": ['BCH', 'BTC', 'LTC'],
         "with_rpc": [True, False],
         "microarchitecture": "ANY", #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
         "no_compilation": [True, False],
-        "verbose": [True, False],
+        "fix_march": [True, False],
+        "verbose": [True, False]
     }
 
     default_options = "currency=BCH", \
                       "with_rpc=False",  \
                       "microarchitecture=_DUMMY_",  \
                       "no_compilation=False",  \
-                      "verbose=False"
-    
-    generators = "cmake"
+                      "fix_march=False", \
+                      "verbose=True"
 
-    exports = "conan_channel", "conan_version", "conan_req_version"
-    exports_sources = "CMakeLists.txt", "cmake/*", "console/*", "bitprimbuildinfo.cmake"
+    generators = "cmake"
+    exports = "conan_*", "ci_utils/*"
+    exports_sources = "CMakeLists.txt", "cmake/*", "console/*"
 
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
 
     def requirements(self):
-        # self.output.info('def requirements(self):')
-
-        # if self.settings.get_safe("compiler") is not None:
-        #     self.output.info('compiler exists')
-        #     self.output.info(self.settings.compiler)
-        # else:
-        #     self.output.info('compiler removed')
-
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
-            self.requires("bitprim-node/0.11.0@bitprim/%s" % get_channel())
+            self.requires("bitprim-node/0.X@%s/%s" % (self.user, self.channel))
             if self.options.with_rpc:
-                self.requires("bitprim-rpc/0.11.0@bitprim/%s" % get_channel())
+                self.requires("bitprim-rpc/0.X@%s/%s" % (self.user, self.channel))
 
+
+    def config_options(self):
+        if self.settings.arch != "x86_64":
+            self.output.info("microarchitecture is disabled for architectures other than x86_64, your architecture: %s" % (self.settings.arch,))
+            self.options.remove("microarchitecture")
+            self.options.remove("fix_march")
 
     def configure(self):
-        # self.output.info('def configure(self):')
-
-        # self.output.info(self.settings.os)
-        # self.output.info(self.settings.arch)
-
-        # if self.settings.compiler != None:
-        #     self.output.info(self.settings.compiler)
-        # else:
-        #     self.output.info('compiler None')
+        if self.settings.arch == "x86_64" and self.options.microarchitecture == "_DUMMY_":
+            del self.options.fix_march
+            # self.options.remove("fix_march")
+            # raise Exception ("fix_march option is for using together with microarchitecture option.")
 
         if self.options.no_compilation or (self.settings.compiler == None and self.settings.arch == 'x86_64' and self.settings.os in ('Linux', 'Windows', 'Macos')):
             self.settings.remove("compiler")
             self.settings.remove("build_type")
-            # del self.settings.compiler
-            # del self.settings.build_type
 
 
-            # # If header only, the compiler, etc, does not affect the package!
-            # if self.options.header_only:
-            #     self.settings.clear()
-            #     self.options.remove("static")
+        # if self.options.microarchitecture == "_DUMMY_":
+        #     self.options.microarchitecture = get_cpu_microarchitecture()
 
-        if self.options.microarchitecture == "_DUMMY_":
-            self.options.microarchitecture = get_cpu_microarchitecture()
+        #     if get_cpuid() == None:
+        #         march_from = 'default'
+        #     else:
+        #         march_from = 'taken from cpuid'
 
-            if get_cpuid() == None:
-                march_from = 'default'
-            else:
-                march_from = 'taken from cpuid'
-
-        else:
-            march_from = 'user defined'
+        # else:
+        #     march_from = 'user defined'
         
-        self.options["*"].microarchitecture = self.options.microarchitecture
-        self.output.info("Compiling for microarchitecture (%s): %s" % (march_from, self.options.microarchitecture))
+        # self.options["*"].microarchitecture = self.options.microarchitecture
+        # self.output.info("Compiling for microarchitecture (%s): %s" % (march_from, self.options.microarchitecture))
+
+
+        if self.settings.arch == "x86_64":
+            march_conan_manip(self)
+            self.options["*"].microarchitecture = self.options.microarchitecture
 
         self.options["*"].currency = self.options.currency
         self.output.info("Compiling for currency: %s" % (self.options.currency,))
@@ -164,58 +115,31 @@ class BitprimNodeExeConan(ConanFile):
         self.info.settings.build_type = "ANY"
         self.info.options.no_compilation = "ANY"
         self.info.options.verbose = "ANY"
-
-        
-
-        # self.output.info('def package_id(self):')
-
-        # self.output.info(self.info.requires)
-        # self.output.info(self.info.requires.sha)
-        # self.output.info(self.info.requires.serialize)
-        # self.output.info(self.info.requires.pkg_names)
-
-        # # self.output.info(self.info.requires['bitprim-node/0.11.0@bitprim/%s' % get_channel())])
-        # # self.output.info(self.info.requires['bitprim-node'])
-
-        # # self.info.requires.remove('bitprim-node')
-        # # self.info.requires.remove('bitprim-rpc')
-
-        # self.output.info(self.info.requires)
-        # self.output.info(self.info.requires.sha)
-        # self.output.info(self.info.requires.serialize)
-        # self.output.info(self.info.requires.pkg_names)
-
-        # # for x in self.info.requires:
-        # #     self.output.info(x)
-
-
-        # # if self.settings.get_safe("compiler") is not None:
-        # #     self.requires("bitprim-node/0.11.0@bitprim/%s" % get_channel()))
-        # #     if self.options.with_rpc:
-        # #         self.requires("bitprim-rpc/0.11.0@bitprim/%s" % get_channel()))
-
-        # self.output.info(self.info.options)
-        # self.output.info(self.info.options.sha)
-        # self.output.info(self.info.package_id())
-        
+        self.info.options.fix_march = "ANY"
 
     def deploy(self):
         self.copy("bn.exe", src="bin")     # copy from current package
         self.copy("bn", src="bin")         # copy from current package
         # self.copy_deps("*.dll") # copy from dependencies        
 
-
     def build(self):
         cmake = CMake(self)
-        
         cmake.definitions["USE_CONAN"] = option_on_off(True)
         cmake.definitions["NO_CONAN_AT_ALL"] = option_on_off(False)
         cmake.verbose = self.options.verbose
         cmake.definitions["WITH_RPC"] = option_on_off(self.options.with_rpc)
-        cmake.definitions["CURRENCY"] = self.options.currency
-        cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
 
-        # if self.settings.compiler is not None:
+        cmake.definitions["CURRENCY"] = self.options.currency
+
+        if self.settings.compiler != "Visual Studio":
+            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
+        if self.settings.compiler == "Visual Studio":
+            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+
+        cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
+        cmake.definitions["BITPRIM_PROJECT_VERSION"] = self.version
+
+
         if self.settings.get_safe("compiler") is not None:
             if self.settings.compiler == "gcc":
                 if float(str(self.settings.compiler.version)) >= 5:
@@ -226,7 +150,8 @@ class BitprimNodeExeConan(ConanFile):
                 if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
                     cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
 
-        cmake.definitions["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
+            pass_march_to_compiler(self, cmake)
+
         cmake.configure(source_dir=self.source_folder)
         cmake.build()
 
@@ -234,20 +159,54 @@ class BitprimNodeExeConan(ConanFile):
     #     self.copy("*.h", "", "include")
 
     def package(self):
-        # self.copy("*.h", dst="include", src="include")
-        # self.copy("*.hpp", dst="include", src="include")
-        # self.copy("*.ipp", dst="include", src="include")
-
         self.copy("bn.exe", dst="bin", src="bin") # Windows
         self.copy("bn", dst="bin", src="bin") # Linux / Macos
-
-        # self.copy("*.lib", dst="lib", keep_path=False)
-        # self.copy("*.dll", dst="bin", keep_path=False)
-        # self.copy("*.dylib*", dst="lib", keep_path=False)
-        # self.copy("*.so", dst="lib", keep_path=False)
-        # self.copy("*.a", dst="lib", keep_path=False)
-
 
     # def package_info(self):
         # self.cpp_info.includedirs = ['include']
         # self.cpp_info.libs = ["bitprim-node-exe"]
+
+
+
+
+
+
+
+# def option_on_off(option):
+#     return "ON" if option else "OFF"
+
+# def get_content(file_name):
+#     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
+#     with open(file_path, 'r') as f:
+#         return f.read().replace('\n', '').replace('\r', '')
+
+# def get_version():
+#     return get_content('conan_version')
+
+# def get_channel():
+#     return get_content('conan_channel')
+
+# def get_conan_req_version():
+#     return get_content('conan_req_version')
+
+# microarchitecture_default = 'x86_64'
+
+# def get_cpuid():
+#     try:
+#         # print("*** cpuid OK")
+#         cpuid = importlib.import_module('cpuid')
+#         return cpuid
+#     except ImportError:
+#         print("*** cpuid could not be imported")
+#         return None
+
+# def get_cpu_microarchitecture_or_default(default):
+#     cpuid = get_cpuid()
+#     if cpuid != None:
+#         # return '%s%s' % cpuid.cpu_microarchitecture()
+#         return '%s' % (''.join(cpuid.cpu_microarchitecture()))
+#     else:
+#         return default
+
+# def get_cpu_microarchitecture():
+#     return get_cpu_microarchitecture_or_default(microarchitecture_default)

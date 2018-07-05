@@ -20,8 +20,14 @@
 branches:
   only:
   - master
+  # - /^v\d+\.\d+\.\d+$/
   - dev
-  - /^v\d+\.\d+\.\d+$/
+  - /^release-\d+\.\d+\.\d+$/
+  - /^hotfix-\d+\.\d+\.\d+$/
+  - /^feature-ci-.+$/
+  - /^feature_ci_.+$/
+  - /^feature-travis-.+$/
+  - /^feature_travis_.+$/
 
 linux: &linux
    os: linux
@@ -35,122 +41,342 @@ osx: &osx
    os: osx
    language: generic
 
-
-matrix:
-   include:
-      - <<: *linux
-        env: CONAN_GCC_VERSIONS=4.9 
-             CONAN_DOCKER_IMAGE=lasote/conangcc49
-             BITPRIM_CI_CURRENCY=BCH
-            #  PUSH_TO_REPOS=true  
-
-      - <<: *linux
-        env: CONAN_GCC_VERSIONS=4.9 
-             CONAN_DOCKER_IMAGE=lasote/conangcc49
-             BITPRIM_CI_CURRENCY=BTC
-            #  PUSH_TO_REPOS=true  
-
-      # - <<: *linux
-      #   env: CONAN_GCC_VERSIONS=5 CONAN_DOCKER_IMAGE=lasote/conangcc54
-
-      # - <<: *linux
-      #   env: CONAN_GCC_VERSIONS=6 CONAN_DOCKER_IMAGE=lasote/conangcc63
-
-      # - <<: *linux
-      #   env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=lasote/conangcc72
-
-      # - <<: *linux
-      #   env: CONAN_CLANG_VERSIONS=3.9 CONAN_DOCKER_IMAGE=lasote/conanclang39
-
-      # - <<: *linux
-      #   env: CONAN_CLANG_VERSIONS=4.0 CONAN_DOCKER_IMAGE=lasote/conanclang40
-
-      - <<: *osx
-        osx_image: xcode7.3
-        env: CONAN_APPLE_CLANG_VERSIONS=7.3
-             BITPRIM_CI_CURRENCY=BCH
-
-      - <<: *osx
-        osx_image: xcode7.3
-        env: CONAN_APPLE_CLANG_VERSIONS=7.3
-             BITPRIM_CI_CURRENCY=BTC
-
-      # - <<: *osx
-      #   osx_image: xcode8.2
-      #   env: CONAN_APPLE_CLANG_VERSIONS=8.0
-
-      # - <<: *osx
-      #   osx_image: xcode8.3
-      #   env: CONAN_APPLE_CLANG_VERSIONS=8.1
+before_install:
+  - |
+    if [[ "${TRAVIS_COMMIT_MESSAGE}" = *"[skip travis]"* ]]; then
+      echo "[skip travis] detected in commit message, exiting"
+      travis_terminate 0
+    fi
 
 install:
+  - cd ${TRAVIS_BUILD_DIR}
+
   - |
-    if [[ $TRAVIS_COMMIT_MESSAGE != *"[NO_TRAVIS]"* ]]; then
-      cd ${TRAVIS_BUILD_DIR}
-      chmod +x .travis/install.sh
-      ./.travis/install.sh
-    fi
+    if [[ "${CHECK_FORMATTING}" != "true" ]]; then
+      chmod +x ci_utils/.travis/install.sh
+      ./ci_utils/.travis/install.sh
+    fi    
 
 script:
-  # - echo "TRAVIS_COMMIT_MESSAGE ... $TRAVIS_COMMIT_MESSAGE"
+  - git fetch --unshallow
 
-  - echo ${TRAVIS_BRANCH}
-  - echo ${TRAVIS_TAG}
+  # #TODO(fernando): Use lasote/conanclang50 for checking formating and other clang-tools related
+  # - |
+  #   if [[ "${CHECK_FORMATTING}" == "true" ]]; then
+  #     cd ${TRAVIS_BUILD_DIR}
+  #     chmod a+x .travis/check_format.sh
+  #     /usr/bin/docker run --rm -ti -v ${TRAVIS_BUILD_DIR}:/home/conan/project \
+  #                                  -v ${TRAVIS_BUILD_DIR}/.travis/check_format.sh:/tmp/check_format.sh lasote/conanclang40 \
+  #                                  /bin/bash \
+  #                                  -c /tmp/check_format.sh
+
+  #   fi
 
   - |
-    if [[ $TRAVIS_COMMIT_MESSAGE != *"[NO_TRAVIS]"* ]]; then
-
-      git fetch --unshallow || true
-      export BITPRIM_BUILD_NUMBER="$(git describe)"
-      echo "${BITPRIM_BUILD_NUMBER}"
-
+    if [[ "${CHECK_FORMATTING}" != "true" ]]; then
       cd ${TRAVIS_BUILD_DIR}
-
-      if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
-        echo TRAVIS_TAG
-        echo ${TRAVIS_BRANCH}
-        echo ${TRAVIS_TAG}
-
-
-        if [[ "${TRAVIS_BRANCH}" == "${TRAVIS_TAG}" ]]; then
-          git checkout master
-        else
-          git checkout ${TRAVIS_BRANCH}
-        fi  
-      fi  
-
-      ls -ltra ./console
-      chmod +rw console/version.hpp
-      ls -ltra ./console
-      python ./.travis/update_version.py console/version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION \"$BITPRIM_BUILD_NUMBER\""
-      ls -ltra ./console
-      chmod +rw console/version.hpp
-      ls -ltra ./console
-      cat console/version.hpp
-
-      if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
-        git config --global user.email "ci@bitprim.org"
-        git config --global user.name "Bitprim CI"
-        git add . console/version.hpp
-        git commit --message "CI automated amend version number taken from VCS [skip ci]" || true
-        git remote add origin-commit https://${GH_TOKEN}@github.com/bitprim/bitprim-node-exe.git > /dev/null 2>&1
-
-        if [[ "${TRAVIS_BRANCH}" == "${TRAVIS_TAG}" ]]; then
-          git push --quiet --set-upstream origin-commit master  || true
-          # git push --quiet --set-upstream origin-commit master 
-        else
-          git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
-          # git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH} 
-        fi  
-
-      fi  
+      chmod +x ci_utils/.travis/run.sh
+      ./ci_utils/.travis/run.sh
     fi
 
-  - |
-    if [[ $TRAVIS_COMMIT_MESSAGE != *"[NO_TRAVIS]"* ]]; then
-      chmod +x .travis/run.sh
-      ./.travis/run.sh
-    fi
+jobs:
+  include:
+
+# Static Checks ------------------------------------------------------
+    - stage: static checks
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_CLANG_VERSIONS=6.0 CONAN_DOCKER_IMAGE=lasote/conanclang60
+      install: skip
+      script: echo "Running checks (1)"
+        # - cd ${TRAVIS_BUILD_DIR}
+        # - chmod a+x .travis/check_format.sh
+        # - /usr/bin/docker run --rm -ti -v ${TRAVIS_BUILD_DIR}:/home/conan/project \
+        #                             -v ${TRAVIS_BUILD_DIR}/.travis/check_format.sh:/tmp/check_format.sh lasote/conanclang60 \
+        #                             /bin/bash \
+        #                             -c /tmp/check_format.sh
+
+# Builds ------------------------------------------------------
+    # Linux, GCC, libstdc++ ------------------------------------------------------
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=8 CONAN_DOCKER_IMAGE=lasote/conangcc8
+           BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=8 CONAN_DOCKER_IMAGE=lasote/conangcc8
+           BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=lasote/conangcc7
+           BITPRIM_CI_CURRENCY=BCH
+      
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=lasote/conangcc7
+           BITPRIM_CI_CURRENCY=BTC
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=6 CONAN_DOCKER_IMAGE=lasote/conangcc6
+           BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=6 CONAN_DOCKER_IMAGE=lasote/conangcc6
+           BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=5 CONAN_DOCKER_IMAGE=lasote/conangcc5
+           BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=5 CONAN_DOCKER_IMAGE=lasote/conangcc5
+           BITPRIM_CI_CURRENCY=BTC      
+      if: branch =~ /^(release|hotfix).+$/
+
+
+    # - stage: build and upload binaries
+    #   os: linux
+    #   sudo: required
+    #   language: python
+    #   python: "3.6"
+    #   services:
+    #     - docker
+    #   env: CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=lasote/conangcc49
+    #   if: branch =~ /^(release|hotfix).+$/
+
+
+    # Linux, Clang, libstdc++ ----------------------------------------------------
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_CLANG_VERSIONS=6.0 CONAN_DOCKER_IMAGE=lasote/conanclang60
+           BITPRIM_CI_CURRENCY=BCH
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_CLANG_VERSIONS=6.0 CONAN_DOCKER_IMAGE=lasote/conanclang60
+           BITPRIM_CI_CURRENCY=BTC
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_CLANG_VERSIONS=5.0 CONAN_DOCKER_IMAGE=lasote/conanclang50
+           BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_CLANG_VERSIONS=5.0 CONAN_DOCKER_IMAGE=lasote/conanclang50
+           BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_CLANG_VERSIONS=4.0 CONAN_DOCKER_IMAGE=lasote/conanclang40
+           BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_CLANG_VERSIONS=4.0 CONAN_DOCKER_IMAGE=lasote/conanclang40
+           BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix).+$/
+
+    # - stage: build and upload binaries
+    #   os: linux
+    #   sudo: required
+    #   language: python
+    #   python: "3.6"
+    #   services:
+    #     - docker
+    #   env: CONAN_CLANG_VERSIONS=3.9 CONAN_DOCKER_IMAGE=lasote/conanclang39
+
+    # macOS, apple-Clang, libc++ -------------------------------------------------
+    - stage: build and upload binaries
+      os: osx
+      language: generic
+      osx_image: xcode9
+      env: CONAN_APPLE_CLANG_VERSIONS=9.0 
+           BITPRIM_CI_CURRENCY=BCH
+
+    - stage: build and upload binaries
+      os: osx
+      language: generic
+      osx_image: xcode9
+      env: CONAN_APPLE_CLANG_VERSIONS=9.0 
+           BITPRIM_CI_CURRENCY=BTC
+
+    - stage: build and upload binaries
+      os: osx
+      language: generic
+      osx_image: xcode8.3         
+      env: CONAN_APPLE_CLANG_VERSIONS=8.1
+           BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: osx
+      language: generic
+      osx_image: xcode8.3         
+      env: CONAN_APPLE_CLANG_VERSIONS=8.1
+           BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix).+$/
+
+    - stage: build and upload binaries
+      os: osx
+      language: generic
+      osx_image: xcode7.3
+      env: CONAN_APPLE_CLANG_VERSIONS=7.3
+           BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(release|hotfix).+$/      
+
+    - stage: build and upload binaries
+      os: osx
+      language: generic
+      osx_image: xcode7.3
+      env: CONAN_APPLE_CLANG_VERSIONS=7.3
+           BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix).+$/
+
+# Upload Aliases -----------------------------------------------------
+    - stage: upload aliases
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      # install: skip
+      script:
+        - |
+          cd ${TRAVIS_BUILD_DIR}
+          git fetch --unshallow
+
+        - eval $(python ci_utils/set_envvars_and_files.py)
+        #TODO(fernando): configure the remote, user and project name using environment variables
+        - conan remote add bitprim_temp https://api.bintray.com/conan/bitprim/bitprim
+        - conan user
+        - conan user ${CONAN_LOGIN_USERNAME} -r bitprim_temp -p ${CONAN_PASSWORD}
+        - conan user
+        - conan alias "bitprim-node-exe/0.X@bitprim/${BITPRIM_CONAN_CHANNEL}" "bitprim-node-exe/${BITPRIM_CONAN_VERSION}@bitprim/${BITPRIM_CONAN_CHANNEL}"
+        - conan upload "bitprim-node-exe/0.X@bitprim/${BITPRIM_CONAN_CHANNEL}" --all -r bitprim_temp
+
+# # Push to repos ------------------------------------------------------
+#     - stage: push to repos
+#       install: skip
+#       script:
+#           - chmod +x .travis/push_other_repo.sh
+#           - ./.travis/push_other_repo.sh
+#       if: branch =~ /^(dev|feature).*$/
+
+# Dummy for master ------------------------------------------------------
+    - stage: build and upload binaries
+      install: 
+        - echo "Stable packages are published in Release branches"
+      script:
+        - echo "Stable packages are published in Release branches"
+      if: branch =~ /^master$/
+
+
+# # Integration Tests ------------------------------------------------------
+#     - stage: integration tests
+#       install: skip
+#       script: echo "Running integration tests (Guille)"
+
+
+    # - stage: deploy to staging
+    #   install: skip
+    #   script: skip
+    # - stage: test staging
+    #   install: skip
+    #   script: 'curl http://sf-stages-staging.herokuapp.com'
+    # - stage: deploy to production
+    #   install: skip
+    #   script: skip
+    # - stage: test production
+    #   install: skip
+    #   script: 'curl http://sf-stages-production.herokuapp.com'
 
 notifications:
   email: false
@@ -158,3 +384,40 @@ notifications:
     urls: https://webhooks.gitter.im/e/a19dd2b03bf676d2b622
     on_success: change
     on_failure: always
+
+# matrix:
+#    include:
+#       - <<: *linux
+#         env: CONAN_GCC_VERSIONS=4.9 
+#              CONAN_DOCKER_IMAGE=lasote/conangcc49
+#              BITPRIM_CI_CURRENCY=BCH
+
+#       - <<: *linux
+#         env: CONAN_GCC_VERSIONS=4.9 
+#              CONAN_DOCKER_IMAGE=lasote/conangcc49
+#              BITPRIM_CI_CURRENCY=BTC
+
+#       - <<: *osx
+#         osx_image: xcode7.3
+#         env: CONAN_APPLE_CLANG_VERSIONS=7.3
+#              BITPRIM_CI_CURRENCY=BCH
+
+#       - <<: *osx
+#         osx_image: xcode7.3
+#         env: CONAN_APPLE_CLANG_VERSIONS=7.3
+#              BITPRIM_CI_CURRENCY=BTC
+
+# script:
+
+#   - |
+#     if [[ $TRAVIS_COMMIT_MESSAGE != *"[NO_TRAVIS]"* ]]; then
+
+#       git fetch --unshallow || true
+#       export BITPRIM_BUILD_NUMBER="$(git describe)"
+#       echo "${BITPRIM_BUILD_NUMBER}"
+
+#       cd ${TRAVIS_BUILD_DIR}
+
+#       python ./.travis/update_version.py console/version.hpp "#define BITPRIM_NODE_EXE_VERSION " "#define BITPRIM_NODE_EXE_VERSION \"$BITPRIM_BUILD_NUMBER\""
+#       cat console/version.hpp
+#     fi

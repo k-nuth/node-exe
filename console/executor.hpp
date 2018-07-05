@@ -143,13 +143,6 @@ private:
 #define BN_LOG_HEADER \
     "================= startup %1% =================="
 
-
-// #ifdef BITPRIM_BUILD_NUMBER
-// #define BITPRIM_NODE_EXE_VERSION BITPRIM_BUILD_NUMBER
-// #else
-// #define BITPRIM_NODE_EXE_VERSION "v0.0.0"
-// #endif
-
 }} // namespace bitprim::node_exe
 
 #endif /*BITPRIM_NODE_EXE_EXECUTOR_HPP_*/
