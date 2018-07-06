@@ -18,22 +18,20 @@
 #
 
 import os
-# import sys
-from conans import ConanFile, CMake
-from conans import __version__ as conan_version
-from conans.model.version import Version
+from conans import CMake
 from ci_utils import option_on_off, get_version, get_conan_req_version, march_conan_manip, pass_march_to_compiler
+from ci_utils import BitprimConanFile
 
-class BitprimNodeExeConan(ConanFile):
+class BitprimNodeExeConan(BitprimConanFile):
     name = "bitprim-node-exe"
-    version = get_version()
+    # version = get_version()
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/bitprim/bitprim-node-exe"
     description = "Bitcoin full node executable"
     settings = "os", "compiler", "build_type", "arch"
 
-    if Version(conan_version) < Version(get_conan_req_version()):
-        raise Exception ("Conan version should be greater or equal than %s. Detected: %s." % (get_conan_req_version(), conan_version))
+    # if Version(conan_version) < Version(get_conan_req_version()):
+    #     raise Exception ("Conan version should be greater or equal than %s. Detected: %s." % (get_conan_req_version(), conan_version))
 
     options = {
         "currency": ['BCH', 'BTC', 'LTC'],
@@ -80,22 +78,6 @@ class BitprimNodeExeConan(ConanFile):
         if self.options.no_compilation or (self.settings.compiler == None and self.settings.arch == 'x86_64' and self.settings.os in ('Linux', 'Windows', 'Macos')):
             self.settings.remove("compiler")
             self.settings.remove("build_type")
-
-
-        # if self.options.microarchitecture == "_DUMMY_":
-        #     self.options.microarchitecture = get_cpu_microarchitecture()
-
-        #     if get_cpuid() == None:
-        #         march_from = 'default'
-        #     else:
-        #         march_from = 'taken from cpuid'
-
-        # else:
-        #     march_from = 'user defined'
-        
-        # self.options["*"].microarchitecture = self.options.microarchitecture
-        # self.output.info("Compiling for microarchitecture (%s): %s" % (march_from, self.options.microarchitecture))
-
 
         if self.settings.arch == "x86_64":
             march_conan_manip(self)

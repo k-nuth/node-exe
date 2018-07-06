@@ -91,6 +91,8 @@ jobs:
       services:
         - docker
       env: CONAN_CLANG_VERSIONS=6.0 CONAN_DOCKER_IMAGE=lasote/conanclang60
+      # if: branch =~ /^(release|hotfix).+$/
+      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
       install: skip
       script: echo "Running checks (1)"
         # - cd ${TRAVIS_BUILD_DIR}
@@ -111,8 +113,7 @@ jobs:
         - docker
       env: CONAN_GCC_VERSIONS=8 CONAN_DOCKER_IMAGE=lasote/conangcc8
            BITPRIM_CI_CURRENCY=BCH
-      if: branch =~ /^(release|hotfix).+$/
-
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
     - stage: build and upload binaries
       os: linux
       sudo: required
@@ -122,7 +123,7 @@ jobs:
         - docker
       env: CONAN_GCC_VERSIONS=8 CONAN_DOCKER_IMAGE=lasote/conangcc8
            BITPRIM_CI_CURRENCY=BTC
-      if: branch =~ /^(release|hotfix).+$/
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
 
     - stage: build and upload binaries
       os: linux
@@ -133,7 +134,7 @@ jobs:
         - docker
       env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=lasote/conangcc7
            BITPRIM_CI_CURRENCY=BCH
-      
+      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
     - stage: build and upload binaries
       os: linux
       sudo: required
@@ -143,6 +144,7 @@ jobs:
         - docker
       env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=lasote/conangcc7
            BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
 
     - stage: build and upload binaries
       os: linux
@@ -153,8 +155,7 @@ jobs:
         - docker
       env: CONAN_GCC_VERSIONS=6 CONAN_DOCKER_IMAGE=lasote/conangcc6
            BITPRIM_CI_CURRENCY=BCH
-      if: branch =~ /^(release|hotfix).+$/
-
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
     - stage: build and upload binaries
       os: linux
       sudo: required
@@ -164,7 +165,7 @@ jobs:
         - docker
       env: CONAN_GCC_VERSIONS=6 CONAN_DOCKER_IMAGE=lasote/conangcc6
            BITPRIM_CI_CURRENCY=BTC
-      if: branch =~ /^(release|hotfix).+$/
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
 
     - stage: build and upload binaries
       os: linux
@@ -175,8 +176,7 @@ jobs:
         - docker
       env: CONAN_GCC_VERSIONS=5 CONAN_DOCKER_IMAGE=lasote/conangcc5
            BITPRIM_CI_CURRENCY=BCH
-      if: branch =~ /^(release|hotfix).+$/
-
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
     - stage: build and upload binaries
       os: linux
       sudo: required
@@ -185,8 +185,8 @@ jobs:
       services:
         - docker
       env: CONAN_GCC_VERSIONS=5 CONAN_DOCKER_IMAGE=lasote/conangcc5
-           BITPRIM_CI_CURRENCY=BTC      
-      if: branch =~ /^(release|hotfix).+$/
+           BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
 
 
     # - stage: build and upload binaries
@@ -197,7 +197,7 @@ jobs:
     #   services:
     #     - docker
     #   env: CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=lasote/conangcc49
-    #   if: branch =~ /^(release|hotfix).+$/
+    #   if: branch =~ /^(release|hotfix).+$/    #Just releases
 
 
     # Linux, Clang, libstdc++ ----------------------------------------------------
@@ -210,7 +210,7 @@ jobs:
         - docker
       env: CONAN_CLANG_VERSIONS=6.0 CONAN_DOCKER_IMAGE=lasote/conanclang60
            BITPRIM_CI_CURRENCY=BCH
-
+      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
     - stage: build and upload binaries
       os: linux
       sudo: required
@@ -220,6 +220,7 @@ jobs:
         - docker
       env: CONAN_CLANG_VERSIONS=6.0 CONAN_DOCKER_IMAGE=lasote/conanclang60
            BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
 
     - stage: build and upload binaries
       os: linux
@@ -230,8 +231,7 @@ jobs:
         - docker
       env: CONAN_CLANG_VERSIONS=5.0 CONAN_DOCKER_IMAGE=lasote/conanclang50
            BITPRIM_CI_CURRENCY=BCH
-      if: branch =~ /^(release|hotfix).+$/
-
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
     - stage: build and upload binaries
       os: linux
       sudo: required
@@ -241,7 +241,7 @@ jobs:
         - docker
       env: CONAN_CLANG_VERSIONS=5.0 CONAN_DOCKER_IMAGE=lasote/conanclang50
            BITPRIM_CI_CURRENCY=BTC
-      if: branch =~ /^(release|hotfix).+$/
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
 
     - stage: build and upload binaries
       os: linux
@@ -252,8 +252,7 @@ jobs:
         - docker
       env: CONAN_CLANG_VERSIONS=4.0 CONAN_DOCKER_IMAGE=lasote/conanclang40
            BITPRIM_CI_CURRENCY=BCH
-      if: branch =~ /^(release|hotfix).+$/
-
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
     - stage: build and upload binaries
       os: linux
       sudo: required
@@ -263,7 +262,7 @@ jobs:
         - docker
       env: CONAN_CLANG_VERSIONS=4.0 CONAN_DOCKER_IMAGE=lasote/conanclang40
            BITPRIM_CI_CURRENCY=BTC
-      if: branch =~ /^(release|hotfix).+$/
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
 
     # - stage: build and upload binaries
     #   os: linux
@@ -281,6 +280,7 @@ jobs:
       osx_image: xcode9
       env: CONAN_APPLE_CLANG_VERSIONS=9.0 
            BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
 
     - stage: build and upload binaries
       os: osx
@@ -288,6 +288,7 @@ jobs:
       osx_image: xcode9
       env: CONAN_APPLE_CLANG_VERSIONS=9.0 
            BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
 
     - stage: build and upload binaries
       os: osx
@@ -295,15 +296,14 @@ jobs:
       osx_image: xcode8.3         
       env: CONAN_APPLE_CLANG_VERSIONS=8.1
            BITPRIM_CI_CURRENCY=BCH
-      if: branch =~ /^(release|hotfix).+$/
-
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
     - stage: build and upload binaries
       os: osx
       language: generic
       osx_image: xcode8.3         
       env: CONAN_APPLE_CLANG_VERSIONS=8.1
            BITPRIM_CI_CURRENCY=BTC
-      if: branch =~ /^(release|hotfix).+$/
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
 
     - stage: build and upload binaries
       os: osx
@@ -311,15 +311,14 @@ jobs:
       osx_image: xcode7.3
       env: CONAN_APPLE_CLANG_VERSIONS=7.3
            BITPRIM_CI_CURRENCY=BCH
-      if: branch =~ /^(release|hotfix).+$/      
-
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
     - stage: build and upload binaries
       os: osx
       language: generic
       osx_image: xcode7.3
       env: CONAN_APPLE_CLANG_VERSIONS=7.3
            BITPRIM_CI_CURRENCY=BTC
-      if: branch =~ /^(release|hotfix).+$/
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
 
 # Upload Aliases -----------------------------------------------------
     - stage: upload aliases
@@ -328,19 +327,22 @@ jobs:
       language: python
       python: "3.6"
       # install: skip
+      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
       script:
         - |
           cd ${TRAVIS_BUILD_DIR}
           git fetch --unshallow
+          REPO_NAME=$(echo $TRAVIS_REPO_SLUG| cut -d'/' -f 2)
+          echo $REPO_NAME
 
         - eval $(python ci_utils/set_envvars_and_files.py)
-        #TODO(fernando): configure the remote, user and project name using environment variables
+        #TODO(fernando): configure the remote and user using environment variables
         - conan remote add bitprim_temp https://api.bintray.com/conan/bitprim/bitprim
         - conan user
         - conan user ${CONAN_LOGIN_USERNAME} -r bitprim_temp -p ${CONAN_PASSWORD}
         - conan user
-        - conan alias "bitprim-node-exe/0.X@bitprim/${BITPRIM_CONAN_CHANNEL}" "bitprim-node-exe/${BITPRIM_CONAN_VERSION}@bitprim/${BITPRIM_CONAN_CHANNEL}"
-        - conan upload "bitprim-node-exe/0.X@bitprim/${BITPRIM_CONAN_CHANNEL}" --all -r bitprim_temp
+        - conan alias "${REPO_NAME}/0.X@bitprim/${BITPRIM_CONAN_CHANNEL}" "${REPO_NAME}/${BITPRIM_CONAN_VERSION}@bitprim/${BITPRIM_CONAN_CHANNEL}"
+        - conan upload "${REPO_NAME}/0.X@bitprim/${BITPRIM_CONAN_CHANNEL}" --all -r bitprim_temp
 
 # # Push to repos ------------------------------------------------------
 #     - stage: push to repos
@@ -348,7 +350,7 @@ jobs:
 #       script:
 #           - chmod +x .travis/push_other_repo.sh
 #           - ./.travis/push_other_repo.sh
-#       if: branch =~ /^(dev|feature).*$/
+#       if: branch =~ /^(dev|feature).*$/     feature_ci_adjustments
 
 # Dummy for master ------------------------------------------------------
     - stage: build and upload binaries
