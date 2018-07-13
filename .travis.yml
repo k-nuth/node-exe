@@ -23,11 +23,17 @@ branches:
   # - /^v\d+\.\d+\.\d+$/
   - dev
   - /^release-\d+\.\d+\.\d+$/
+  - /^release_\d+\.\d+\.\d+$/
   - /^hotfix-\d+\.\d+\.\d+$/
+  - /^hotfix_\d+\.\d+\.\d+$/
   - /^feature-ci-.+$/
   - /^feature_ci_.+$/
   - /^feature-travis-.+$/
   - /^feature_travis_.+$/
+
+env:
+   global:
+     - CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
 
 linux: &linux
    os: linux
@@ -277,18 +283,33 @@ jobs:
     - stage: build and upload binaries
       os: osx
       language: generic
-      osx_image: xcode9
-      env: CONAN_APPLE_CLANG_VERSIONS=9.0 
+      osx_image: xcode9.3
+      env: CONAN_APPLE_CLANG_VERSIONS=9.1
            BITPRIM_CI_CURRENCY=BCH
       if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
 
     - stage: build and upload binaries
       os: osx
       language: generic
-      osx_image: xcode9
-      env: CONAN_APPLE_CLANG_VERSIONS=9.0 
+      osx_image: xcode9.3
+      env: CONAN_APPLE_CLANG_VERSIONS=9.1
            BITPRIM_CI_CURRENCY=BTC
       if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
+
+    - stage: build and upload binaries
+      os: osx
+      language: generic
+      osx_image: xcode9     
+      env: CONAN_APPLE_CLANG_VERSIONS=9.0
+           BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
+    - stage: build and upload binaries
+      os: osx
+      language: generic
+      osx_image: xcode9
+      env: CONAN_APPLE_CLANG_VERSIONS=9.0
+           BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
 
     - stage: build and upload binaries
       os: osx
@@ -305,20 +326,20 @@ jobs:
            BITPRIM_CI_CURRENCY=BTC
       if: branch =~ /^(release|hotfix).+$/    #Just releases
 
-    - stage: build and upload binaries
-      os: osx
-      language: generic
-      osx_image: xcode7.3
-      env: CONAN_APPLE_CLANG_VERSIONS=7.3
-           BITPRIM_CI_CURRENCY=BCH
-      if: branch =~ /^(release|hotfix).+$/    #Just releases
-    - stage: build and upload binaries
-      os: osx
-      language: generic
-      osx_image: xcode7.3
-      env: CONAN_APPLE_CLANG_VERSIONS=7.3
-           BITPRIM_CI_CURRENCY=BTC
-      if: branch =~ /^(release|hotfix).+$/    #Just releases
+    # - stage: build and upload binaries
+    #   os: osx
+    #   language: generic
+    #   osx_image: xcode7.3
+    #   env: CONAN_APPLE_CLANG_VERSIONS=7.3
+    #        BITPRIM_CI_CURRENCY=BCH
+    #   if: branch =~ /^(release|hotfix).+$/    #Just releases
+    # - stage: build and upload binaries
+    #   os: osx
+    #   language: generic
+    #   osx_image: xcode7.3
+    #   env: CONAN_APPLE_CLANG_VERSIONS=7.3
+    #        BITPRIM_CI_CURRENCY=BTC
+    #   if: branch =~ /^(release|hotfix).+$/    #Just releases
 
 # Upload Aliases -----------------------------------------------------
     - stage: upload aliases
