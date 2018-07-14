@@ -47,7 +47,7 @@ class BitprimNodeExeConan(BitprimConanFile):
                       "microarchitecture=_DUMMY_",  \
                       "no_compilation=False",  \
                       "fix_march=False", \
-                      "verbose=True"
+                      "verbose=False"
 
     generators = "cmake"
     exports = "conan_*", "ci_utils/*"
