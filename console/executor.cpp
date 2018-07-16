@@ -117,8 +117,8 @@ bool executor::do_initchain() {
     if (create_directories(directory, ec)) {
         LOG_INFO(LOG_NODE) << format(BN_INITIALIZING_CHAIN) % directory;
 
-        bool const testnet = libbitcoin::get_network(metadata_.configured.network.identifier) == libbitcoin::config::settings::testnet;
-        auto const genesis = testnet ? block::genesis_testnet() : block::genesis_mainnet();
+        auto const genesis = libbitcoin::node::full_node::get_genesis_block(metadata_.configured.chain);
+
         auto const& settings = metadata_.configured.database;
         auto const result = data_base(settings).create(genesis);
 
