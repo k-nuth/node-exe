@@ -118,7 +118,16 @@ bool executor::do_initchain() {
         LOG_INFO(LOG_NODE) << format(BN_INITIALIZING_CHAIN) % directory;
 
         bool const testnet = libbitcoin::get_network(metadata_.configured.network.identifier) == libbitcoin::config::settings::testnet;
-        auto const genesis = testnet ? block::genesis_testnet() : block::genesis_mainnet();
+
+        bool const testnet_blocks = metadata_.configured.chain.easy_blocks;
+        bool const retarget = metadata_.configured.chain.retarget;
+        const auto mainnet = retarget && !testnet_blocks;
+
+        auto genesis = testnet ? block::genesis_testnet() : block::genesis_mainnet();
+        if (!mainnet && !testnet_blocks) {
+            ////NOTE: To be on regtest, retarget and easy_blocks options must be set to false
+            genesis = block::genesis_regtest();
+        }
         auto const& settings = metadata_.configured.database;
         auto const result = data_base(settings).create(genesis);
 
