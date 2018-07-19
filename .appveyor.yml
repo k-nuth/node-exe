@@ -101,12 +101,12 @@ for:
           CONAN_VISUAL_VERSIONS: 15
           BITPRIM_CI_CURRENCY: BTC
           VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-          CONAN_VISUAL_VERSIONS: 14
-          BITPRIM_CI_CURRENCY: BCH
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-          CONAN_VISUAL_VERSIONS: 14
-          BITPRIM_CI_CURRENCY: BTC
+        # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+        #   CONAN_VISUAL_VERSIONS: 14
+        #   BITPRIM_CI_CURRENCY: BCH
+        # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+        #   CONAN_VISUAL_VERSIONS: 14
+        #   BITPRIM_CI_CURRENCY: BTC
 
   -
     branches:
