@@ -156,26 +156,26 @@ jobs:
     #        BITPRIM_CI_CURRENCY=BTC
     #   if: branch =~ /^(release|hotfix).+$/    #Just releases
 
-    # - stage: build and upload binaries
-    #   os: linux
-    #   sudo: required
-    #   language: python
-    #   python: "3.6"
-    #   services:
-    #     - docker
-    #   env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=lasote/conangcc7
-    #        BITPRIM_CI_CURRENCY=BCH
-    #   if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
-    # - stage: build and upload binaries
-    #   os: linux
-    #   sudo: required
-    #   language: python
-    #   python: "3.6"
-    #   services:
-    #     - docker
-    #   env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=lasote/conangcc7
-    #        BITPRIM_CI_CURRENCY=BTC
-    #   if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=lasote/conangcc7
+           BITPRIM_CI_CURRENCY=BCH
+      if: branch =~ /^(dev|feature).*$/         #Just development branches
+    - stage: build and upload binaries
+      os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      services:
+        - docker
+      env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=lasote/conangcc7
+           BITPRIM_CI_CURRENCY=BTC
+      if: branch =~ /^(dev|feature).*$/        #Just development branches
 
     # - stage: build and upload binaries
     #   os: linux
@@ -207,8 +207,7 @@ jobs:
         - docker
       env: CONAN_GCC_VERSIONS=5 CONAN_DOCKER_IMAGE=lasote/conangcc5
            BITPRIM_CI_CURRENCY=BCH
-      # if: branch =~ /^(release|hotfix).+$/    #Just releases
-      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
     - stage: build and upload binaries
       os: linux
       sudo: required
@@ -218,9 +217,7 @@ jobs:
         - docker
       env: CONAN_GCC_VERSIONS=5 CONAN_DOCKER_IMAGE=lasote/conangcc5
            BITPRIM_CI_CURRENCY=BTC
-      # if: branch =~ /^(release|hotfix).+$/    #Just releases
-      if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
-
+      if: branch =~ /^(release|hotfix).+$/    #Just releases
 
     # - stage: build and upload binaries
     #   os: linux
