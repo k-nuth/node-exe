@@ -39,7 +39,8 @@ class BitprimNodeExeConan(BitprimConanFile):
         "microarchitecture": "ANY", #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
         "no_compilation": [True, False],
         "fix_march": [True, False],
-        "verbose": [True, False]
+        "verbose": [True, False],
+        "keoken": [True, False],
     }
 
     default_options = "currency=BCH", \
@@ -47,7 +48,8 @@ class BitprimNodeExeConan(BitprimConanFile):
                       "microarchitecture=_DUMMY_",  \
                       "no_compilation=False",  \
                       "fix_march=False", \
-                      "verbose=False"
+                      "verbose=False", \
+                      "keoken=False"
 
     generators = "cmake"
     exports = "conan_*", "ci_utils/*"
@@ -55,6 +57,10 @@ class BitprimNodeExeConan(BitprimConanFile):
 
     # package_files = "build/lbitprim-node.a"
     build_policy = "missing"
+
+    @property
+    def is_keoken(self):
+        return self.options.currency == "BCH" and self.options.get_safe("keoken")
 
     def requirements(self):
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
@@ -83,6 +89,12 @@ class BitprimNodeExeConan(BitprimConanFile):
             march_conan_manip(self)
             self.options["*"].microarchitecture = self.options.microarchitecture
 
+        if self.options.keoken and self.options.currency != "BCH":
+            self.output.warn("For the moment Keoken is only enabled for BCH. Building without Keoken support...")
+            del self.options.keoken
+        else:
+            self.options["*"].keoken = self.options.keoken
+
         self.options["*"].currency = self.options.currency
         self.output.info("Compiling for currency: %s" % (self.options.currency,))
 
@@ -110,6 +122,7 @@ class BitprimNodeExeConan(BitprimConanFile):
         cmake.definitions["NO_CONAN_AT_ALL"] = option_on_off(False)
         cmake.verbose = self.options.verbose
         cmake.definitions["WITH_RPC"] = option_on_off(self.options.with_rpc)
+        cmake.definitions["WITH_KEOKEN"] = option_on_off(self.is_keoken)
 
         cmake.definitions["CURRENCY"] = self.options.currency
 

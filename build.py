@@ -25,15 +25,28 @@ if __name__ == "__main__":
             else:
                 marchs = ["x86-64"]
 
-            options["*:currency"] = os.getenv('BITPRIM_CI_CURRENCY', '---')
+            ci_currency = os.getenv('BITPRIM_CI_CURRENCY', None)
+            if ci_currency is not None:
+                options["*:currency"] = ci_currency
 
-            rpc_off = copy.deepcopy(options)
-            rpc_on = copy.deepcopy(options)
-            rpc_off["*:with_rpc"] = "False"
-            rpc_on["*:with_rpc"] = "True"
+                rpc_off = copy.deepcopy(options)
+                rpc_on = copy.deepcopy(options)
+                rpc_off["*:with_rpc"] = "False"
+                rpc_on["*:with_rpc"] = "True"
 
-            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_off, env_vars, build_requires)
-            handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on, env_vars, build_requires)
+                if ci_currency == "BCH":
+                    rpc_on_keoken = copy.deepcopy(rpc_on)
+                    rpc_on_keoken["%s:keoken" % name] = True
+                    handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on_keoken, env_vars, build_requires)
+
+                handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on, env_vars, build_requires)
+                handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_off, env_vars, build_requires)
+
+
+
+
+
+
 
     builder.builds = filtered_builds
     builder.run()

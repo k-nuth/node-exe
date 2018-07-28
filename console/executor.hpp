@@ -123,13 +123,26 @@ private:
 #define BN_USING_DEFAULT_CONFIG \
     "Using default configuration settings."
 
+#ifdef WITH_KEOKEN
+// Keoken build
+#ifdef NDEBUG
+#define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  Keoken Protocol enabled\n  microarchitecture: %3%"
+#else
+#define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  Keoken Protocol enabled\n  microarchitecture: %3%\n  (Debug Build)"
+#endif
+#else
+// No Keoken build
 #ifdef NDEBUG
 #define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  microarchitecture: %3%"
 #else
 #define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  microarchitecture: %3%\n  (Debug Build)"
 #endif
 
+#endif
+
 #define BN_VERSION_MESSAGE_INIT "Node version: %1%"
+
+#define BN_KEOKEN_MESSAGE_INIT "Keoken protocol enabled"
 
 #define BN_CRYPTOCURRENCY_INIT "Currency: %1% - %2%"
 
