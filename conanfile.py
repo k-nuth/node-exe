@@ -17,9 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os
 from conans import CMake
-from ci_utils import option_on_off, get_version, get_conan_req_version, march_conan_manip, pass_march_to_compiler
+from ci_utils import option_on_off, march_conan_manip, pass_march_to_compiler, is_development_branch_internal
 from ci_utils import BitprimConanFile
 
 class BitprimNodeExeConan(BitprimConanFile):
@@ -62,12 +61,15 @@ class BitprimNodeExeConan(BitprimConanFile):
     def is_keoken(self):
         return self.options.currency == "BCH" and self.options.get_safe("keoken")
 
+    @property
+    def dont_compile(self):
+        return self.options.no_compilation or (self.settings.compiler == None and self.settings.arch == 'x86_64' and  self.settings.os in ('Linux', 'Windows', 'Macos'))
+
     def requirements(self):
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
             self.requires("bitprim-node/0.X@%s/%s" % (self.user, self.channel))
             if self.options.with_rpc:
                 self.requires("bitprim-rpc/0.X@%s/%s" % (self.user, self.channel))
-
 
     def config_options(self):
         if self.settings.arch != "x86_64":
@@ -76,12 +78,15 @@ class BitprimNodeExeConan(BitprimConanFile):
             self.options.remove("fix_march")
 
     def configure(self):
+        # self.output.info("************************************** def configure(self):")
+
         if self.settings.arch == "x86_64" and self.options.microarchitecture == "_DUMMY_":
             del self.options.fix_march
             # self.options.remove("fix_march")
             # raise Exception ("fix_march option is for using together with microarchitecture option.")
 
-        if self.options.no_compilation or (self.settings.compiler == None and self.settings.arch == 'x86_64' and self.settings.os in ('Linux', 'Windows', 'Macos')):
+        # if self.options.no_compilation or (self.settings.compiler == None and self.settings.arch == 'x86_64' and self.settings.os in ('Linux', 'Windows', 'Macos')):
+        if self.dont_compile:
             self.settings.remove("compiler")
             self.settings.remove("build_type")
 
@@ -102,11 +107,26 @@ class BitprimNodeExeConan(BitprimConanFile):
         self.output.info("Compiling with RPC support: %s" % (self.options.with_rpc,))
 
     def package_id(self):
-        self.info.requires.clear()
-        # self.settings.remove("compiler")
-        # self.settings.remove("build_type")
-        self.info.settings.compiler = "ANY"
-        self.info.settings.build_type = "ANY"
+        # self.output.info("************************************** def package_id(self):")
+
+        if self.dont_compile:
+            self.info.requires.clear()
+            # self.settings.remove("compiler")
+            # self.settings.remove("build_type")
+
+            self.output.info("package_id - self.channel: %s" % (self.channel,))
+            self.output.info("package_id - self.options.no_compilation: %s" % (self.options.no_compilation,))
+            self.output.info("package_id - self.settings.compiler: %s" % (self.settings.compiler,))
+            self.output.info("package_id - self.settings.arch: %s" % (self.settings.arch,))
+            self.output.info("package_id - self.settings.os: %s" % (self.settings.os,))
+            self.output.info("package_id - is_development_branch_internal: %s" % (is_development_branch_internal(self.channel),))
+
+            # if not is_development_branch_internal(self.channel):
+                # self.info.settings.compiler = "ANY"
+                # self.info.settings.build_type = "ANY"
+            self.info.settings.compiler = "ANY"
+            self.info.settings.build_type = "ANY"
+
         self.info.options.no_compilation = "ANY"
         self.info.options.verbose = "ANY"
         self.info.options.fix_march = "ANY"
@@ -133,7 +153,6 @@ class BitprimNodeExeConan(BitprimConanFile):
 
         cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
         cmake.definitions["BITPRIM_PROJECT_VERSION"] = self.version
-
 
         if self.settings.get_safe("compiler") is not None:
             if self.settings.compiler == "gcc":
