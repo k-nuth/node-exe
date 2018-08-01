@@ -133,9 +133,9 @@ private:
 #else
 // No Keoken build
 #ifdef NDEBUG
-#define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  microarchitecture: %3%"
+#define BN_VERSION_MESSAGE "Bitprim v%1%\n  currency: %2%\n  microarchitecture: %3%"
 #else
-#define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  microarchitecture: %3%\n  (Debug Build)"
+#define BN_VERSION_MESSAGE "Bitprim v%1%\n  currency: %2%\n  microarchitecture: %3%\n  (Debug Build)"
 #endif
 
 #endif
