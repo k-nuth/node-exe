@@ -59,7 +59,7 @@ class BitprimNodeExeConan(BitprimConanFile):
 
     @property
     def is_keoken(self):
-        return self.options.currency == "BCH" and self.options.get_safe("keoken")
+        return self.options.currency == "BCH" and self.options.with_rpc and self.options.get_safe("keoken")
 
     @property
     def dont_compile(self):
@@ -94,11 +94,15 @@ class BitprimNodeExeConan(BitprimConanFile):
             march_conan_manip(self)
             self.options["*"].microarchitecture = self.options.microarchitecture
 
-        if self.options.keoken and self.options.currency != "BCH":
+        if self.options.keoken and not self.options.with_rpc:
+            self.output.warn("Keoken is only available building with Json-RPC support. Building without Keoken support...")
+            del self.options.keoken
+
+        if self.is_keoken and self.options.currency != "BCH":
             self.output.warn("For the moment Keoken is only enabled for BCH. Building without Keoken support...")
             del self.options.keoken
-        else:
-            self.options["*"].keoken = self.options.keoken
+        
+        self.options["*"].keoken = self.is_keoken
 
         self.options["*"].currency = self.options.currency
         self.output.info("Compiling for currency: %s" % (self.options.currency,))

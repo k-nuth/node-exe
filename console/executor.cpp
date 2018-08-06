@@ -207,7 +207,11 @@ bool executor::run() {
         rpc_allowed_ips.insert(ip);
     }
 
-    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips);
+#ifdef WITH_KEOKEN
+    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, metadata_.configured.node.keoken_genesis_height, rpc_allowed_ips);
+#else
+    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips);
+#endif
     
     auto rpc_thread = std::thread([&message_manager]() {
         message_manager.start();
