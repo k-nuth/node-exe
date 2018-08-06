@@ -107,6 +107,8 @@ void executor::do_version() {
 }
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
+
+#ifndef BITPRIM_READ_ONLY
 // Emit to the log.
 bool executor::do_initchain() {
     initialize_output();
@@ -134,6 +136,8 @@ bool executor::do_initchain() {
     LOG_ERROR(LOG_NODE) << format(BN_INITCHAIN_NEW) % directory % ec.message();
     return false;
 }
+#endif // BITPRIM_READ_ONLY
+
 
 #endif   // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 
@@ -159,9 +163,11 @@ bool executor::menu() {
     }
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
+#ifndef BITPRIM_READ_ONLY
     if (config.initchain) {
         return do_initchain();
     }
+#endif // BITPRIM_READ_ONLY
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
 
     // There are no command line arguments, just run the node.

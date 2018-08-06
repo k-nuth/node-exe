@@ -41,12 +41,6 @@ if __name__ == "__main__":
 
                 handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on, env_vars, build_requires)
                 handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_off, env_vars, build_requires)
-
-
-
-
-
-
-
+ 
     builder.builds = filtered_builds
     builder.run()

@@ -88,6 +88,16 @@ if (WITH_KEOKEN)
   add_definitions(-DWITH_KEOKEN)
 endif()
 
+# Implement --read-only and declare READ_ONLY.
+#------------------------------------------------------------------------------
+option(READ_ONLY "Read-only blockchain." OFF)
+if (READ_ONLY)
+  message(STATUS "Bitprim: Read-only blockchain.")
+  add_definitions(-DBITPRIM_READ_ONLY)
+else()
+message(STATUS "Bitprim: Writable blockchain.")
+endif()
+
 
 # Conan infrastructure
 #==============================================================================

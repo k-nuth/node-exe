@@ -40,6 +40,7 @@ class BitprimNodeExeConan(BitprimConanFile):
         "fix_march": [True, False],
         "verbose": [True, False],
         "keoken": [True, False],
+        "readonly": [True, False],
     }
 
     default_options = "currency=BCH", \
@@ -48,7 +49,8 @@ class BitprimNodeExeConan(BitprimConanFile):
                       "no_compilation=False",  \
                       "fix_march=False", \
                       "verbose=False", \
-                      "keoken=False"
+                      "keoken=False", \
+                      "readonly=False"
 
     generators = "cmake"
     exports = "conan_*", "ci_utils/*"
@@ -100,11 +102,14 @@ class BitprimNodeExeConan(BitprimConanFile):
         else:
             self.options["*"].keoken = self.options.keoken
 
+        self.options["*"].readonly = self.options.readonly
+        self.output.info("Compiling for readonly blockchain: %s." % (self.options.readonly,))
+
         self.options["*"].currency = self.options.currency
-        self.output.info("Compiling for currency: %s" % (self.options.currency,))
+        self.output.info("Compiling for currency: %s." % (self.options.currency,))
 
         self.options["*"].with_rpc = self.options.with_rpc
-        self.output.info("Compiling with RPC support: %s" % (self.options.with_rpc,))
+        self.output.info("Compiling with RPC support: %s." % (self.options.with_rpc,))
 
     def package_id(self):
         # self.output.info("************************************** def package_id(self):")
@@ -143,7 +148,7 @@ class BitprimNodeExeConan(BitprimConanFile):
         cmake.verbose = self.options.verbose
         cmake.definitions["WITH_RPC"] = option_on_off(self.options.with_rpc)
         cmake.definitions["WITH_KEOKEN"] = option_on_off(self.is_keoken)
-
+        cmake.definitions["READ_ONLY"] = option_on_off(self.options.readonly)
         cmake.definitions["CURRENCY"] = self.options.currency
 
         if self.settings.compiler != "Visual Studio":
