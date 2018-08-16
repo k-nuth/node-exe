@@ -68,12 +68,12 @@ class BitprimNodeExeConan(BitprimConanFile):
     def requirements(self):
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
             self.requires("bitprim-node/0.X@%s/%s" % (self.user, self.channel))
-            reqs = ["bitprim-node/0.X@%s/%s"]
+            # reqs = ["bitprim-node/0.X@%s/%s"]
 
             if self.options.with_rpc:
-                # self.requires("bitprim-rpc/0.X@%s/%s" % (self.user, self.channel))
-                reqs.append("bitprim-rpc/0.X@%s/%s")
-            self.bitprim_requires(reqs)
+                self.requires("bitprim-rpc/0.X@%s/%s" % (self.user, self.channel))
+                # reqs.append("bitprim-rpc/0.X@%s/%s")
+            # self.bitprim_requires(reqs)
 
     def config_options(self):
         if self.settings.arch != "x86_64":
