@@ -103,15 +103,15 @@ jobs:
         - |
           conan user
           conan remote add bitprim_temp https://api.bintray.com/conan/bitprim/bitprim
-          echo "waiting for bitprim-rpc/0.X@bitprim/stating ..."
-          conan search bitprim-rpc/0.X@bitprim/stating -r bitprim_temp > /dev/null
+          echo "waiting for bitprim-rpc/0.X@bitprim/staging ..."
+          conan search bitprim-rpc/0.X@bitprim/staging -r bitprim_temp > /dev/null
           while [ $? == 1 ]
           do
             printf "."
             sleep 10
-            conan search bitprim-rpc/0.X@bitprim/stating -r bitprim_temp > /dev/null
+            conan search bitprim-rpc/0.X@bitprim/staging -r bitprim_temp > /dev/null
           done
-          echo "bitprim-rpc/0.X@bitprim/stating found"
+          echo "bitprim-rpc/0.X@bitprim/staging found"
 
 # Static Checks ------------------------------------------------------
     - stage: static checks
