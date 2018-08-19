@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
                 if ci_currency == "BCH":
                     rpc_on_keoken = copy.deepcopy(rpc_on)
-                    # rpc_on_keoken["%s:keoken" % name] = True
+                    rpc_on_keoken["*:keoken"] = True
                     handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on_keoken, env_vars, build_requires)
 
                 handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on, env_vars, build_requires)
