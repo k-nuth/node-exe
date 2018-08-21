@@ -190,7 +190,8 @@ endif()
 add_executable(console.bn
         console/executor.cpp
         console/executor.hpp
-        console/main.cpp)
+        console/main.cpp
+        console/user_agent.cpp)
 
 # target_link_libraries(console.bn bitprim-node)
 
