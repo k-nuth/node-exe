@@ -40,6 +40,7 @@ class BitprimNodeExeConan(BitprimConanFile):
         "fix_march": [True, False],
         "verbose": [True, False],
         "keoken": [True, False],
+        "mining": [True, False],
     }
 
     default_options = "currency=BCH", \
@@ -48,7 +49,8 @@ class BitprimNodeExeConan(BitprimConanFile):
                       "no_compilation=False",  \
                       "fix_march=False", \
                       "verbose=False", \
-                      "keoken=False"
+                      "keoken=False", \
+                      "mining=False"
 
     generators = "cmake"
     exports = "conan_*", "ci_utils/*"
@@ -108,6 +110,10 @@ class BitprimNodeExeConan(BitprimConanFile):
         
         self.options["*"].keoken = self.is_keoken
 
+
+        self.options["*"].mining = self.options.mining
+        self.output.info("Compiling with mining optimizations: %s" % (self.options.mining,))
+
         self.options["*"].currency = self.options.currency
         self.output.info("Compiling for currency: %s" % (self.options.currency,))
 
@@ -153,6 +159,9 @@ class BitprimNodeExeConan(BitprimConanFile):
         cmake.definitions["WITH_KEOKEN"] = option_on_off(self.is_keoken)
 
         cmake.definitions["CURRENCY"] = self.options.currency
+        cmake.definitions["WITH_MINING"] = option_on_off(self.options.mining)
+
+
 
         if self.settings.compiler != "Visual Studio":
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
