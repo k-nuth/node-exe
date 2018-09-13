@@ -85,7 +85,7 @@ message(STATUS "Bitprim: Cryptocurrency: ${CURRENCY}")
 option(WITH_KEOKEN "Keoken enabled." OFF)
 if (WITH_KEOKEN)
   message(STATUS "Bitprim: Keoken enabled")
-  add_definitions(-DWITH_KEOKEN)
+  add_definitions(-DBITPRIM_WITH_KEOKEN)
 endif()
 
 # Implement --with-mining and declare WITH_MINING.
@@ -93,9 +93,16 @@ endif()
 option(WITH_MINING "Mining enabled." OFF)
 if (WITH_MINING)
   message(STATUS "Bitprim: Mining enabled")
-  add_definitions(-DWITH_MINING)
+  add_definitions(-DBITPRIM_WITH_MINING)
 endif()
 
+# Implement --use-domain and declare USE_DOMAIN.
+#------------------------------------------------------------------------------
+option(USE_DOMAIN "Domain enabled." OFF)
+if (USE_DOMAIN)
+  message(STATUS "Bitprim: Using Domain enabled")
+  add_definitions(-DBITPRIM_USE_DOMAIN)
+endif()
 
 
 # Conan infrastructure

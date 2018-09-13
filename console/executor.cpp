@@ -207,7 +207,7 @@ bool executor::run() {
         rpc_allowed_ips.insert(ip);
     }
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
     bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, metadata_.configured.node.keoken_genesis_height, rpc_allowed_ips);
 #else
     bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips);
@@ -331,7 +331,7 @@ void executor::initialize_output() {
 
     LOG_INFO(LOG_NODE) << format(BN_VERSION_MESSAGE_INIT) % BITPRIM_NODE_EXE_VERSION;    
     LOG_INFO(LOG_NODE) << format(BN_CRYPTOCURRENCY_INIT) % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_CURRENCY_STR;
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
     LOG_INFO(LOG_NODE) << format(BN_KEOKEN_MESSAGE_INIT);
 #endif
     LOG_INFO(LOG_NODE) << format(BN_MICROARCHITECTURE_INIT) % BITPRIM_MICROARCHITECTURE_STR;
