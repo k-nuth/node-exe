@@ -63,6 +63,117 @@ def get_cpu_microarchitecture():
     return get_cpu_microarchitecture_or_default(microarchitecture_default)
 
 
+    # TODO: check previous marchs
+    # TODO: AMD
+    # TODO: Intel Linea ATOM
+    # TODO: Cyrix y otros procesadores no 80x86
+
+    # Intel Linea "Pulenta". La otra linea es la de ATOM, etc...
+    # Nehalem
+        # Instructions	
+        #     MMX
+        # Extensions	
+        #     x86-64, Intel 64
+        #     SSE, SSE2, SSE3, SSSE3, SSE4, SSE4.1, SSE4.2
+        #     VT-x, VT-d
+
+    # Westmere
+    #     Instructions	
+    #         MMX, AES-NI, CLMUL
+    #     Extensions	
+    #         x86-64, Intel 64
+    #         SSE, SSE2, SSE3, SSSE3, SSE4, SSE4.1, SSE4.2
+    #         VT-x, VT-d
+
+    # Sandy Bridge
+    #     Instructions	
+    #         MMX, AES-NI, CLMUL
+    #     Extensions	
+    #         x86-64, Intel 64
+    #         SSE, SSE2, SSE3, SSSE3, SSE4, SSE4.1, SSE4.2
+    #         AVX, TXT, VT-x, VT-d
+
+    # Ivy Bridge
+    #     Instructions	
+    #         MMX, AES-NI, CLMUL
+    #     Extensions	
+    #         x86-64, Intel 64
+    #         SSE, SSE2, SSE3, SSSE3, SSE4, SSE4.1, SSE4.2
+    #         AVX, TXT, VT-x, VT-d, F16C
+
+    # Haswell
+    #     Instructions	
+    #         MMX, AES-NI, CLMUL, FMA3
+    #     Extensions	
+    #         x86-64, Intel 64
+    #         SSE, SSE2, SSE3, SSSE3, SSE4, SSE4.1, SSE4.2
+    #         AVX, AVX2, TXT, and TSX (disabled via microcode, except for Haswell-EX)
+    #         VT-x, VT-d    
+
+    # Broadwell
+    #     Instructions	
+    #         MMX, AES-NI, CLMUL, FMA3
+    #     Extensions	
+    #         x86-64
+    #         SSE, SSE2, SSE3, SSSE3, SSE4, SSE4.1, SSE4.2
+    #         AVX, AVX2, TXT, TSX
+    #         VT-x, VT-d
+
+    # Skylake
+    #     Instructions	
+    #         MMX, AES-NI, CLMUL, FMA3
+    #     Extensions	
+    #         x86-64, Intel 64
+    #         SSE, SSE2, SSE3, SSSE3, SSE4, SSE4.1, SSE4.2
+    #         ADX, AVX, AVX2, AVX-512 (Xeon 'Purley' only[2][3][4]), MPX, TXT, TSX, SGX[5]
+    #         VT-x, VT-d
+
+march_is = [
+    {'march': 'nehalem',     'arch': '80x68', 'brand': 'intel', 'iss': ['MMX', 'x86-64', 'Intel 64', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4', 'SSE4.1', 'SSE4.2', 'VT-x', 'VT-d']},
+    {'march': 'westmere',    'arch': '80x68', 'brand': 'intel', 'iss': ['MMX', 'AES-NI', 'CLMUL', 'x86-64', 'Intel 64', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4', 'SSE4.1', 'SSE4.2', 'VT-x', 'VT-d']},
+    {'march': 'sandybridge', 'arch': '80x68', 'brand': 'intel', 'iss': ['MMX', 'AES-NI', 'CLMUL', 'x86-64', 'Intel 64', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4', 'SSE4.1', 'SSE4.2', 'AVX', 'TXT', 'VT-x', 'VT-d']},
+    {'march': 'ivybridge',   'arch': '80x68', 'brand': 'intel', 'iss': ['MMX', 'AES-NI', 'CLMUL', 'x86-64', 'Intel 64', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4', 'SSE4.1', 'SSE4.2', 'AVX', 'TXT', 'VT-x', 'VT-d', 'F16C']},
+    # TSX disabled via microcode, except for Haswell-EX
+    {'march': 'haswell',     'arch': '80x68', 'brand': 'intel', 'iss': ['MMX', 'AES-NI', 'CLMUL', 'FMA3', 'x86-64', 'Intel 64', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4', 'SSE4.1', 'SSE4.2', 'AVX', 'AVX2', 'TXT', 'VT-x', 'VT-d']},
+    {'march': 'haswell-EX',  'arch': '80x68', 'brand': 'intel', 'iss': ['MMX', 'AES-NI', 'CLMUL', 'FMA3', 'x86-64', 'Intel 64', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4', 'SSE4.1', 'SSE4.2', 'AVX', 'AVX2', 'TXT', 'TSX', 'VT-x', 'VT-d']},
+    {'march': 'broadwell',   'arch': '80x68', 'brand': 'intel', 'iss': ['MMX', 'AES-NI', 'CLMUL', 'FMA3', 'x86-64', 'Intel 64', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4', 'SSE4.1', 'SSE4.2', 'AVX', 'AVX2', 'TXT', 'TSX', 'VT-x', 'VT-d']},
+    {'march': 'skylake',     'arch': '80x68', 'brand': 'intel', 'iss': ['MMX', 'AES-NI', 'CLMUL', 'FMA3', 'x86-64', 'Intel 64', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4', 'SSE4.1', 'SSE4.2', 'ADX', 'AVX', 'AVX2', 'MPX', 'TXT', 'TSX', 'VT-x', 'VT-d']},
+        # 'SGX[5]'
+        # 'AVX-512 (Xeon 'Purley' only[2][3][4])'
+
+]
+
+ 
+
+def transform_is(is_name):
+    is_name = is_name.replace(' ', '_')
+    is_name = is_name.replace('-', '_')
+    is_name = is_name.replace('.', '_')
+    return "BITPRIM_HAS_%s" % (is_name.upper(),)
+
+def get_iss(march):
+    filtered = (x for x in march_is if x['march'] == march)
+    x = next(filtered, None)
+
+    if x != None:
+        # print(x)
+        # return []
+        return x['iss']
+    else:
+        return []
+
+
+def add_iss_defs(march, cmake):
+
+    print(march)
+
+    for x in get_iss(march):
+        definition = transform_is(x)
+        print(x)
+        print(definition)
+        cmake.definitions[definition] = option_on_off(True)
+
+
 class BitprimNodeExeConan(ConanFile):
     name = "bitprim-node-exe"
 
@@ -235,6 +346,9 @@ class BitprimNodeExeConan(ConanFile):
                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
 
         cmake.definitions["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
+
+        add_iss_defs(self.options.microarchitecture, cmake)
+
         cmake.configure(source_dir=self.source_folder)
         cmake.build()
 
