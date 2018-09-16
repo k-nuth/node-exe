@@ -41,7 +41,14 @@ class BitprimNodeExeConan(BitprimConanFile):
         "verbose": [True, False],
         "keoken": [True, False],
         "mining": [True, False],
-        "use_domain": [True, False]
+        "use_domain": [True, False],
+        "db_transaction_unconfirmed": [True, False],
+        "db_spends": [True, False],
+        "db_history": [True, False],
+        "db_stealth": [True, False],
+        "db_unspent_libbitcoin": [True, False],
+        "db_legacy": [True, False],
+        "db_new": [True, False],
     }
 
     default_options = "currency=BCH", \
@@ -52,7 +59,14 @@ class BitprimNodeExeConan(BitprimConanFile):
                       "verbose=False", \
                       "keoken=False", \
                       "mining=False", \
-                      "use_domain=False"
+                      "use_domain=False", \
+                      "db_transaction_unconfirmed=True", \
+                      "db_spends=True", \
+                      "db_history=True", \
+                      "db_stealth=True", \
+                      "db_unspent_libbitcoin=True", \
+                      "db_legacy=True", \
+                      "db_new=False"
 
     generators = "cmake"
     exports = "conan_*", "ci_utils/*"
@@ -72,12 +86,9 @@ class BitprimNodeExeConan(BitprimConanFile):
     def requirements(self):
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
             self.requires("bitprim-node/0.X@%s/%s" % (self.user, self.channel))
-            # reqs = ["bitprim-node/0.X@%s/%s"]
 
             if self.options.with_rpc:
                 self.requires("bitprim-rpc/0.X@%s/%s" % (self.user, self.channel))
-                # reqs.append("bitprim-rpc/0.X@%s/%s")
-            # self.bitprim_requires(reqs)
 
     def config_options(self):
         if self.settings.arch != "x86_64":
@@ -110,8 +121,15 @@ class BitprimNodeExeConan(BitprimConanFile):
             self.output.warn("For the moment Keoken is only enabled for BCH. Building without Keoken support...")
             del self.options.keoken
         
-        self.options["*"].keoken = self.is_keoken
 
+        self.options["*"].db_transaction_unconfirmed = self.options.db_transaction_unconfirmed
+        self.options["*"].db_spends = self.options.db_spends
+        self.options["*"].db_history = self.options.db_history
+        self.options["*"].db_stealth = self.options.db_stealth
+        self.options["*"].db_unspent_libbitcoin = self.options.db_unspent_libbitcoin
+        self.options["*"].db_legacy = self.options.db_legacy
+        self.options["*"].db_new = self.options.db_new
+        self.options["*"].keoken = self.is_keoken
         self.options["*"].use_domain = self.options.use_domain
 
         self.options["*"].mining = self.options.mining
@@ -163,8 +181,15 @@ class BitprimNodeExeConan(BitprimConanFile):
 
         cmake.definitions["CURRENCY"] = self.options.currency
         cmake.definitions["WITH_MINING"] = option_on_off(self.options.mining)
-
         cmake.definitions["USE_DOMAIN"] = option_on_off(self.options.use_domain)
+
+        cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(self.options.db_transaction_unconfirmed)
+        cmake.definitions["DB_SPENDS"] = option_on_off(self.options.db_spends)
+        cmake.definitions["DB_HISTORY"] = option_on_off(self.options.db_history)
+        cmake.definitions["DB_STEALTH"] = option_on_off(self.options.db_stealth)
+        cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(self.options.db_unspent_libbitcoin)
+        cmake.definitions["DB_LEGACY"] = option_on_off(self.options.db_legacy)
+        cmake.definitions["DB_NEW"] = option_on_off(self.options.db_new)
 
         if self.settings.compiler != "Visual Studio":
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
