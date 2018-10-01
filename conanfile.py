@@ -49,6 +49,8 @@ class BitprimNodeExeConan(BitprimConanFile):
         "db_unspent_libbitcoin": [True, False],
         "db_legacy": [True, False],
         "db_new": [True, False],
+        "cxxflags": "ANY",
+        "cflags": "ANY",
     }
 
     default_options = "currency=BCH", \
@@ -66,7 +68,10 @@ class BitprimNodeExeConan(BitprimConanFile):
                       "db_stealth=True", \
                       "db_unspent_libbitcoin=True", \
                       "db_legacy=True", \
-                      "db_new=False"
+                      "db_new=False", \
+                      "cxxflags=_DUMMY_", \
+                      "cflags=_DUMMY_"
+
 
     generators = "cmake"
     exports = "conan_*", "ci_utils/*"
@@ -165,6 +170,9 @@ class BitprimNodeExeConan(BitprimConanFile):
         self.info.options.no_compilation = "ANY"
         self.info.options.verbose = "ANY"
         self.info.options.fix_march = "ANY"
+        self.info.options.cxxflags = "ANY"
+        self.info.options.cflags = "ANY"
+
 
     def deploy(self):
         self.copy("bn.exe", src="bin")     # copy from current package
@@ -195,6 +203,11 @@ class BitprimNodeExeConan(BitprimConanFile):
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
         if self.settings.compiler == "Visual Studio":
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+
+        if self.options.cxxflags != "_DUMMY_":
+            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
+        if self.options.cflags != "_DUMMY_":
+            cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
 
         cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
         cmake.definitions["BITPRIM_PROJECT_VERSION"] = self.version
