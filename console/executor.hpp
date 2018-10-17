@@ -123,7 +123,7 @@ private:
 #define BN_USING_DEFAULT_CONFIG \
     "Using default configuration settings."
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
 // Keoken build
 #ifdef NDEBUG
 #define BN_VERSION_MESSAGE "Bitprim %1%\n  currency: %2%\n  Keoken Protocol enabled\n  microarchitecture: %3%"
