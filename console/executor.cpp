@@ -201,16 +201,20 @@ bool executor::run() {
 #ifdef BITPRIM_WITH_RPC
     std::string message = "RPC port: " + std::to_string(metadata_.configured.node.rpc_port) + ". ZMQ port: " + std::to_string(metadata_.configured.node.subscriber_port);
     LOG_INFO(LOG_NODE) << message;
+    if (metadata_.configured.node.rpc_allow_all_ips) {
+        LOG_INFO(LOG_NODE) << "RPC is listening requests from all addresses";
+    }
+
     std::unordered_set<std::string> rpc_allowed_ips;
     
     for (auto const& ip : metadata_.configured.node.rpc_allow_ip) {
         rpc_allowed_ips.insert(ip);
     }
 
-#ifdef BITPRIM_WITH_KEOKEN
-    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, metadata_.configured.node.keoken_genesis_height, rpc_allowed_ips);
+#ifdef WITH_KEOKEN
+    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, metadata_.configured.node.keoken_genesis_height, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
 #else
-    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips);
+    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
 #endif
     
     auto rpc_thread = std::thread([&message_manager]() {
