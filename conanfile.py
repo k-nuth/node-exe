@@ -18,8 +18,10 @@
 #
 
 from conans import CMake
-from ci_utils import option_on_off, march_conan_manip, pass_march_to_compiler, is_development_branch_internal
+from ci_utils import option_on_off, march_conan_manip, pass_march_to_compiler, is_development_branch_internal, filter_valid_exts, default_compiler_and_version
 from ci_utils import BitprimConanFile
+
+
 
 class BitprimNodeExeConan(BitprimConanFile):
     name = "bitprim-node-exe"
@@ -45,6 +47,7 @@ class BitprimNodeExeConan(BitprimConanFile):
         "db": ['legacy', 'legacy_full', 'new', 'new_with_blocks'],
         "cxxflags": "ANY",
         "cflags": "ANY",
+        "make_raw": [True, False],
     }
 
     default_options = "currency=BCH", \
@@ -58,7 +61,8 @@ class BitprimNodeExeConan(BitprimConanFile):
                       "use_domain=False", \
                       "db=legacy_full", \
                       "cxxflags=_DUMMY_", \
-                      "cflags=_DUMMY_"
+                      "cflags=_DUMMY_", \
+                      "make_raw=False"
 
 
     generators = "cmake"
@@ -102,8 +106,21 @@ class BitprimNodeExeConan(BitprimConanFile):
             self.settings.remove("compiler")
             self.settings.remove("build_type")
 
-        if self.settings.arch == "x86_64":
+        if self.settings.arch == "x86_64":  #TODO(fernando): hardcoded
             march_conan_manip(self)
+
+        if self.dont_compile:
+            self.settings.remove("compiler")
+            self.settings.remove("build_type")
+
+            comp, ver = default_compiler_and_version(str(self.settings.os))
+            valid_marchs = filter_valid_exts(str(self.settings.os), comp, float(ver), ['x86-64', 'haswell', 'skylake'])     #TODO(fernando): hardcoded
+
+            if self.options.microarchitecture not in valid_marchs:
+                #TODO(fernando): find better march
+                self.options.microarchitecture = 'x86-64' #TODO(fernando): hardcoded
+
+        if self.settings.arch == "x86_64":              #TODO(fernando): hardcoded
             self.options["*"].microarchitecture = self.options.microarchitecture
 
         if self.options.keoken and not self.options.with_rpc:
@@ -132,6 +149,14 @@ class BitprimNodeExeConan(BitprimConanFile):
     def package_id(self):
         # self.output.info("************************************** def package_id(self):")
 
+        self.info.options.no_compilation = "ANY"
+        self.info.options.verbose = "ANY"
+        self.info.options.fix_march = "ANY"
+        self.info.options.cxxflags = "ANY"
+        self.info.options.cflags = "ANY"
+        self.info.options.make_raw = "ANY"
+
+
         if self.dont_compile:
             self.info.requires.clear()
             # self.settings.remove("compiler")
@@ -139,7 +164,8 @@ class BitprimNodeExeConan(BitprimConanFile):
 
             self.output.info("package_id - self.channel: %s" % (self.channel,))
             self.output.info("package_id - self.options.no_compilation: %s" % (self.options.no_compilation,))
-            self.output.info("package_id - self.settings.compiler: %s" % (self.settings.compiler,))
+            # self.output.info("package_id - self.settings.compiler: %s" % (self.settings.compiler,))
+            self.output.info("package_id - self.settings.compiler: %s" % (self.settings.get_safe("compiler"),))
             self.output.info("package_id - self.settings.arch: %s" % (self.settings.arch,))
             self.output.info("package_id - self.settings.os: %s" % (self.settings.os,))
             self.output.info("package_id - is_development_branch_internal: %s" % (is_development_branch_internal(self.channel),))
@@ -147,14 +173,40 @@ class BitprimNodeExeConan(BitprimConanFile):
             # if not is_development_branch_internal(self.channel):
                 # self.info.settings.compiler = "ANY"
                 # self.info.settings.build_type = "ANY"
+            # self.info.settings.compiler = "gcc"
+            # self.info.settings.compiler.version = 8
+            # self.info.settings.build_type = "Release"
+
             self.info.settings.compiler = "ANY"
             self.info.settings.build_type = "ANY"
 
-        self.info.options.no_compilation = "ANY"
-        self.info.options.verbose = "ANY"
-        self.info.options.fix_march = "ANY"
-        self.info.options.cxxflags = "ANY"
-        self.info.options.cflags = "ANY"
+            comp, ver = default_compiler_and_version(str(self.settings.os))
+            valid_marchs = filter_valid_exts(str(self.settings.os), comp, float(ver), ['x86-64', 'haswell', 'skylake'])
+
+            # if self.options.microarchitecture not in valid_marchs:
+
+        if self.options.make_raw:
+            self.info.requires.clear()
+            # self.settings.remove("compiler")
+            # self.settings.remove("build_type")
+
+            self.output.info("package_id - self.channel: %s" % (self.channel,))
+            self.output.info("package_id - self.options.no_compilation: %s" % (self.options.no_compilation,))
+            
+            # self.output.info("package_id - self.settings.compiler: %s" % (self.settings.compiler,))
+            self.output.info("package_id - self.settings.compiler: %s" % (self.settings.get_safe("compiler"),))
+
+
+            self.output.info("package_id - self.settings.arch: %s" % (self.settings.arch,))
+            self.output.info("package_id - self.settings.os: %s" % (self.settings.os,))
+            self.output.info("package_id - is_development_branch_internal: %s" % (is_development_branch_internal(self.channel),))
+
+            # self.info.settings.compiler = "gcc"
+            # self.info.settings.compiler.version = 8
+            # self.info.settings.build_type = "Release"
+
+            self.info.settings.compiler = "ANY"
+            self.info.settings.build_type = "ANY"
 
 
     def deploy(self):
@@ -211,20 +263,21 @@ class BitprimNodeExeConan(BitprimConanFile):
             cmake.definitions["DB_NEW"] = option_on_off(True)
             cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(True)
 
-        if self.settings.compiler != "Visual Studio":
-            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
-        if self.settings.compiler == "Visual Studio":
-            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
-
-        if self.options.cxxflags != "_DUMMY_":
-            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
-        if self.options.cflags != "_DUMMY_":
-            cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
 
         cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
         cmake.definitions["BITPRIM_PROJECT_VERSION"] = self.version
 
         if self.settings.get_safe("compiler") is not None:
+            if self.settings.compiler != "Visual Studio":
+                cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
+            if self.settings.compiler == "Visual Studio":
+                cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+
+            if self.options.cxxflags != "_DUMMY_":
+                cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
+            if self.options.cflags != "_DUMMY_":
+                cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
+
             if self.settings.compiler == "gcc":
                 if float(str(self.settings.compiler.version)) >= 5:
                     cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
