@@ -312,6 +312,8 @@ std::string executor::network_name() const {
             return "Testnet";
         case libbitcoin::config::settings::mainnet:
             return "Mainnet";
+        case libbitcoin::config::settings::regtest:
+            return "Regtest";
     }
     return "Unknown";
 }
