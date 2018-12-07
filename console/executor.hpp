@@ -60,6 +60,10 @@ private:
     bool verify_directory();
 #endif    
 
+#if defined(BITPRIM_DB_NEW_FULL_ASYNC)
+    bool do_generate_indexes();
+#endif
+
     bool run();
 
     // Termination state.

@@ -137,6 +137,24 @@ bool executor::do_initchain() {
 
 #endif   // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 
+
+#if defined(BITPRIM_DB_NEW_FULL_ASYNC)
+
+bool executor::do_generate_indexes() {
+    initialize_output();
+
+    LOG_INFO(LOG_NODE) << "Starting indexing";
+
+    auto const& settings = metadata_.configured.database;
+    auto const result = data_base(settings).generate_indexes();
+    
+    LOG_INFO(LOG_NODE) << "Indexing complete";
+
+    return result;
+}
+
+#endif
+
 // Menu selection.
 // ----------------------------------------------------------------------------
 
@@ -163,6 +181,13 @@ bool executor::menu() {
         return do_initchain();
     }
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
+
+
+#if defined(BITPRIM_DB_NEW_FULL_ASYNC)
+    if (config.generate_indexes) {
+        return do_initchain();
+    }
+#endif
 
     // There are no command line arguments, just run the node.
     return run();

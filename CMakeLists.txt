@@ -176,6 +176,14 @@ if (DB_NEW_FULL)
   add_definitions(-DBITPRIM_DB_NEW_FULL)
 endif()
 
+# Implement and declare DB_NEW_FULL_ASYNC.
+#------------------------------------------------------------------------------
+option(DB_NEW_FULL "DB New Full Async enabled." OFF)
+if (DB_NEW_FULL_ASYNC)
+  message(STATUS "Bitprim: DB New Full Async enabled")
+  add_definitions(-DBITPRIM_DB_NEW_FULL_ASYNC)
+endif()
+
 # Conan infrastructure
 #==============================================================================
 if(EXISTS ${CMAKE_SOURCE_DIR}/ci_utils/cmake/bitprimbuildinfo.cmake)
