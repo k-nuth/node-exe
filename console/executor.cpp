@@ -185,7 +185,7 @@ bool executor::menu() {
 
 #if defined(BITPRIM_DB_NEW_FULL_ASYNC)
     if (config.generate_indexes) {
-        return do_initchain();
+        return do_generate_indexes();
     }
 #endif
 
