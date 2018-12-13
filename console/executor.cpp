@@ -211,7 +211,7 @@ bool executor::run() {
         rpc_allowed_ips.insert(ip);
     }
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
     bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, metadata_.configured.node.keoken_genesis_height, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
 #else
     bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
