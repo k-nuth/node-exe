@@ -45,6 +45,7 @@ class BitprimNodeExeConan(BitprimConanFile):
         "db": ['legacy', 'legacy_full', 'new', 'new_with_blocks'],
         "cxxflags": "ANY",
         "cflags": "ANY",
+        "glibcxx_supports_cxx11_abi": "ANY",        
     }
 
     default_options = "currency=BCH", \
@@ -58,7 +59,8 @@ class BitprimNodeExeConan(BitprimConanFile):
                       "use_domain=False", \
                       "db=legacy_full", \
                       "cxxflags=_DUMMY_", \
-                      "cflags=_DUMMY_"
+                      "cflags=_DUMMY_", \
+                      "glibcxx_supports_cxx11_abi=_DUMMY_"
 
 
     generators = "cmake"
