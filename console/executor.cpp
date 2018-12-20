@@ -103,7 +103,7 @@ void executor::do_settings() {
 }
 
 void executor::do_version() {
-    output_ << format(BN_VERSION_MESSAGE) % BITPRIM_NODE_EXE_VERSION % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_MICROARCHITECTURE_STR << std::endl;
+    output_ << format(BN_VERSION_MESSAGE) % BITPRIM_NODE_EXE_VERSION % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_MICROARCHITECTURE_STR % BN_DB_TYPE << std::endl;
 }
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
@@ -337,10 +337,16 @@ void executor::initialize_output() {
 
     LOG_INFO(LOG_NODE) << format(BN_VERSION_MESSAGE_INIT) % BITPRIM_NODE_EXE_VERSION;    
     LOG_INFO(LOG_NODE) << format(BN_CRYPTOCURRENCY_INIT) % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_CURRENCY_STR;
+
 #ifdef BITPRIM_WITH_KEOKEN
     LOG_INFO(LOG_NODE) << format(BN_KEOKEN_MESSAGE_INIT);
 #endif
+
     LOG_INFO(LOG_NODE) << format(BN_MICROARCHITECTURE_INIT) % BITPRIM_MICROARCHITECTURE_STR;
+
+    LOG_INFO(LOG_NODE) << format(BN_DB_TYPE_INIT) % BN_DB_TYPE;
+
+
 #ifndef NDEBUG
     LOG_INFO(LOG_NODE) << BN_DEBUG_BUILD_INIT;
 #endif
@@ -348,6 +354,8 @@ void executor::initialize_output() {
     LOG_INFO(LOG_NODE) << format(BN_NETWORK_INIT) % 
             network_name() %
             metadata_.configured.network.identifier;
+
+    LOG_INFO(LOG_NODE) << format(BN_CORES_INIT) % libbitcoin::thread_ceiling(metadata_.configured.chain.cores);
 }
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
