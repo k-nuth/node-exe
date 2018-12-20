@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
                     opts_bch_new = copy.deepcopy(rpc_off)
                     opts_bch_new["%s:use_domain" % name] = "True"
-                    opts_bch_new["%s:db" % name] = "new"
+                    opts_bch_new["%s:db" % name] = "default"
 
                     handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_bch_new, env_vars, build_requires)
                     handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on_keoken, env_vars, build_requires)
