@@ -115,7 +115,13 @@ class BitprimNodeExeConan(BitprimConanFile):
         if self.is_keoken and self.options.currency != "BCH":
             self.output.warn("For the moment Keoken is only enabled for BCH. Building without Keoken support...")
             del self.options.keoken
-        
+
+
+        if self.is_keoken:
+            if self.options.db == "pruned" or self.options.db == "default":
+                self.output.warn("Keoken mode requires db=full and your configuration is db=%s, it has been changed automatically..." % (self.options.db,))
+                self.options.db = "full"
+
 
         self.options["*"].db = self.options.db
         
@@ -130,6 +136,8 @@ class BitprimNodeExeConan(BitprimConanFile):
 
         self.options["*"].with_rpc = self.options.with_rpc
         self.output.info("Compiling with RPC support: %s" % (self.options.with_rpc,))
+
+        self.output.info("Compiling for DB: %s" % (self.options.db,))
 
     def package_id(self):
         # self.output.info("************************************** def package_id(self):")
