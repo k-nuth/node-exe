@@ -37,7 +37,7 @@ if __name__ == "__main__":
                 if ci_currency == "BCH":
                     rpc_on_keoken = copy.deepcopy(rpc_on)
                     rpc_on_keoken["*:keoken"] = True
-                    rpc_on_keoken["*:db"] = "Full"
+                    rpc_on_keoken["*:db"] = "full"
 
                     opts_bch_domain = copy.deepcopy(rpc_off)
                     opts_bch_domain["%s:use_domain" % name] = "True"
