@@ -92,6 +92,7 @@ class BitprimNodeExeConan(BitprimConanFile):
             self.options.remove("fix_march")
 
     def configure(self):
+        BitprimConanFile.configure(self)
         # self.output.info("************************************** def configure(self):")
 
         if self.settings.arch == "x86_64" and self.options.microarchitecture == "_DUMMY_":
@@ -140,6 +141,7 @@ class BitprimNodeExeConan(BitprimConanFile):
         self.output.info("Compiling for DB: %s" % (self.options.db,))
 
     def package_id(self):
+        BitprimConanFile.package_id(self)
         # self.output.info("************************************** def package_id(self):")
 
         if self.dont_compile:
