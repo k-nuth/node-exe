@@ -13,7 +13,6 @@ if __name__ == "__main__":
     filtered_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
 
-
         if settings["build_type"] == "Release" \
                 and (not "compiler.runtime" in settings or not settings["compiler.runtime"] == "MD"):
 
@@ -34,6 +33,11 @@ if __name__ == "__main__":
                 rpc_off["*:with_rpc"] = "False"
                 rpc_on["*:with_rpc"] = "True"
 
+                rpc_off_full = copy.deepcopy(rpc_off)
+                rpc_on_full = copy.deepcopy(rpc_on)
+                rpc_off_full["*:db"] = "Full"
+                rpc_on_full["*:db"] = "Full"
+                
                 if ci_currency == "BCH":
                     rpc_on_keoken = copy.deepcopy(rpc_on)
                     rpc_on_keoken["*:keoken"] = True
@@ -46,10 +50,11 @@ if __name__ == "__main__":
                     handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_bch_domain, env_vars, build_requires)
                     handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on_keoken, env_vars, build_requires)
 
+                
+                handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_off_full, env_vars, build_requires)
+                handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on_full, env_vars, build_requires)
                 handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on, env_vars, build_requires)
                 handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_off, env_vars, build_requires)
-
-
 
 
     builder.builds = filtered_builds
