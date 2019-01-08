@@ -35,8 +35,8 @@ if __name__ == "__main__":
 
                 rpc_off_full = copy.deepcopy(rpc_off)
                 rpc_on_full = copy.deepcopy(rpc_on)
-                rpc_off_full["*:db"] = "Full"
-                rpc_on_full["*:db"] = "Full"
+                rpc_off_full["*:db"] = "full"
+                rpc_on_full["*:db"] = "full"
                 
                 if ci_currency == "BCH":
                     rpc_on_keoken = copy.deepcopy(rpc_on)
