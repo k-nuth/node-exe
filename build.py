@@ -39,17 +39,15 @@ if __name__ == "__main__":
                 rpc_on_full["*:db"] = "full"
                 
                 if ci_currency == "BCH":
-                    rpc_on_keoken = copy.deepcopy(rpc_on)
-                    rpc_on_keoken["*:keoken"] = True
-                    rpc_on_keoken["*:db"] = "full"
+                    # rpc_on_keoken = copy.deepcopy(rpc_on)
+                    # rpc_on_keoken["*:keoken"] = True
+                    # rpc_on_keoken["*:db"] = "full"
 
                     opts_bch_domain = copy.deepcopy(rpc_off)
                     opts_bch_domain["%s:use_domain" % name] = "True"
-                    
 
                     handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, opts_bch_domain, env_vars, build_requires)
-                    handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on_keoken, env_vars, build_requires)
-
+                    # handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on_keoken, env_vars, build_requires)
                 
                 handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_off_full, env_vars, build_requires)
                 handle_microarchs("*:microarchitecture", marchs, filtered_builds, settings, rpc_on_full, env_vars, build_requires)
