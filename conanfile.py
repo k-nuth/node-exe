@@ -56,7 +56,7 @@ class BitprimNodeExeConan(BitprimConanFile):
                       "verbose=False", \
                       "keoken=False", \
                       "mempool=True", \
-                      "use_domain=False", \
+                      "use_domain=True", \
                       "db=default", \
                       "cxxflags=_DUMMY_", \
                       "cflags=_DUMMY_", \
