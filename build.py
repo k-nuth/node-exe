@@ -8,7 +8,6 @@ if __name__ == "__main__":
 
     full_build = os.getenv('KTH_FULL_BUILD', '0') == '1'
     builder, name = get_builder(os.path.dirname(os.path.abspath(__file__)))
-    builder.add_common_builds(shared_option_name="%s:shared" % name)
 
     march_ids = get_base_march_ids()
     filtered_builds = []
