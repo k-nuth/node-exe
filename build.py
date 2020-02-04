@@ -6,8 +6,8 @@ from kthbuild import get_base_march_ids, get_builder, handle_microarchs, copy_en
 
 if __name__ == "__main__":
 
-    full_build = os.getenv('KTH_FULL_BUILD', '0') == '1'
     builder, name = get_builder(os.path.dirname(os.path.abspath(__file__)))
+    builder.add_common_builds()
 
     march_ids = get_base_march_ids()
     filtered_builds = []
