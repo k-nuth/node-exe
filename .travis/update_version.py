@@ -42,8 +42,8 @@ if __name__ == "__main__":
 # set -e
 # set -x
 
-# git config --global user.email "ci@bitprim.org"
-# git config --global user.name "Bitprim CI"
+# git config --global user.email "ci@kth.cash"
+# git config --global user.name "Knuth CI"
 
 # replace_versions "#define KTH_NODE_EXE_VERSION " "#define KTH_NODE_EXE_VERSION $KTH_BUILD_NUMBER"
 

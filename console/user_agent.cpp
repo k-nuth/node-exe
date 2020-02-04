@@ -2,14 +2,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <bitcoin/network/user_agent.hpp>
+#include <kth/network/user_agent.hpp>
 #include "version.hpp"
 
-namespace libbitcoin {
+namespace kth {
 namespace network {
 
 std::string get_user_agent() {
-    return "/bitprim:" KTH_NODE_EXE_VERSION "/";
+    return "/kth:" KTH_NODE_EXE_VERSION "/";
 }
 
 } // namespace network

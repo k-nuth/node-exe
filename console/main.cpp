@@ -7,22 +7,22 @@
 #include <cstdio>
 #include <iostream>
 
-#include <bitcoin/node.hpp>
+#include <kth/node.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include "executor.hpp"
 
 KTH_USE_MAIN
 
-int bc::main(int argc, char* argv[]) {
+int kth::main(int argc, char* argv[]) {
     using namespace bc;
     using namespace bc::node;
-    using namespace bitprim;
-    using namespace knuth::node_exe;
+    using namespace kth;
+    using namespace kth::node_exe;
 
     set_utf8_stdio();
     auto const& args = const_cast<const char**>(argv);
 
-    node::parser metadata(libbitcoin::config::settings::mainnet);
+    node::parser metadata(kth::config::settings::mainnet);
     if ( ! metadata.parse(argc, args, cerr)) {
         return console_result::failure;
     }

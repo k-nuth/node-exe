@@ -1,4 +1,4 @@
-# Bitprim <a target="_blank" href="http://semver.org">![Version][badge.version]</a> <a target="_blank" href="https://travis-ci.org/k-nuth/node-exe">![Travis status][badge.Travis]</a> [![Appveyor Status](https://ci.appveyor.com/api/projects/status/github/k-nuth/node-exe?svg=true&branch=master)](https://ci.appveyor.com/projects/k-nuth/node-exe) <a target="_blank" href="https://gitter.im/bitprim/Lobby">![Gitter Chat][badge.Gitter]</a>
+# Knuth <a target="_blank" href="http://semver.org">![Version][badge.version]</a> <a target="_blank" href="https://travis-ci.org/k-nuth/node-exe">![Travis status][badge.Travis]</a> [![Appveyor Status](https://ci.appveyor.com/api/projects/status/github/k-nuth/node-exe?svg=true&branch=master)](https://ci.appveyor.com/projects/k-nuth/node-exe) <a target="_blank" href="https://gitter.im/kth/Lobby">![Gitter Chat][badge.Gitter]</a>
 
 > Multi-Cryptocurrency full-node and development platform
 
@@ -19,9 +19,8 @@ with all four main features:
   * Golang
 
 ... and networking APIs: 
-  * bitprim-insight: A Bitprim implementation of the Insight-API
+  * insight: Our implementation of the Insight-API
   * JSON-RPC
-  * Libbitcoin BS-BX protocol
 
 ## Installation Requirements
 
@@ -67,25 +66,25 @@ In order to run the full node you have to initialize the database and then run t
 
 1. Run the following to initialize the database:
 
-```./bn -i```
+```./kth -i```
 
 2. finally, run the node:
 
-```./bn```
+```./kth```
 
-The above commands use the default configuration hardcoded in the executable. You can use a configuration file to customize the behavior of the node. In the [bitprim-config](https://github.com/k-nuth/config) repository you can find some example files.
+The above commands use the default configuration hardcoded in the executable. You can use a configuration file to customize the behavior of the node. In the [kth-config](https://github.com/k-nuth/config) repository you can find some example files.
 
 1. Initialize the database using a configuration file:
 
-```./bn -i -c <configuration file path>```
+```./kth -i -c <configuration file path>```
 
 2. Run the node using a configuration file:
 
-```./bn -c <configuration file path>```
+```./kth -c <configuration file path>```
 
 ## Advanced Installation
 
-Bitprim is a high performance node, so we have some options and pre-built packages tuned for several platforms.
+Knuth is a high performance node, so we have some options and pre-built packages tuned for several platforms.
 Specifically, you can choose your computer _microarchitecture_ to download a pre-build executable compiled to take advantage of the instructions available in your processor. For example:
 
 ```
@@ -106,9 +105,9 @@ conan install kth-node-exe/0.10.1@kth/stable
 
 ## Detailed documentation
 
-* [Gitbook site](https://www.bitprim.org/)
-* [Build manually from source](https://www.bitprim.org/installation.html)
-* [Python API documentation](https://www.bitprim.org/python-interface/details.html)
+* [Gitbook site](https://www.kth.cash/)
+* [Build manually from source](https://www.kth.cash/installation.html)
+* [Python API documentation](https://www.kth.cash/python-interface/details.html)
 
 ## Changelog
 
@@ -124,4 +123,4 @@ conan install kth-node-exe/0.10.1@kth/stable
 [badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/k-nuth/node-exe?svg=true&branch=dev
 [badge.Gitter]: https://img.shields.io/badge/gitter-join%20chat-blue.svg
 [badge.Travis]: https://travis-ci.org/k-nuth/node-exe.svg?branch=master
-[badge.version]: https://badge.fury.io/gh/bitprim%2Fkth-node-exe.svg
+[badge.version]: https://badge.fury.io/gh/kth%2Fkth-node-exe.svg

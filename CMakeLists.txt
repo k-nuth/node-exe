@@ -37,14 +37,24 @@ if (NO_CONAN_AT_ALL)
   set(USE_CONAN OFF)
 endif()
 
+
 set(KTH_PROJECT_VERSION "-" CACHE STRING "Specify the Knuth Project Version.")
 # message(${KTH_PROJECT_VERSION})
 message( STATUS "Knuth: Compiling version ${KTH_PROJECT_VERSION}")
 
-set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Cryptocurrency (x86_64|...).")
+set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Microarchitecture (x86_64|...).")
 message( STATUS "Knuth: Compiling for ${MICROARCHITECTURE}")
 add_definitions(-DKTH_MICROARCHITECTURE=${MICROARCHITECTURE})
 add_definitions(-DKTH_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
+
+set(MARCH_ID "" CACHE STRING "Specify the Microarchitecture ID (x86_64|...).")
+message( STATUS "Knuth: Compiling for Microarchitecture ID ${MARCH_ID}")
+
+message( STATUS "Knuth: CONAN_CXX_FLAGS ${CONAN_CXX_FLAGS}")
+message( STATUS "Knuth: CONAN_C_FLAGS ${CONAN_C_FLAGS}")
+
+
+
 
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 
@@ -181,10 +191,10 @@ if (NOT USE_CONAN)
   endif()
 
   if (WITH_RPC)
-    # Require bitprim-rpc of at least version 0
+    # Require kth-rpc of at least version 0
     #------------------------------------------------------------------------------
-    if (NOT TARGET bitprim-rpc)
-      find_package(bitprim-rpc 0 REQUIRED)
+    if (NOT TARGET kth-rpc)
+      find_package(kth-rpc 0 REQUIRED)
     endif()
   endif()
 endif()
@@ -260,41 +270,41 @@ endif()
 
 # Build
 #==============================================================================
-add_executable(console.bn
+add_executable(console.exe
         console/executor.cpp
         console/executor.hpp
         console/main.cpp
         console/user_agent.cpp)
 
-# target_link_libraries(console.bn kth-node)
+# target_link_libraries(console.exe kth-node)
 
 
-# target_compile_definitions(console.bn PUBLIC -DKTH_BUILD_NUMBER="${KTH_BUILD_NUMBER}")
+# target_compile_definitions(console.exe PUBLIC -DKTH_BUILD_NUMBER="${KTH_BUILD_NUMBER}")
 
-target_compile_definitions(console.bn PUBLIC -DKTH_PROJECT_VERSION="${KTH_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
-target_compile_definitions(console.bn PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
+target_compile_definitions(console.exe PUBLIC -DKTH_PROJECT_VERSION="${KTH_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
+target_compile_definitions(console.exe PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
 
 if (NOT USE_CONAN)
-  target_link_libraries(console.bn PUBLIC kth-node)
+  target_link_libraries(console.exe PUBLIC kth-node)
   if(WITH_RPC)
-    target_link_libraries(console.bn PUBLIC bitprim-rpc)
+    target_link_libraries(console.exe PUBLIC kth-rpc)
   endif()
 endif()
 
 if (NOT NO_CONAN_AT_ALL)
-  target_link_libraries(console.bn PUBLIC ${CONAN_LIBS})
+  target_link_libraries(console.exe PUBLIC ${CONAN_LIBS})
 endif()
 
 if (USE_CONAN)
   if (MINGW)
-    target_link_libraries(console.bn PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
+    target_link_libraries(console.exe PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
   endif()
 endif()
 
 set_target_properties(
-        console.bn PROPERTIES
+  console.exe PROPERTIES
         FOLDER "node"
-        OUTPUT_NAME bn)
+        OUTPUT_NAME kth)
 
 
 
@@ -303,7 +313,7 @@ set_target_properties(
 
 # Install
 #==============================================================================
-install(TARGETS console.bn
+install(TARGETS console.exe
         RUNTIME DESTINATION bin)
 
 # # Export
