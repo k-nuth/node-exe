@@ -156,7 +156,3 @@ class KnuthNodeExeConan(KnuthConanFile):
         self.copy("kth.exe", src="bin")     # copy from current package
         self.copy("kth", src="bin")         # copy from current package
         # self.copy_deps("*.dll") # copy from dependencies        
-
-
-
-
