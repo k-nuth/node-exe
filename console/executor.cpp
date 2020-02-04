@@ -1,21 +1,7 @@
-/**
- * Copyright (c) 2017-2018 Bitprim Inc.
- *
- * This file is part of Bitprim.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "executor.hpp"
 
 #include <csignal>
@@ -29,8 +15,8 @@
 #include <bitcoin/bitcoin/multi_crypto_support.hpp>
 
 
-#ifdef BITPRIM_WITH_RPC
-#include <bitprim/rpc/manager.hpp>
+#ifdef KTH_WITH_RPC
+#include <knuth/rpc/manager.hpp>
 #include <unordered_set>
 #endif
 
@@ -103,7 +89,7 @@ void executor::do_settings() {
 }
 
 void executor::do_version() {
-    output_ << format(BN_VERSION_MESSAGE) % BITPRIM_NODE_EXE_VERSION % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_MICROARCHITECTURE_STR % BN_DB_TYPE << std::endl;
+    output_ << format(BN_VERSION_MESSAGE) % KTH_NODE_EXE_VERSION % KTH_CURRENCY_SYMBOL_STR % KTH_MICROARCHITECTURE_STR % BN_DB_TYPE << std::endl;
 }
 
 #if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
@@ -198,7 +184,7 @@ bool executor::run() {
     // The callback may be returned on the same thread.
     node_->start(std::bind(&executor::handle_started, this, _1));
 
-#ifdef BITPRIM_WITH_RPC
+#ifdef KTH_WITH_RPC
     std::string message = "RPC port: " + std::to_string(metadata_.configured.node.rpc_port) + ". ZMQ port: " + std::to_string(metadata_.configured.node.subscriber_port);
     LOG_INFO(LOG_NODE) << message;
     if (metadata_.configured.node.rpc_allow_all_ips) {
@@ -211,10 +197,10 @@ bool executor::run() {
         rpc_allowed_ips.insert(ip);
     }
 
-#ifdef BITPRIM_WITH_KEOKEN
-    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, metadata_.configured.node.keoken_genesis_height, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
+#ifdef KTH_WITH_KEOKEN
+    knuth::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, metadata_.configured.node.keoken_genesis_height, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
 #else
-    bitprim::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
+    knuth::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
 #endif
     
     auto rpc_thread = std::thread([&message_manager]() {
@@ -227,7 +213,7 @@ bool executor::run() {
 
     LOG_INFO(LOG_NODE) << BN_NODE_STOPPING;
 
-#ifdef BITPRIM_WITH_RPC
+#ifdef KTH_WITH_RPC
     if (!message_manager.is_stopped()) {
         LOG_INFO(LOG_NODE) << BN_RPC_STOPPING;
         message_manager.stop();
@@ -335,14 +321,14 @@ void executor::initialize_output() {
         LOG_INFO(LOG_NODE) << format(BN_USING_CONFIG_FILE) % file;
     }
 
-    LOG_INFO(LOG_NODE) << format(BN_VERSION_MESSAGE_INIT) % BITPRIM_NODE_EXE_VERSION;    
-    LOG_INFO(LOG_NODE) << format(BN_CRYPTOCURRENCY_INIT) % BITPRIM_CURRENCY_SYMBOL_STR % BITPRIM_CURRENCY_STR;
+    LOG_INFO(LOG_NODE) << format(BN_VERSION_MESSAGE_INIT) % KTH_NODE_EXE_VERSION;    
+    LOG_INFO(LOG_NODE) << format(BN_CRYPTOCURRENCY_INIT) % KTH_CURRENCY_SYMBOL_STR % KTH_CURRENCY_STR;
 
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
     LOG_INFO(LOG_NODE) << format(BN_KEOKEN_MESSAGE_INIT);
 #endif
 
-    LOG_INFO(LOG_NODE) << format(BN_MICROARCHITECTURE_INIT) % BITPRIM_MICROARCHITECTURE_STR;
+    LOG_INFO(LOG_NODE) << format(BN_MICROARCHITECTURE_INIT) % KTH_MICROARCHITECTURE_STR;
 
     LOG_INFO(LOG_NODE) << format(BN_DB_TYPE_INIT) % BN_DB_TYPE;
 
@@ -379,4 +365,4 @@ bool executor::verify_directory() {
 }
 #endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 
-}} // namespace bitprim::node_exe
+}} // namespace knuth::node_exe

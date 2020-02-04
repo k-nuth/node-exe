@@ -1,27 +1,13 @@
-#
-# Copyright (c) 2017-2018 Bitprim Inc.
-#
-# This file is part of Bitprim.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# Copyright (c) 2016-2020 Knuth Project developers.
+# Distributed under the MIT software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 cmake_minimum_required(VERSION 3.4)
 
-# bitprim-node-exe
+# kth-node-exe
 #==============================================================================
-project(bitprim-node-exe
+project(kth-node-exe
         VERSION 0
         LANGUAGES CXX C)
 
@@ -29,7 +15,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Check for baseline language coverage in the compiler for the C++14 standard.
 #------------------------------------------------------------------------------
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Process options.
@@ -44,144 +30,144 @@ option(NO_CONAN_AT_ALL "Conan totally disabled." OFF)
 #------------------------------------------------------------------------------
 option(WITH_RPC "Compile with RPC-ZMQ support." OFF)
 if (WITH_RPC)
-  add_definitions(-DBITPRIM_WITH_RPC)
+  add_definitions(-DKTH_WITH_RPC)
 endif()
 
 if (NO_CONAN_AT_ALL)
   set(USE_CONAN OFF)
 endif()
 
-set(BITPRIM_PROJECT_VERSION "-" CACHE STRING "Specify the Bitprim Project Version.")
-# message(${BITPRIM_PROJECT_VERSION})
-message( STATUS "Bitprim: Compiling version ${BITPRIM_PROJECT_VERSION}")
+set(KTH_PROJECT_VERSION "-" CACHE STRING "Specify the Knuth Project Version.")
+# message(${KTH_PROJECT_VERSION})
+message( STATUS "Knuth: Compiling version ${KTH_PROJECT_VERSION}")
 
 set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Cryptocurrency (x86_64|...).")
-message( STATUS "Bitprim: Compiling for ${MICROARCHITECTURE}")
-add_definitions(-DBITPRIM_MICROARCHITECTURE=${MICROARCHITECTURE})
-add_definitions(-DBITPRIM_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
+message( STATUS "Knuth: Compiling for ${MICROARCHITECTURE}")
+add_definitions(-DKTH_MICROARCHITECTURE=${MICROARCHITECTURE})
+add_definitions(-DKTH_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
 
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 
 if (${CURRENCY} STREQUAL "BCH")
-  add_definitions(-DBITPRIM_CURRENCY_BCH)
-  add_definitions(-DBITPRIM_CURRENCY_SYMBOL_STR="BCH")
-  add_definitions(-DBITPRIM_CURRENCY_STR="Bitcoin Cash")
+  add_definitions(-DKTH_CURRENCY_BCH)
+  add_definitions(-DKTH_CURRENCY_SYMBOL_STR="BCH")
+  add_definitions(-DKTH_CURRENCY_STR="Bitcoin Cash")
 elseif (${CURRENCY} STREQUAL "BTC")
-  add_definitions(-DBITPRIM_CURRENCY_BTC)
-  add_definitions(-DBITPRIM_CURRENCY_SYMBOL_STR="BTC")
-  add_definitions(-DBITPRIM_CURRENCY_STR="Bitcoin Legacy")
+  add_definitions(-DKTH_CURRENCY_BTC)
+  add_definitions(-DKTH_CURRENCY_SYMBOL_STR="BTC")
+  add_definitions(-DKTH_CURRENCY_STR="Bitcoin Legacy")
 elseif (${CURRENCY} STREQUAL "LTC")
-  add_definitions(-DBITPRIM_CURRENCY_LTC)
-  add_definitions(-DBITPRIM_CURRENCY_SYMBOL_STR="LTC")
-  add_definitions(-DBITPRIM_CURRENCY_STR="Litecoin")
+  add_definitions(-DKTH_CURRENCY_LTC)
+  add_definitions(-DKTH_CURRENCY_SYMBOL_STR="LTC")
+  add_definitions(-DKTH_CURRENCY_STR="Litecoin")
 else()
   message(FATAL_ERROR "Invalid Cryptocurrency: ${CURRENCY}")
 endif()
 
-message(STATUS "Bitprim: Cryptocurrency: ${CURRENCY}")
+message(STATUS "Knuth: Cryptocurrency: ${CURRENCY}")
 
 # Implement --with-keoken and declare WITH_KEOKEN.
 #------------------------------------------------------------------------------
 option(WITH_KEOKEN "Keoken enabled." OFF)
 if (WITH_KEOKEN)
-  message(STATUS "Bitprim: Keoken enabled")
-  add_definitions(-DBITPRIM_WITH_KEOKEN)
+  message(STATUS "Knuth: Keoken enabled")
+  add_definitions(-DKTH_WITH_KEOKEN)
 endif()
 
 # Implement --with-mempool and declare WITH_MEMPOOL.
 #------------------------------------------------------------------------------
 option(WITH_MEMPOOL "Mempool enabled." OFF)
 if (WITH_MEMPOOL)
-  message(STATUS "Bitprim: Mempool enabled")
-  add_definitions(-DBITPRIM_WITH_MEMPOOL)
+  message(STATUS "Knuth: Mempool enabled")
+  add_definitions(-DKTH_WITH_MEMPOOL)
 endif()
 
 # Implement --use-domain and declare USE_DOMAIN.
 #------------------------------------------------------------------------------
 option(USE_DOMAIN "Domain enabled." ON)
 if (USE_DOMAIN)
-  message(STATUS "Bitprim: Using Domain enabled")
-  add_definitions(-DBITPRIM_USE_DOMAIN)
+  message(STATUS "Knuth: Using Domain enabled")
+  add_definitions(-DKTH_USE_DOMAIN)
 endif()
 
 # Implement and declare DB_TRANSACTION_UNCONFIRMED.
 #------------------------------------------------------------------------------
 option(DB_TRANSACTION_UNCONFIRMED "DB Transactions Unconfirmed enabled." OFF)
 if (DB_TRANSACTION_UNCONFIRMED)
-  message(STATUS "Bitprim: DB Transactions Unconfirmed enabled")
-  add_definitions(-DBITPRIM_DB_TRANSACTION_UNCONFIRMED)
+  message(STATUS "Knuth: DB Transactions Unconfirmed enabled")
+  add_definitions(-DKTH_DB_TRANSACTION_UNCONFIRMED)
 endif()
 
 # Implement and declare DB_SPENDS.
 #------------------------------------------------------------------------------
 option(DB_SPENDS "DB Spends enabled." OFF)
 if (DB_SPENDS)
-  message(STATUS "Bitprim: DB Spends enabled")
-  add_definitions(-DBITPRIM_DB_SPENDS)
+  message(STATUS "Knuth: DB Spends enabled")
+  add_definitions(-DKTH_DB_SPENDS)
 endif()
 
 # Implement and declare DB_HISTORY.
 #------------------------------------------------------------------------------
 option(DB_HISTORY "DB History enabled." OFF)
 if (DB_HISTORY)
-  message(STATUS "Bitprim: DB History enabled")
-  add_definitions(-DBITPRIM_DB_HISTORY)
+  message(STATUS "Knuth: DB History enabled")
+  add_definitions(-DKTH_DB_HISTORY)
 endif()
 
 # Implement and declare DB_STEALTH.
 #------------------------------------------------------------------------------
 option(DB_STEALTH "DB Stealth enabled." OFF)
 if (DB_STEALTH)
-  message(STATUS "Bitprim: DB Stealth enabled")
-  add_definitions(-DBITPRIM_DB_STEALTH)
+  message(STATUS "Knuth: DB Stealth enabled")
+  add_definitions(-DKTH_DB_STEALTH)
 endif()
 
-# Implement and declare DB_UNSPENT_LIBBITCOIN.
+# Implement and declare DB_UNSPENT_LEGACY.
 #------------------------------------------------------------------------------
-option(DB_UNSPENT_LIBBITCOIN "DB Unspent Libbitcoin enabled." OFF)
-if (DB_UNSPENT_LIBBITCOIN)
-  message(STATUS "Bitprim: DB Unspent Libbitcoin enabled")
-  add_definitions(-DBITPRIM_DB_UNSPENT_LIBBITCOIN)
+option(DB_UNSPENT_LEGACY "DB Unspent Legacy enabled." OFF)
+if (DB_UNSPENT_LEGACY)
+  message(STATUS "Knuth: DB Unspent Legacy enabled")
+  add_definitions(-DKTH_DB_UNSPENT_LEGACY)
 endif()
 
 # Implement and declare DB_LEGACY.
 #------------------------------------------------------------------------------
 option(DB_LEGACY "DB Legacy enabled." OFF)
 if (DB_LEGACY)
-  message(STATUS "Bitprim: DB Legacy enabled")
-  add_definitions(-DBITPRIM_DB_LEGACY)
+  message(STATUS "Knuth: DB Legacy enabled")
+  add_definitions(-DKTH_DB_LEGACY)
 endif()
 
 # Implement and declare DB_NEW.
 #------------------------------------------------------------------------------
 option(DB_NEW "DB New enabled." OFF)
 if (DB_NEW)
-  message(STATUS "Bitprim: DB New enabled")
-  add_definitions(-DBITPRIM_DB_NEW)
+  message(STATUS "Knuth: DB New enabled")
+  add_definitions(-DKTH_DB_NEW)
 endif()
 
 # Implement and declare DB_NEW_BLOCKS.
 #------------------------------------------------------------------------------
 option(DB_NEW_BLOCKS "DB Blocks New enabled." OFF)
 if (DB_NEW_BLOCKS)
-  message(STATUS "Bitprim: DB Blocks New enabled")
-  add_definitions(-DBITPRIM_DB_NEW_BLOCKS)
+  message(STATUS "Knuth: DB Blocks New enabled")
+  add_definitions(-DKTH_DB_NEW_BLOCKS)
 endif()
 
 # Implement and declare DB_NEW_FULL.
 #------------------------------------------------------------------------------
 option(DB_NEW_FULL "DB New Full enabled." OFF)
 if (DB_NEW_FULL)
-  message(STATUS "Bitprim: DB New Full enabled")
-  add_definitions(-DBITPRIM_DB_NEW_FULL)
+  message(STATUS "Knuth: DB New Full enabled")
+  add_definitions(-DKTH_DB_NEW_FULL)
 endif()
 
 # Conan infrastructure
 #==============================================================================
-if(EXISTS ${CMAKE_SOURCE_DIR}/ci_utils/cmake/bitprimbuildinfo.cmake)
-    include(${CMAKE_SOURCE_DIR}/ci_utils/cmake/bitprimbuildinfo.cmake)
+if(EXISTS ${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
+    include(${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
 else()
-    message( STATUS "bitprimbuildinfo doent exists")
+    message( STATUS "knuthbuildinfo doent exists")
 endif()
 
 
@@ -190,8 +176,8 @@ endif()
 #==============================================================================
 #------------------------------------------------------------------------------
 if (NOT USE_CONAN)
-  if (NOT TARGET bitprim-node)
-    find_package(bitprim-node 0 REQUIRED)
+  if (NOT TARGET kth-node)
+    find_package(kth-node 0 REQUIRED)
   endif()
 
   if (WITH_RPC)
@@ -212,7 +198,7 @@ include(CheckCXXCompilerFlag)
 #------------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/ci_utils/cmake)
 
-include(BitprimTools)
+include(KnuthTools)
 
 
 # Warn on all stuff.
@@ -280,16 +266,16 @@ add_executable(console.bn
         console/main.cpp
         console/user_agent.cpp)
 
-# target_link_libraries(console.bn bitprim-node)
+# target_link_libraries(console.bn kth-node)
 
 
-# target_compile_definitions(console.bn PUBLIC -DBITPRIM_BUILD_NUMBER="${BITPRIM_BUILD_NUMBER}")
+# target_compile_definitions(console.bn PUBLIC -DKTH_BUILD_NUMBER="${KTH_BUILD_NUMBER}")
 
-target_compile_definitions(console.bn PUBLIC -DBITPRIM_PROJECT_VERSION="${BITPRIM_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
+target_compile_definitions(console.bn PUBLIC -DKTH_PROJECT_VERSION="${KTH_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
 target_compile_definitions(console.bn PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
 
 if (NOT USE_CONAN)
-  target_link_libraries(console.bn PUBLIC bitprim-node)
+  target_link_libraries(console.bn PUBLIC kth-node)
   if(WITH_RPC)
     target_link_libraries(console.bn PUBLIC bitprim-rpc)
   endif()
@@ -324,21 +310,21 @@ install(TARGETS console.bn
 # #==============================================================================
 # include(CMakePackageConfigHelpers)
 
-# export(EXPORT bitprim-node
-#         FILE "${CMAKE_CURRENT_BINARY_DIR}/bitprim-nodeTargets.cmake")
-# export(PACKAGE bitprim-node)
+# export(EXPORT kth-node
+#         FILE "${CMAKE_CURRENT_BINARY_DIR}/kth-nodeTargets.cmake")
+# export(PACKAGE kth-node)
 
-# configure_file(bitprim-nodeConfig.cmake.in
-#         "${CMAKE_CURRENT_BINARY_DIR}/bitprim-nodeConfig.cmake"
+# configure_file(kth-nodeConfig.cmake.in
+#         "${CMAKE_CURRENT_BINARY_DIR}/kth-nodeConfig.cmake"
 #         @ONLY)
 
 # write_basic_package_version_file(
-#         "${CMAKE_CURRENT_BINARY_DIR}/bitprim-nodeConfigVersion.cmake"
+#         "${CMAKE_CURRENT_BINARY_DIR}/kth-nodeConfigVersion.cmake"
 #         VERSION ${PROJECT_VERSION}
 #         COMPATIBILITY AnyNewerVersion)
 
 # install(
 #         FILES
-#         "${CMAKE_CURRENT_BINARY_DIR}/bitprim-nodeConfig.cmake"
-#         "${CMAKE_CURRENT_BINARY_DIR}/bitprim-nodeConfigVersion.cmake"
+#         "${CMAKE_CURRENT_BINARY_DIR}/kth-nodeConfig.cmake"
+#         "${CMAKE_CURRENT_BINARY_DIR}/kth-nodeConfigVersion.cmake"
 #         DESTINATION ${_config_package_location})

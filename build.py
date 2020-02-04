@@ -6,7 +6,7 @@ from ci_utils import get_builder, handle_microarchs, copy_env_vars, filter_valid
 
 if __name__ == "__main__":
 
-    full_build = os.getenv('BITPRIM_FULL_BUILD', '0') == '1'
+    full_build = os.getenv('KTH_FULL_BUILD', '0') == '1'
     builder, name = get_builder()
     builder.add_common_builds()
 
@@ -24,7 +24,7 @@ if __name__ == "__main__":
             else:
                 marchs = ["x86-64"]
 
-            ci_currency = os.getenv('BITPRIM_CI_CURRENCY', None)
+            ci_currency = os.getenv('KTH_CI_CURRENCY', None)
             if ci_currency is not None:
                 options["*:currency"] = ci_currency
 
