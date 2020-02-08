@@ -63,7 +63,7 @@ conan install kth/0.X@kth/stable -o currency=LTC
 
 In the case we don't have pre-built binaries for your plarform, it is necessary to build from the source code, so you need to add the following requirements to the previous ones:
 
-- C++17 Conforming Compiler.
+- C++17 conforming compiler.
 - [CMake](https://cmake.org/) building tool, version 3.8 or newer.
 
 ## Running the node
