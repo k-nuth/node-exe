@@ -66,7 +66,7 @@ conan install kth/0.X@kth/stable -o currency=LTC
 In the case we don't have pre-built binaries for your plarform, it is necessary to build from the source code, so you need to add the following requirements to the previous ones:
 
 - C++17 Conforming Compiler.
-- [CMake](https://cmake.org/) building tool, version 3.4 or newer.
+- [CMake](https://cmake.org/) building tool, version 3.8 or newer.
 
 ## Running the node
 
@@ -99,7 +99,7 @@ For those who don't want to wait for compilation times, we provide a pre-built p
 
 ## Documentation
 
-In you want to tune the installation for better performance, please refer to the [documentation](https://kth.github.io/docfx/content/user_guide/installation.html#advanced-installation).
+In you want to tune the installation for better performance, please refer to the [documentation](https://k-nuth.github.io/docs/content/user_guide/advanced_installation.html).
 
 ## Changelog
 
