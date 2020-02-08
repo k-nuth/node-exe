@@ -1,4 +1,7 @@
-# Knuth <a target="_blank" href="http://semver.org">![Version][badge.version]</a> <a target="_blank" href="https://travis-ci.org/k-nuth/node-exe">![Travis status][badge.Travis]</a> [![Appveyor Status](https://ci.appveyor.com/api/projects/status/github/k-nuth/node-exe?svg=true&branch=master)](https://ci.appveyor.com/projects/k-nuth/node-exe) <a target="_blank" href="https://gitter.im/kth/Lobby">![Gitter Chat][badge.Gitter]</a>
+<!-- <a target="_blank" href="http://semver.org">![Version][badge.version]</a> -->
+<!-- <a target="_blank" href="https://cirrus-ci.com/github/k-nuth/node-exe">![Build Status][badge.Cirrus]</a> -->
+
+# Knuth <a target="_blank" href="https://github.com/k-nuth/node-exe/releases">![Github Releases][badge.release]</a> <a target="_blank" href="https://travis-ci.org/k-nuth/node-exe">![Build status][badge.Travis]</a> <a target="_blank" href="https://ci.appveyor.com/projects/k-nuth/node-exe">![Build Status][badge.Appveyor]</a> <a target="_blank" href="https://t.me/knuth_cash">![Telegram][badge.telegram]</a> <a target="_blank" href="https://k-nuth.slack.com/">![Slack][badge.slack]</a>
 
 > Multi-Cryptocurrency full-node and development platform
 
@@ -31,33 +34,38 @@ with all four main features:
 
 The *Knuth* executables can be installed on Linux, macOS, FreeBSD, Windows and others. These binaries are pre-built for the most usual operating system/compiler combinations and hosted in an online repository. If there are no pre-built binaries for your platform, a build from source will be attempted.
 
-So, for any platform, an installation can be performed in 2 simple steps:
+So, for any platform, an installation can be performed in 3 simple steps:
 
-1. Configure the Conan remote
+1. Install the Knuth build helper:
+```
+pip install kthbuild --user --upgrade
+```
+
+2. Configure the Conan remote:
 ```
 conan remote add kth https://api.bintray.com/conan/k-nuth/kth
 ```
 
-2. Install the appropriate executable
+3. Install the appropriate executable:
 
 ```
 # For Bitcoin Cash
-conan install kth-node-exe/0.10.1@kth/stable -o currency=BCH
+conan install kth/0.X@kth/stable -o currency=BCH
 # ... or (BCH is the default crypto)
-conan install kth-node-exe/0.10.1@kth/stable
+conan install kth/0.X@kth/stable
 
-# For Bitcoin Legacy
-conan install kth-node-exe/0.10.1@kth/stable -o currency=BTC
+# For Bitcoin Core
+conan install kth/0.X@kth/stable -o currency=BTC
 
 # For Litecoin
-conan install kth-node-exe/0.10.1@kth/stable -o currency=LTC
+conan install kth/0.X@kth/stable -o currency=LTC
 ```
 
 ## Building from source Requirements
 
 In the case we don't have pre-built binaries for your plarform, it is necessary to build from the source code, so you need to add the following requirements to the previous ones:
 
-- C++11 Conforming Compiler.
+- C++17 Conforming Compiler.
 - [CMake](https://cmake.org/) building tool, version 3.4 or newer.
 
 ## Running the node
@@ -82,45 +90,29 @@ The above commands use the default configuration hardcoded in the executable. Yo
 
 ```./kth -c <configuration file path>```
 
-## Advanced Installation
+## High performance
 
-Knuth is a high performance node, so we have some options and pre-built packages tuned for several platforms.
-Specifically, you can choose your computer _microarchitecture_ to download a pre-build executable compiled to take advantage of the instructions available in your processor. For example:
+Knuth is a high performance node, so our build system has the ability to automatically detect the microarchitecture of your processor and perform an optimized build for it.
 
-```
-# For Haswell microarchitecture and Bitcoin Cash currency
-conan install kth-node-exe/0.10.1@kth/stable -o currency=BCH -o microarchitecture=haswell 
-```
-So, you can manually choose the appropriate microarchitecture, some examples are: _x86_64_, _haswell_, _ivybridge_, _sandybridge_, _bulldozer_, ...  
-By default, if you do not specify any, the building system will select a base microarchitecture corresponding to your _Instruction Set Architecture_ (ISA). For example, for _Intel 80x86_, the x86_64 microarchitecture will be selected.
+For those who don't want to wait for compilation times, we provide a pre-built packages for the instruction set and extensions corresponding to [Intel Haswell](https://en.wikipedia.org/wiki/Haswell_(microarchitecture)).
 
-### Automatic Microarchitecture selection
 
-Our build system has the ability to automatically detect the microarchitecture of your processor. To do this, first, you have to install our _pip_ package called [cpuid](https://pypi.python.org/pypi/cpuid). Our build system detects if this package is installed and in such case, makes use of it to detect the best possible executable for your processor.
+## Documentation
 
-```
-pip install cpuid
-conan install kth-node-exe/0.10.1@kth/stable
-```
-
-## Detailed documentation
-
-* [Gitbook site](https://www.kth.cash/)
-* [Build manually from source](https://www.kth.cash/installation.html)
-* [Python API documentation](https://www.kth.cash/python-interface/details.html)
+In you want to tune the installation for better performance, please refer to the [documentation](https://kth.github.io/docfx/content/user_guide/installation.html#advanced-installation).
 
 ## Changelog
 
-* [0.10.0](https://github.com/k-nuth/kth/blob/master/doc/release-notes/release-notes.md#version-0100)
-* [0.9.1](https://github.com/k-nuth/kth/blob/master/doc/release-notes/release-notes.md#version-091)
-* [0.9](https://github.com/k-nuth/kth/blob/master/doc/release-notes/release-notes.md#version-090)
-* [0.8](https://github.com/k-nuth/kth/blob/master/doc/release-notes/release-notes.md#version-080)
-* [0.7](https://github.com/k-nuth/kth/blob/master/doc/release-notes/release-notes.md#version-070)
-* [Older](https://github.com/k-nuth/kth/blob/master/doc/release-notes/release-notes.md)
-
+* [0.1.0](https://github.com/k-nuth/kth/blob/master/doc/release-notes/release-notes.md#version-010)
 
 <!-- Links -->
-[badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/k-nuth/node-exe?svg=true&branch=dev
-[badge.Gitter]: https://img.shields.io/badge/gitter-join%20chat-blue.svg
 [badge.Travis]: https://travis-ci.org/k-nuth/node-exe.svg?branch=master
-[badge.version]: https://badge.fury.io/gh/kth%2Fkth-node-exe.svg
+[badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/k-nuth/node-exe?svg=true&branch=master
+[badge.Cirrus]: https://api.cirrus-ci.com/github/k-nuth/node-exe.svg?branch=master
+[badge.version]: https://badge.fury.io/gh/k-nuth%2Fnode-exe.svg
+[badge.release]: https://img.shields.io/github/release/k-nuth/node-exe.svg
+
+[badge.telegram]: https://img.shields.io/badge/telegram-badge-blue.svg?logo=telegram
+[badge.slack]: https://img.shields.io/badge/slack-badge-orange.svg?logo=slack
+
+<!-- [badge.Gitter]: https://img.shields.io/badge/gitter-join%20chat-blue.svg -->
