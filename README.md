@@ -9,7 +9,7 @@
 with all four main features:
   * Wallet
   * Mining
-  * Full blockchain
+  * Fully indexed blockchain
   * Routing
 
 *Knuth* also works as a cryptocurrency development platform with several programmable APIs:
@@ -49,10 +49,8 @@ conan remote add kth https://api.bintray.com/conan/k-nuth/kth
 3. Install the appropriate executable:
 
 ```
-# For Bitcoin Cash
+# For Bitcoin Cash (default)
 conan install kth/0.X@kth/stable -o currency=BCH
-# ... or (BCH is the default crypto)
-conan install kth/0.X@kth/stable
 
 # For Bitcoin Core
 conan install kth/0.X@kth/stable -o currency=BTC
