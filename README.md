@@ -116,7 +116,7 @@ Each of our modules has its own Github repository, but in case you want to creat
 
 ## Contact
 
-You can contact us through our [Telegram](https://t.me/knuth_cash) and [Slack](https://k-nuth.slack.com/) groups or you can write to us at info@kth.cash.
+You can contact us through our [Telegram](https://t.me/knuth_cash) and [Slack](https://k-nuth.slack.com/) groups or write to us at info@kth.cash.
 
 
 <!-- Links -->
