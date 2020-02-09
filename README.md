@@ -28,7 +28,7 @@ with all four main features:
 ## Installation Requirements
 
 - 64-bit machine.
-- [Conan](https://www.conan.io/) package manager, version 1.1.0 or newer. See [Conan Installation](http://docs.conan.io/en/latest/installation.html#install-with-pip-recommended).
+- [Conan](https://www.conan.io/) package manager, version 1.1.0 or newer. See [$ conan installation](http://docs.conan.io/en/latest/installation.html#install-with-pip-recommended).
 
 ## Installation Procedure
 
@@ -47,13 +47,13 @@ $ conan remote add kth https://api.bintray.com/conan/k-nuth/kth
 
 ```
 # For Bitcoin Cash (default)
-conan install kth/0.X@kth/stable -o currency=BCH
+$ conan install kth/0.X@kth/stable -o currency=BCH
 
 # For Bitcoin Core
-conan install kth/0.X@kth/stable -o currency=BTC
+$ conan install kth/0.X@kth/stable -o currency=BTC
 
 # For Litecoin
-conan install kth/0.X@kth/stable -o currency=LTC
+$ conan install kth/0.X@kth/stable -o currency=LTC
 ```
 
 ## Building from source Requirements
