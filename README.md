@@ -1,7 +1,7 @@
 <!-- <a target="_blank" href="http://semver.org">![Version][badge.version]</a> -->
 <!-- <a target="_blank" href="https://cirrus-ci.com/github/k-nuth/node-exe">![Build Status][badge.Cirrus]</a> -->
 
-# Knuth <a target="_blank" href="https://github.com/k-nuth/node-exe/releases">![Github Releases][badge.release]</a> <a target="_blank" href="https://travis-ci.org/k-nuth/node-exe">![Build status][badge.Travis]</a> <a target="_blank" href="https://ci.appveyor.com/projects/k-nuth/node-exe">![Build Status][badge.Appveyor]</a> <a target="_blank" href="https://t.me/knuth_cash">![Telegram][badge.telegram]</a> <a target="_blank" href="https://k-nuth.slack.com/">![Slack][badge.slack]</a>
+# knuth <a target="_blank" href="https://github.com/k-nuth/node-exe/releases">![Github Releases][badge.release]</a> <a target="_blank" href="https://travis-ci.org/k-nuth/node-exe">![Build status][badge.Travis]</a> <a target="_blank" href="https://ci.appveyor.com/projects/k-nuth/node-exe">![Build Status][badge.Appveyor]</a> <a target="_blank" href="https://t.me/knuth_cash">![Telegram][badge.telegram]</a> <a target="_blank" href="https://k-nuth.slack.com/">![Slack][badge.slack]</a>
 
 > Multi-Cryptocurrency full-node and development platform
 
@@ -36,14 +36,11 @@ The *Knuth* executables can be installed on Linux, macOS, FreeBSD, Windows and o
 
 So, for any platform, an installation can be performed in 3 simple steps:
 
-1. Install the Knuth build helper:
+1. Install and configure the Knuth build helper:
 ```
-pip install kthbuild --user --upgrade
-```
+$ pip install kthbuild --user --upgrade
 
-2. Configure the Conan remote:
-```
-conan remote add kth https://api.bintray.com/conan/k-nuth/kth
+$ conan remote add kth https://api.bintray.com/conan/k-nuth/kth
 ```
 
 3. Install the appropriate executable:
@@ -97,7 +94,7 @@ For those who don't want to wait for compilation times, we provide a pre-built p
 
 ## Documentation
 
-In you want to tune the installation for better performance, please refer to the [documentation](https://k-nuth.github.io/docs/content/user_guide/advanced_installation.html).
+For more more detailed instructions, please refer to our [documentation](https://k-nuth.github.io/docs/).
 
 ## Changelog
 
