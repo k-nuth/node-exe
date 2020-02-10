@@ -11,9 +11,9 @@ class KnuthNodeExeConan(KnuthConanFile):
     def recipe_dir(self):
         return os.path.dirname(os.path.abspath(__file__))
 
-    name = "node-exe"
+    name = "kth"
     license = "http://www.boost.org/users/license.html"
-    url = "https://github.com/k-nuth/node-exe"
+    url = "https://github.com/k-nuth/kth"
     description = "Bitcoin full node executable"
     settings = "os", "compiler", "build_type", "arch"
 
