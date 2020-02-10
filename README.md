@@ -82,7 +82,7 @@ $ ./kth -i
 # Run the node
 $ ./kth
 ```
-For more more detailed instructions, please refer to our [documentation](https://k-nuth.github.io/docs/).
+For more more detailed instructions, please refer to our [documentation](https://kth.cash/docs/).
 
 ## Roadmap
 
@@ -111,7 +111,7 @@ Our donation address is:
 
 ## Documentation
 
-We are working to improve the documentation, which is [located here](https://k-nuth.github.io/docs/).
+We are working to improve the documentation, which is [located here](https://kth.cash/docs/).
 
 ## Issues
 
