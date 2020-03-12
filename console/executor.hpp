@@ -41,11 +41,11 @@ private:
     std::string network_name() const;
     void initialize_output();
 
-#if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
+#if ! defined(KTH_DB_READONLY)
     bool do_initchain();
-    bool verify_directory();
-#endif    
+#endif // ! defined(KTH_DB_READONLY)    
 
+    bool verify_directory();
     bool run();
 
     // Termination state.
@@ -63,7 +63,6 @@ private:
 #define KTH_INFORMATION_MESSAGE \
     "Runs a full bitcoin node with additional client-server query protocol."
 
-#if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 #define KTH_UNINITIALIZED_CHAIN \
     "The %1% directory is not initialized, run: kth --initchain"
 #define KTH_INITIALIZING_CHAIN \
@@ -76,7 +75,6 @@ private:
     "Failed to test directory %1% with error, '%2%'."
 #define KTH_INITCHAIN_COMPLETE \
     "Completed initialization."
-#endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 
 #define KTH_NODE_INTERRUPT \
     "Press CTRL-C to stop the node."

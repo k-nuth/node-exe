@@ -94,7 +94,7 @@ void executor::do_version() {
     output_ << format(KTH_VERSION_MESSAGE) % KTH_NODE_EXE_VERSION % KTH_CURRENCY_SYMBOL_STR % KTH_MICROARCHITECTURE_STR % KTH_DB_TYPE << std::endl;
 }
 
-#if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
+#if ! defined(KTH_DB_READONLY)
 // Emit to the log.
 bool executor::do_initchain() {
     initialize_output();
@@ -122,8 +122,7 @@ bool executor::do_initchain() {
     LOG_ERROR(LOG_NODE) << format(KTH_INITCHAIN_NEW) % directory % ec.message();
     return false;
 }
-
-#endif   // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
+#endif // ! defined(KTH_DB_READONLY)
 
 // Menu selection.
 // ----------------------------------------------------------------------------
@@ -146,11 +145,11 @@ bool executor::menu() {
         return true;
     }
 
-#if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
+#if ! defined(KTH_DB_READONLY)
     if (config.initchain) {
         return do_initchain();
     }
-#endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
+#endif // ! defined(KTH_DB_READONLY)    
 
     // There are no command line arguments, just run the node.
     return run();
@@ -167,11 +166,9 @@ bool executor::run() {
 
     //Log Cryotocurrency
     //Log Microarchitecture
-#if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
     if ( ! verify_directory()) {
         return false;
     }
-#endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)    
 
     bool const testnet = kth::get_network(metadata_.configured.network.identifier) == kth::config::settings::testnet;
 
@@ -346,7 +343,6 @@ void executor::initialize_output() {
     LOG_INFO(LOG_NODE) << format(KTH_CORES_INIT) % kth::thread_ceiling(metadata_.configured.chain.cores);
 }
 
-#if !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 // Use missing directory as a sentinel indicating lack of initialization.
 bool executor::verify_directory() {
     error_code ec;
@@ -365,6 +361,5 @@ bool executor::verify_directory() {
     LOG_ERROR(LOG_NODE) << format(KTH_INITCHAIN_TRY) % directory % message;
     return false;
 }
-#endif // !defined(WITH_REMOTE_BLOCKCHAIN) && !defined(WITH_REMOTE_DATABASE)
 
 }} // namespace kth::node_exe

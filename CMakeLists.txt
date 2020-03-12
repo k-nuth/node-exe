@@ -92,14 +92,6 @@ if (WITH_MEMPOOL)
   add_definitions(-DKTH_WITH_MEMPOOL)
 endif()
 
-# Implement --use-domain and declare USE_DOMAIN.
-#------------------------------------------------------------------------------
-option(USE_DOMAIN "Domain enabled." ON)
-if (USE_DOMAIN)
-  message(STATUS "Knuth: Using Domain enabled")
-  add_definitions(-DKTH_USE_DOMAIN)
-endif()
-
 # Implement and declare DB_TRANSACTION_UNCONFIRMED.
 #------------------------------------------------------------------------------
 option(DB_TRANSACTION_UNCONFIRMED "DB Transactions Unconfirmed enabled." OFF)
@@ -171,6 +163,15 @@ if (DB_NEW_FULL)
   message(STATUS "Knuth: DB New Full enabled")
   add_definitions(-DKTH_DB_NEW_FULL)
 endif()
+
+# Implement --db_readonly_mode and declare KTH_DB_READONLY.
+#------------------------------------------------------------------------------
+option(DB_READONLY_MODE "Readonly DB mode enabled." OFF)
+if (DB_READONLY_MODE)
+  message(STATUS "Knuth: Readonly DB mode enabled")
+  add_definitions(-DKTH_DB_READONLY)
+endif()
+
 
 # Conan infrastructure
 #==============================================================================
@@ -270,39 +271,39 @@ endif()
 
 # Build
 #==============================================================================
-add_executable(console.exe
+add_executable(kth-node-exe
         console/executor.cpp
         console/executor.hpp
         console/main.cpp
         console/user_agent.cpp)
 
-# target_link_libraries(console.exe kth-node)
+# target_link_libraries(kth-node-exe kth-node)
 
 
-# target_compile_definitions(console.exe PUBLIC -DKTH_BUILD_NUMBER="${KTH_BUILD_NUMBER}")
+# target_compile_definitions(kth-node-exe PUBLIC -DKTH_BUILD_NUMBER="${KTH_BUILD_NUMBER}")
 
-target_compile_definitions(console.exe PUBLIC -DKTH_PROJECT_VERSION="${KTH_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
-target_compile_definitions(console.exe PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
+target_compile_definitions(kth-node-exe PUBLIC -DKTH_PROJECT_VERSION="${KTH_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
+target_compile_definitions(kth-node-exe PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
 
 if (NOT USE_CONAN)
-  target_link_libraries(console.exe PUBLIC kth-node)
+  target_link_libraries(kth-node-exe PUBLIC kth-node)
   if(WITH_RPC)
-    target_link_libraries(console.exe PUBLIC kth-rpc)
+    target_link_libraries(kth-node-exe PUBLIC kth-rpc)
   endif()
 endif()
 
 if (NOT NO_CONAN_AT_ALL)
-  target_link_libraries(console.exe PUBLIC ${CONAN_LIBS})
+  target_link_libraries(kth-node-exe PUBLIC ${CONAN_LIBS})
 endif()
 
 if (USE_CONAN)
   if (MINGW)
-    target_link_libraries(console.exe PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
+    target_link_libraries(kth-node-exe PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
   endif()
 endif()
 
 set_target_properties(
-  console.exe PROPERTIES
+    kth-node-exe PROPERTIES
         FOLDER "node"
         OUTPUT_NAME kth)
 
@@ -313,7 +314,7 @@ set_target_properties(
 
 # Install
 #==============================================================================
-install(TARGETS console.exe
+install(TARGETS kth-node-exe
         RUNTIME DESTINATION bin)
 
 # # Export
