@@ -2,7 +2,6 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-
 cmake_minimum_required(VERSION 3.8)
 
 # kth-node-exe
@@ -32,6 +31,14 @@ option(WITH_RPC "Compile with RPC-ZMQ support." OFF)
 if (WITH_RPC)
   add_definitions(-DKTH_WITH_RPC)
 endif()
+
+# Implement --binlog.
+#------------------------------------------------------------------------------
+option(BINLOG "Uses BinLog logging library." OFF)
+if (BINLOG)
+  add_definitions(-DKTH_USE_BINLOG)
+endif()
+
 
 if (NO_CONAN_AT_ALL)
   set(USE_CONAN OFF)

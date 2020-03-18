@@ -22,7 +22,7 @@
 #include <unordered_set>
 #endif
 
-namespace kth { namespace node_exe {
+namespace kth::node_exe {
 
 using boost::format;
 using namespace boost;
@@ -103,23 +103,23 @@ bool executor::do_initchain() {
     auto const& directory = metadata_.configured.database.directory;
 
     if (create_directories(directory, ec)) {
-        LOG_INFO(LOG_NODE) << format(KTH_INITIALIZING_CHAIN) % directory;
+        LOG_INFO(LOG_NODE, format(KTH_INITIALIZING_CHAIN) % directory);
 
         auto const genesis = kth::node::full_node::get_genesis_block(metadata_.configured.chain);
 
         auto const& settings = metadata_.configured.database;
         auto const result = data_base(settings).create(genesis);
 
-        LOG_INFO(LOG_NODE) << KTH_INITCHAIN_COMPLETE;
+        LOG_INFO(LOG_NODE, KTH_INITCHAIN_COMPLETE);
         return result;
     }
 
     if (ec.value() == directory_exists) {
-        LOG_ERROR(LOG_NODE) << format(KTH_INITCHAIN_EXISTS) % directory;
+        LOG_ERROR(LOG_NODE, format(KTH_INITCHAIN_EXISTS) % directory);
         return false;
     }
 
-    LOG_ERROR(LOG_NODE) << format(KTH_INITCHAIN_NEW) % directory % ec.message();
+    LOG_ERROR(LOG_NODE, format(KTH_INITCHAIN_NEW) % directory % ec.message());
     return false;
 }
 #endif // ! defined(KTH_DB_READONLY)
@@ -161,8 +161,8 @@ bool executor::menu() {
 bool executor::run() {
     initialize_output();
 
-    LOG_INFO(LOG_NODE) << KTH_NODE_INTERRUPT;
-    LOG_INFO(LOG_NODE) << KTH_NODE_STARTING;
+    LOG_INFO(LOG_NODE, KTH_NODE_INTERRUPT);
+    LOG_INFO(LOG_NODE, KTH_NODE_STARTING);
 
     //Log Cryotocurrency
     //Log Microarchitecture
@@ -185,9 +185,9 @@ bool executor::run() {
 
 #ifdef KTH_WITH_RPC
     std::string message = "RPC port: " + std::to_string(metadata_.configured.node.rpc_port) + ". ZMQ port: " + std::to_string(metadata_.configured.node.subscriber_port);
-    LOG_INFO(LOG_NODE) << message;
+    LOG_INFO(LOG_NODE, message);
     if (metadata_.configured.node.rpc_allow_all_ips) {
-        LOG_INFO(LOG_NODE) << "RPC is listening requests from all addresses";
+        LOG_INFO(LOG_NODE, "RPC is listening requests from all addresses");
     }
 
     std::unordered_set<std::string> rpc_allowed_ips;
@@ -210,22 +210,22 @@ bool executor::run() {
     // Wait for stop.
     stopping_.get_future().wait();
 
-    LOG_INFO(LOG_NODE) << KTH_NODE_STOPPING;
+    LOG_INFO(LOG_NODE, KTH_NODE_STOPPING);
 
 #ifdef KTH_WITH_RPC
     if (!message_manager.is_stopped()) {
-        LOG_INFO(LOG_NODE) << KTH_RPC_STOPPING;
+        LOG_INFO(LOG_NODE, KTH_RPC_STOPPING);
         message_manager.stop();
         rpc_thread.join();
-        LOG_INFO(LOG_NODE) << KTH_RPC_STOPPED;
+        LOG_INFO(LOG_NODE, KTH_RPC_STOPPED);
     }
 #endif
 
     // Close must be called from main thread.
     if (node_->close()) {
-        LOG_INFO(LOG_NODE) << KTH_NODE_STOPPED;
+        LOG_INFO(LOG_NODE, KTH_NODE_STOPPED);
     } else {
-        LOG_INFO(LOG_NODE) << KTH_NODE_STOP_FAIL;
+        LOG_INFO(LOG_NODE, KTH_NODE_STOP_FAIL);
     }
 
     return true;
@@ -234,12 +234,12 @@ bool executor::run() {
 // Handle the completion of the start sequence and begin the run sequence.
 void executor::handle_started(kth::code const& ec) {
     if (ec) {
-        LOG_ERROR(LOG_NODE) << format(KTH_NODE_START_FAIL) % ec.message();
+        LOG_ERROR(LOG_NODE, format(KTH_NODE_START_FAIL) % ec.message());
         stop(ec);
         return;
     }
 
-    LOG_INFO(LOG_NODE) << KTH_NODE_SEEDED;
+    LOG_INFO(LOG_NODE, KTH_NODE_SEEDED);
 
     // This is the beginning of the stop sequence.
     node_->subscribe_stop(std::bind(&executor::handle_stopped, this, _1));
@@ -251,12 +251,12 @@ void executor::handle_started(kth::code const& ec) {
 // This is the end of the run sequence.
 void executor::handle_running(kth::code const& ec) {
     if (ec) {
-        LOG_INFO(LOG_NODE) << format(KTH_NODE_START_FAIL) % ec.message();
+        LOG_INFO(LOG_NODE, format(KTH_NODE_START_FAIL) % ec.message());
         stop(ec);
         return;
     }
 
-    LOG_INFO(LOG_NODE) << KTH_NODE_STARTED;
+    LOG_INFO(LOG_NODE, KTH_NODE_STARTED);
 }
 
 // This is the end of the stop sequence.
@@ -278,7 +278,7 @@ void executor::handle_stop(int code) {
         return;
     }
 
-    LOG_INFO(LOG_NODE) << format(KTH_NODE_SIGNALED) % code;
+    LOG_INFO(LOG_NODE, format(KTH_NODE_SIGNALED) % code);
     stop(kth::error::success);
 }
 
@@ -306,41 +306,41 @@ std::string executor::network_name() const {
 // Set up logging.
 void executor::initialize_output() {
     auto const header = format(KTH_LOG_HEADER) % kth::local_time();
-    LOG_DEBUG(LOG_NODE) << header;
-    LOG_INFO(LOG_NODE) << header;
-    LOG_WARNING(LOG_NODE) << header;
-    LOG_ERROR(LOG_NODE) << header;
-    LOG_FATAL(LOG_NODE) << header;
+    LOG_DEBUG(LOG_NODE, header);
+    LOG_INFO(LOG_NODE, header);
+    LOG_WARNING(LOG_NODE, header);
+    LOG_ERROR(LOG_NODE, header);
+    LOG_FATAL(LOG_NODE, header);
 
     auto const& file = metadata_.configured.file;
 
     if (file.empty()) {
-        LOG_INFO(LOG_NODE) << KTH_USING_DEFAULT_CONFIG;
+        LOG_INFO(LOG_NODE, KTH_USING_DEFAULT_CONFIG);
     } else {
-        LOG_INFO(LOG_NODE) << format(KTH_USING_CONFIG_FILE) % file;
+        LOG_INFO(LOG_NODE, format(KTH_USING_CONFIG_FILE) % file);
     }
 
-    LOG_INFO(LOG_NODE) << format(KTH_VERSION_MESSAGE_INIT) % KTH_NODE_EXE_VERSION;    
-    LOG_INFO(LOG_NODE) << format(KTH_CRYPTOCURRENCY_INIT) % KTH_CURRENCY_SYMBOL_STR % KTH_CURRENCY_STR;
+    LOG_INFO(LOG_NODE, format(KTH_VERSION_MESSAGE_INIT) % KTH_NODE_EXE_VERSION);    
+    LOG_INFO(LOG_NODE, format(KTH_CRYPTOCURRENCY_INIT) % KTH_CURRENCY_SYMBOL_STR % KTH_CURRENCY_STR);
 
 #ifdef KTH_WITH_KEOKEN
-    LOG_INFO(LOG_NODE) << format(KTH_KEOKEN_MESSAGE_INIT);
+    LOG_INFO(LOG_NODE, format(KTH_KEOKEN_MESSAGE_INIT));
 #endif
 
-    LOG_INFO(LOG_NODE) << format(KTH_MICROARCHITECTURE_INIT) % KTH_MICROARCHITECTURE_STR;
+    LOG_INFO(LOG_NODE, format(KTH_MICROARCHITECTURE_INIT) % KTH_MICROARCHITECTURE_STR);
 
-    LOG_INFO(LOG_NODE) << format(KTH_DB_TYPE_INIT) % KTH_DB_TYPE;
+    LOG_INFO(LOG_NODE, format(KTH_DB_TYPE_INIT) % KTH_DB_TYPE);
 
 
 #ifndef NDEBUG
-    LOG_INFO(LOG_NODE) << KTH_DEBUG_BUILD_INIT;
+    LOG_INFO(LOG_NODE, KTH_DEBUG_BUILD_INIT);
 #endif
 
-    LOG_INFO(LOG_NODE) << format(KTH_NETWORK_INIT) % 
+    LOG_INFO(LOG_NODE, format(KTH_NETWORK_INIT) % 
             network_name() %
-            metadata_.configured.network.identifier;
+            metadata_.configured.network.identifier);
 
-    LOG_INFO(LOG_NODE) << format(KTH_CORES_INIT) % kth::thread_ceiling(metadata_.configured.chain.cores);
+    LOG_INFO(LOG_NODE, format(KTH_CORES_INIT) % kth::thread_ceiling(metadata_.configured.chain.cores));
 }
 
 // Use missing directory as a sentinel indicating lack of initialization.
@@ -353,13 +353,13 @@ bool executor::verify_directory() {
     }
 
     if (ec.value() == directory_not_found) {
-        LOG_ERROR(LOG_NODE) << format(KTH_UNINITIALIZED_CHAIN) % directory;
+        LOG_ERROR(LOG_NODE, format(KTH_UNINITIALIZED_CHAIN) % directory);
         return false;
     }
 
     auto const message = ec.message();
-    LOG_ERROR(LOG_NODE) << format(KTH_INITCHAIN_TRY) % directory % message;
+    LOG_ERROR(LOG_NODE, format(KTH_INITCHAIN_TRY) % directory % message);
     return false;
 }
 
-}} // namespace kth::node_exe
+} // namespace kth::node_exe
