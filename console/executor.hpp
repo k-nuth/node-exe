@@ -58,90 +58,68 @@ private:
 };
 
 // Localizable messages.
-#define KTH_SETTINGS_MESSAGE \
-    "These are the configuration settings that can be set."
-#define KTH_INFORMATION_MESSAGE \
-    "Runs a full bitcoin node with additional client-server query protocol."
+#define KTH_SETTINGS_MESSAGE "These are the configuration settings that can be set."
+#define KTH_INFORMATION_MESSAGE "Runs a full bitcoin node with additional client-server query protocol."
 
-#define KTH_UNINITIALIZED_CHAIN \
-    "The %1% directory is not initialized, run: kth --initchain"
-#define KTH_INITIALIZING_CHAIN \
-    "Please wait while initializing %1% directory..."
-#define KTH_INITCHAIN_NEW \
-    "Failed to create directory %1% with error, '%2%'."
-#define KTH_INITCHAIN_EXISTS \
-    "Failed because the directory %1% already exists."
-#define KTH_INITCHAIN_TRY \
-    "Failed to test directory %1% with error, '%2%'."
-#define KTH_INITCHAIN_COMPLETE \
-    "Completed initialization."
+#define KTH_UNINITIALIZED_CHAIN "The {} directory is not initialized, run: kth --initchain"
+#define KTH_INITIALIZING_CHAIN "Please wait while initializing {} directory..."
+#define KTH_INITCHAIN_NEW "Failed to create directory {} with error, '{}'."
+#define KTH_INITCHAIN_EXISTS "Failed because the directory {} already exists."
+#define KTH_INITCHAIN_TRY "Failed to test directory {} with error, '{}'."
+#define KTH_INITCHAIN_COMPLETE "Completed initialization."
 
-#define KTH_NODE_INTERRUPT \
-    "Press CTRL-C to stop the node."
-#define KTH_NODE_STARTING \
-    "Please wait while the node is starting..."
-#define KTH_NODE_START_FAIL \
-    "Node failed to start with error, %1%."
-#define KTH_NODE_SEEDED \
-    "Seeding is complete."
-#define KTH_NODE_STARTED \
-    "Node is started."
+#define KTH_NODE_INTERRUPT "Press CTRL-C to stop the node."
+#define KTH_NODE_STARTING "Please wait while the node is starting..."
+#define KTH_NODE_START_FAIL "Node failed to start with error, {}."
+#define KTH_NODE_SEEDED "Seeding is complete."
+#define KTH_NODE_STARTED "Node is started."
 
-#define KTH_NODE_SIGNALED \
-    "Stop signal detected (code: %1%)."
-#define KTH_NODE_STOPPING \
-    "Please wait while the node is stopping..."
-#define KTH_NODE_STOP_FAIL \
-    "Node failed to stop properly, see log."
-#define KTH_NODE_STOPPED \
-    "Node stopped successfully."
+#define KTH_NODE_SIGNALED "Stop signal detected (code: {})."
+#define KTH_NODE_STOPPING "Please wait while the node is stopping..."
+#define KTH_NODE_STOP_FAIL "Node failed to stop properly, see log."
+#define KTH_NODE_STOPPED "Node stopped successfully."
 
-#define KTH_RPC_STOPPING \
-    "RPC-ZMQ service is stopping..."
-#define KTH_RPC_STOPPED \
-    "RPC-ZMQ service stopped successfully"
+#define KTH_RPC_STOPPING "RPC-ZMQ service is stopping..."
+#define KTH_RPC_STOPPED "RPC-ZMQ service stopped successfully"
 
-#define KTH_USING_CONFIG_FILE \
-    "Using config file: %1%"
+#define KTH_USING_CONFIG_FILE "Using config file: {}"
 
-#define KTH_USING_DEFAULT_CONFIG \
-    "Using default configuration settings."
+#define KTH_USING_DEFAULT_CONFIG "Using default configuration settings."
 
 #ifdef KTH_WITH_KEOKEN
 // Keoken build
 #ifdef NDEBUG
-#define KTH_VERSION_MESSAGE "Knuth %1%\n  currency: %2%\n  Keoken Protocol enabled\n  microarchitecture: %3%\n  db type: %4%"
+#define KTH_VERSION_MESSAGE "Knuth {}\n  currency: {}\n  Keoken Protocol enabled\n  microarchitecture: {}\n  db type: {}"
 #else
-#define KTH_VERSION_MESSAGE "Knuth %1%\n  currency: %2%\n  Keoken Protocol enabled\n  microarchitecture: %3%\n  db type: %4%\n  (Debug Build)"
+#define KTH_VERSION_MESSAGE "Knuth {}\n  currency: {}\n  Keoken Protocol enabled\n  microarchitecture: {}\n  db type: {}\n  (Debug Build)"
 #endif
 #else
 // No Keoken build
 #ifdef NDEBUG
-#define KTH_VERSION_MESSAGE "Knuth v%1%\n  currency: %2%\n  microarchitecture: %3%\n  db type: %4%"
+#define KTH_VERSION_MESSAGE "Knuth v{}\n  currency: {}\n  microarchitecture: {}\n  db type: {}"
 #else
-#define KTH_VERSION_MESSAGE "Knuth v%1%\n  currency: %2%\n  microarchitecture: %3%\n  db type: %4%\n  (Debug Build)"
+#define KTH_VERSION_MESSAGE "Knuth v{}\n  currency: {}\n  microarchitecture: {}\n  db type: {}\n  (Debug Build)"
 #endif
 
 #endif
 
-#define KTH_VERSION_MESSAGE_INIT "Node version: %1%"
+#define KTH_VERSION_MESSAGE_INIT "Node version: {}"
 
 #define KTH_KEOKEN_MESSAGE_INIT "Keoken protocol enabled"
 
-#define KTH_CRYPTOCURRENCY_INIT "Currency: %1% - %2%"
+#define KTH_CRYPTOCURRENCY_INIT "Currency: {} - {}"
 
-#define KTH_MICROARCHITECTURE_INIT "Compiled for microarchitecture: %1%"
+#define KTH_MICROARCHITECTURE_INIT "Compiled for microarchitecture: {}"
 
-#define KTH_DB_TYPE_INIT "Database type: %1%"
+#define KTH_DB_TYPE_INIT "Database type: {}"
 
 #define KTH_DEBUG_BUILD_INIT "(Debug Build)"
 
-#define KTH_NETWORK_INIT "Network: %1% (%2%)"
+#define KTH_NETWORK_INIT "Network: {} ({})"
 
-#define KTH_CORES_INIT "Configured to use %1% cores"
+#define KTH_CORES_INIT "Configured to use {} cores"
 
-#define KTH_LOG_HEADER \
-    "================= startup %1% =================="
+// #define KTH_LOG_HEADER "================= startup {} =================="
 
 #if defined(KTH_DB_NEW_FULL)
 #define KTH_DB_TYPE "full, new version"
