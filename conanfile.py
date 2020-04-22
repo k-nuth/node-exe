@@ -38,6 +38,7 @@ class KnuthNodeExeConan(KnuthConanFile):
         "cmake_export_compile_commands": [True, False],
         "binlog": [True, False],
         "use_libmdbx": [True, False],
+        "statistics": [True, False],
     }
 
     default_options = {
@@ -61,7 +62,7 @@ class KnuthNodeExeConan(KnuthConanFile):
         "cmake_export_compile_commands": False,
         "binlog": False,
         "use_libmdbx": False,
-        
+        "statistics": False,
     }
 
     generators = "cmake"
@@ -128,6 +129,9 @@ class KnuthNodeExeConan(KnuthConanFile):
         self.options["*"].use_libmdbx = self.options.use_libmdbx
         self.output.info("Compiling with use_libmdbx: %s" % (self.options.use_libmdbx,))
 
+        self.options["*"].statistics = self.options.statistics
+        self.output.info("Compiling with statistics: %s" % (self.options.statistics,))
+
     def package_id(self):
         KnuthConanFile.package_id(self)
 
@@ -159,6 +163,7 @@ class KnuthNodeExeConan(KnuthConanFile):
         cmake.definitions["DB_READONLY_MODE"] = option_on_off(self.options.db_readonly)
         cmake.definitions["BINLOG"] = option_on_off(self.options.binlog)
         cmake.definitions["USE_LIBMDBX"] = option_on_off(self.options.use_libmdbx)
+        cmake.definitions["STATISTICS"] = option_on_off(self.options.statistics)
 
         cmake.configure(source_dir=self.source_folder)
         if not self.options.cmake_export_compile_commands:

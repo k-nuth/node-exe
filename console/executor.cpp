@@ -65,10 +65,15 @@ executor::executor(kth::node::parser& metadata, std::istream& input, std::ostrea
         network.maximum_archive_files
     };
 
+#if defined(KTH_STATISTICS_ENABLED)
+    kth::log::initialize(debug_file, error_file, verbose);
+#else
     kth::log::stream console_out(&output_, null_deleter());
     kth::log::stream console_err(&error_, null_deleter());
 
     kth::log::initialize(debug_file, error_file, console_out, console_err, verbose);
+#endif
+
     handle_stop(initialize_stop);
 }
 
