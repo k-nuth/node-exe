@@ -36,7 +36,7 @@ class KnuthNodeExeConan(KnuthConanFile):
         "cflags": "ANY",
         "glibcxx_supports_cxx11_abi": "ANY",
         "cmake_export_compile_commands": [True, False],
-        "binlog": [True, False],
+        "log": ["boost", "spdlog", "binlog"],
         "use_libmdbx": [True, False],
         "statistics": [True, False],
     }
@@ -60,7 +60,7 @@ class KnuthNodeExeConan(KnuthConanFile):
         "cflags": "_DUMMY_",
         "glibcxx_supports_cxx11_abi": "_DUMMY_",
         "cmake_export_compile_commands": False,
-        "binlog": False,
+        "log": "boost",
         "use_libmdbx": False,
         "statistics": False,
     }
@@ -123,8 +123,9 @@ class KnuthNodeExeConan(KnuthConanFile):
         self.options["*"].rpc = self.options.rpc
         self.output.info("Compiling with RPC support: %s" % (self.options.rpc,))
 
-        self.options["*"].binlog = self.options.binlog
-        self.output.info("Compiling with binlog: %s" % (self.options.binlog,))
+        #TODO(fernando): move to kthbuild
+        self.options["*"].log = self.options.log
+        self.output.info("Compiling with log: %s" % (self.options.log,))
 
         self.options["*"].use_libmdbx = self.options.use_libmdbx
         self.output.info("Compiling with use_libmdbx: %s" % (self.options.use_libmdbx,))
@@ -161,7 +162,7 @@ class KnuthNodeExeConan(KnuthConanFile):
         cmake.definitions["WITH_KEOKEN"] = option_on_off(self.is_keoken)
         cmake.definitions["WITH_MEMPOOL"] = option_on_off(self.options.mempool)
         cmake.definitions["DB_READONLY_MODE"] = option_on_off(self.options.db_readonly)
-        cmake.definitions["BINLOG"] = option_on_off(self.options.binlog)
+        cmake.definitions["LOG_LIBRARY"] = self.options.log
         cmake.definitions["USE_LIBMDBX"] = option_on_off(self.options.use_libmdbx)
         cmake.definitions["STATISTICS"] = option_on_off(self.options.statistics)
 

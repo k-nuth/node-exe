@@ -47,7 +47,8 @@ executor::executor(kth::node::parser& metadata, std::istream& input, std::ostrea
     auto const& network = metadata_.configured.network;
     auto const verbose = network.verbose;
 
-    const kth::log::rotable_file debug_file {
+#if defined(KTH_LOG_LIBRARY_BOOST)
+    kth::log::rotable_file const debug_file {
         network.debug_file,
         network.archive_directory,
         network.rotation_size,
@@ -56,7 +57,7 @@ executor::executor(kth::node::parser& metadata, std::istream& input, std::ostrea
         network.maximum_archive_files
     };
 
-    const kth::log::rotable_file error_file {
+    kth::log::rotable_file const error_file {
         network.error_file,
         network.archive_directory,
         network.rotation_size,
@@ -64,14 +65,22 @@ executor::executor(kth::node::parser& metadata, std::istream& input, std::ostrea
         network.minimum_free_space,
         network.maximum_archive_files
     };
+#elif defined(DKTH_LOG_LIBRARY_SPDLOG)
+#else
+#endif
+
 
 #if defined(KTH_STATISTICS_ENABLED)
     kth::log::initialize(debug_file, error_file, verbose);
 #else
+
+#if defined(KTH_LOG_LIBRARY_BOOST)
     kth::log::stream console_out(&output_, null_deleter());
     kth::log::stream console_err(&error_, null_deleter());
-
     kth::log::initialize(debug_file, error_file, console_out, console_err, verbose);
+#else
+#endif
+
 #endif
 
     handle_stop(initialize_stop);
@@ -179,8 +188,13 @@ bool executor::run() {
     // Now that the directory is verified we can create the node for it.
     node_ = std::make_shared<kth::node::full_node>(metadata_.configured);
 
+#if defined(KTH_LOG_LIBRARY_BOOST)
     // Initialize broadcast to statistics server if configured.
     kth::log::initialize_statsd(node_->thread_pool(), metadata_.configured.network.statistics_server);
+#else
+    //TODO(fernando): implement this for spdlog and binlog
+#endif
+
 
     // The callback may be returned on the same thread.
     node_->start(std::bind(&executor::handle_started, this, _1));
