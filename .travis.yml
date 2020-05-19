@@ -178,7 +178,7 @@ jobs:
       python: "3.7"
       services:
         - docker
-      env: CONAN_GCC_VERSIONS=9 CONAN_DOCKER_IMAGE=conanio/gcc9
+      env: CONAN_GCC_VERSIONS=10 CONAN_DOCKER_IMAGE=conanio/gcc10
       if: branch =~ /^(release|hotfix).+$/    #Just releases
       script:
         - |
@@ -331,9 +331,21 @@ jobs:
       python: "3.7"
       services:
         - docker
-      env: CONAN_GCC_VERSIONS=9 CONAN_DOCKER_IMAGE=conanio/gcc9 
+      env: CONAN_GCC_VERSIONS=10 CONAN_DOCKER_IMAGE=conanio/gcc10
       # CONAN_PIP_COMMAND="pip --install-option='--no-remotes=True'"
       if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
+
+    # - stage: build and upload binaries
+    #   os: linux
+    #   sudo: required
+    #   dist: xenial
+    #   language: python
+    #   python: "3.7"
+    #   services:
+    #     - docker
+    #   env: CONAN_GCC_VERSIONS=9 CONAN_DOCKER_IMAGE=conanio/gcc9 
+    #   # CONAN_PIP_COMMAND="pip --install-option='--no-remotes=True'"
+    #   if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
 
     # - stage: build and upload binaries
     #   os: linux
@@ -476,14 +488,14 @@ jobs:
     - stage: build and upload binaries
       os: osx
       language: generic
-      osx_image: xcode11
+      osx_image: xcode11.4
       env: CONAN_APPLE_CLANG_VERSIONS=11.0
            KTH_RUN_TESTS=true
       if: branch =~ /^(release|hotfix).+$/    #Just releases
     - stage: build and upload binaries
       os: osx
       language: generic
-      osx_image: xcode11
+      osx_image: xcode11.4
       env: CONAN_APPLE_CLANG_VERSIONS=11.0
       if: branch =~ /^(feature|dev).*$/    #Just development
 
