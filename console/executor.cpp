@@ -49,8 +49,8 @@ executor::executor(kth::node::parser& metadata, std::istream& input, std::ostrea
 
 #if defined(KTH_LOG_LIBRARY_BOOST)
     kth::log::rotable_file const debug_file {
-        network.debug_file,
-        network.archive_directory,
+        network.debug_file.string(),
+        network.archive_directory.string(),
         network.rotation_size,
         network.maximum_archive_size,
         network.minimum_free_space,
@@ -58,8 +58,8 @@ executor::executor(kth::node::parser& metadata, std::istream& input, std::ostrea
     };
 
     kth::log::rotable_file const error_file {
-        network.error_file,
-        network.archive_directory,
+        network.error_file.string(),
+        network.archive_directory.string(),
         network.rotation_size,
         network.maximum_archive_size,
         network.minimum_free_space,
