@@ -27,10 +27,10 @@ namespace kth::node_exe {
 // using boost::format;
 using namespace boost;
 using namespace boost::system;
-using namespace bc::chain;
-using namespace bc::config;
-using namespace bc::database;
-using namespace bc::network;
+using namespace kd::chain;
+using namespace kd::config;
+using namespace kth::database;
+using namespace kth::network;
 using namespace std::placeholders;
 
 static auto const application_name = "kth";
@@ -92,14 +92,14 @@ executor::executor(kth::node::parser& metadata, std::istream& input, std::ostrea
 
 void executor::do_help() {
     auto const options = metadata_.load_options();
-    printer help(options, application_name, KTH_INFORMATION_MESSAGE);
+    kth::infrastructure::config::printer help(options, application_name, KTH_INFORMATION_MESSAGE);
     help.initialize();
     help.commandline(output_);
 }
 
 void executor::do_settings() {
     auto const settings = metadata_.load_settings();
-    printer print(settings, application_name, KTH_SETTINGS_MESSAGE);
+    kth::infrastructure::config::printer print(settings, application_name, KTH_SETTINGS_MESSAGE);
     print.initialize();
     print.settings(output_);
 }
@@ -181,7 +181,7 @@ bool executor::run() {
         return false;
     }
 
-    bool const testnet = kth::get_network(metadata_.configured.network.identifier) == kth::config::settings::testnet;
+    bool const testnet = kth::get_network(metadata_.configured.network.identifier) == kth::infrastructure::config::settings::testnet;
 
     metadata_.configured.node.testnet = testnet;
 
@@ -309,11 +309,11 @@ void executor::stop(kth::code const& ec) {
 
 std::string executor::network_name() const {
     switch (kth::get_network(metadata_.configured.network.identifier)) {
-        case kth::config::settings::testnet:
+        case kth::infrastructure::config::settings::testnet:
             return "Testnet";
-        case kth::config::settings::mainnet:
+        case kth::infrastructure::config::settings::mainnet:
             return "Mainnet";
-        case kth::config::settings::regtest:
+        case kth::infrastructure::config::settings::regtest:
             return "Regtest";
     }
     return "Unknown";

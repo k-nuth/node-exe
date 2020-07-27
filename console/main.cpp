@@ -14,15 +14,15 @@
 KTH_USE_MAIN
 
 int kth::main(int argc, char* argv[]) {
-    using namespace bc;
-    using namespace bc::node;
+    using namespace kd;
+    using namespace kth::node;
     using namespace kth;
     using namespace kth::node_exe;
 
     set_utf8_stdio();
     auto const& args = const_cast<const char**>(argv);
 
-    node::parser metadata(kth::config::settings::mainnet);
+    node::parser metadata(kth::infrastructure::config::settings::mainnet);
     if ( ! metadata.parse(argc, args, cerr)) {
         return console_result::failure;
     }
