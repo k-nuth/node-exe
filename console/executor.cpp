@@ -229,7 +229,7 @@ bool executor::run() {
     LOG_INFO(LOG_NODE, KTH_NODE_STOPPING);
 
 #ifdef KTH_WITH_RPC
-    if (!message_manager.is_stopped()) {
+    if ( ! message_manager.is_stopped()) {
         LOG_INFO(LOG_NODE, KTH_RPC_STOPPING);
         message_manager.stop();
         rpc_thread.join();
