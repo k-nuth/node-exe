@@ -22,7 +22,7 @@ int kth::main(int argc, char* argv[]) {
     set_utf8_stdio();
     auto const& args = const_cast<const char**>(argv);
 
-    node::parser metadata(kth::infrastructure::config::settings::mainnet);
+    node::parser metadata(kth::domain::config::network::mainnet);
     if ( ! metadata.parse(argc, args, cerr)) {
         return console_result::failure;
     }

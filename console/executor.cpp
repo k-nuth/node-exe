@@ -181,9 +181,10 @@ bool executor::run() {
         return false;
     }
 
-    bool const testnet = kth::get_network(metadata_.configured.network.identifier) == kth::infrastructure::config::settings::testnet;
+    bool const testnet = kth::get_network(metadata_.configured.network.identifier) == kth::domain::config::network::testnet;
 
-    metadata_.configured.node.testnet = testnet;
+    //TODO(fernando): see is we can remove this!
+    // metadata_.configured.node.testnet = testnet;
 
     // Now that the directory is verified we can create the node for it.
     node_ = std::make_shared<kth::node::full_node>(metadata_.configured);
@@ -213,9 +214,9 @@ bool executor::run() {
     }
 
 #ifdef KTH_WITH_KEOKEN
-    kth::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, metadata_.configured.node.keoken_genesis_height, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
+    kth::rpc::manager message_manager(testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, metadata_.configured.node.keoken_genesis_height, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
 #else
-    kth::rpc::manager message_manager (metadata_.configured.node.testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
+    kth::rpc::manager message_manager(testnet, *node_, metadata_.configured.node.rpc_port, metadata_.configured.node.subscriber_port, rpc_allowed_ips, metadata_.configured.node.rpc_allow_all_ips);
 #endif
     
     auto rpc_thread = std::thread([&message_manager]() {
@@ -307,27 +308,8 @@ void executor::stop(kth::code const& ec) {
 // Utilities.
 // ----------------------------------------------------------------------------
 
-std::string executor::network_name() const {
-    switch (kth::get_network(metadata_.configured.network.identifier)) {
-        case kth::infrastructure::config::settings::testnet:
-            return "Testnet";
-        case kth::infrastructure::config::settings::mainnet:
-            return "Mainnet";
-        case kth::infrastructure::config::settings::regtest:
-            return "Regtest";
-    }
-    return "Unknown";
-}
-
 // Set up logging.
 void executor::initialize_output() {
-    // auto const header = fmt::format(KTH_LOG_HEADER, kth::local_time());
-    // LOG_DEBUG(LOG_NODE, header);
-    // LOG_INFO(LOG_NODE, header);
-    // LOG_WARNING(LOG_NODE, header);
-    // LOG_ERROR(LOG_NODE, header);
-    // LOG_FATAL(LOG_NODE, header);
-
     auto const& file = metadata_.configured.file;
 
     if (file.empty()) {
@@ -344,15 +326,13 @@ void executor::initialize_output() {
 #endif
 
     LOG_INFO(LOG_NODE, fmt::format(KTH_MICROARCHITECTURE_INIT, KTH_MICROARCHITECTURE_STR));
-
     LOG_INFO(LOG_NODE, fmt::format(KTH_DB_TYPE_INIT, KTH_DB_TYPE));
-
 
 #ifndef NDEBUG
     LOG_INFO(LOG_NODE, KTH_DEBUG_BUILD_INIT);
 #endif
 
-    LOG_INFO(LOG_NODE, fmt::format(KTH_NETWORK_INIT, network_name(), metadata_.configured.network.identifier));
+    LOG_INFO(LOG_NODE, fmt::format(KTH_NETWORK_INIT, name(get_network(metadata_.configured.network.identifier)), metadata_.configured.network.identifier));
     LOG_INFO(LOG_NODE, fmt::format(KTH_CORES_INIT, kth::thread_ceiling(metadata_.configured.chain.cores)));
 }
 

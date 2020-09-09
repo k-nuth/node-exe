@@ -38,7 +38,6 @@ private:
     void do_help();
     void do_settings();
     void do_version();
-    std::string network_name() const;
     void initialize_output();
 
 #if ! defined(KTH_DB_READONLY)
@@ -104,19 +103,12 @@ private:
 #endif
 
 #define KTH_VERSION_MESSAGE_INIT "Node version: {}"
-
 #define KTH_KEOKEN_MESSAGE_INIT "Keoken protocol enabled"
-
 #define KTH_CRYPTOCURRENCY_INIT "Currency: {} - {}"
-
 #define KTH_MICROARCHITECTURE_INIT "Compiled for microarchitecture: {}"
-
 #define KTH_DB_TYPE_INIT "Database type: {}"
-
 #define KTH_DEBUG_BUILD_INIT "(Debug Build)"
-
-#define KTH_NETWORK_INIT "Network: {} ({})"
-
+#define KTH_NETWORK_INIT "Network: {0} ({1} - {1:#x})"
 #define KTH_CORES_INIT "Configured to use {} cores"
 
 // #define KTH_LOG_HEADER "================= startup {} =================="
