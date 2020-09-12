@@ -118,7 +118,7 @@ bool executor::do_initchain() {
 
     if (create_directories(directory, ec)) {
         LOG_INFO(LOG_NODE, fmt::format(KTH_INITIALIZING_CHAIN, directory.string()));
-        auto const genesis = kth::node::full_node::get_genesis_block(metadata_.configured.chain);
+        auto const genesis = kth::node::full_node::get_genesis_block(get_network(metadata_.configured.network.identifier));
         auto const& settings = metadata_.configured.database;
         auto const result = data_base(settings).create(genesis);
         LOG_INFO(LOG_NODE, KTH_INITCHAIN_COMPLETE);
@@ -157,7 +157,14 @@ bool executor::menu() {
     }
 
 #if ! defined(KTH_DB_READONLY)
-    if (config.initchain) {
+    if (config.init_and_run) {
+        if ( ! verify_directory()) {
+            auto res = do_initchain();
+            if ( ! res) {
+                return res;
+            }
+        }
+    } else if (config.initchain) {
         return do_initchain();
     }
 #endif // ! defined(KTH_DB_READONLY)    
@@ -174,17 +181,12 @@ bool executor::run() {
 
     LOG_INFO(LOG_NODE, KTH_NODE_INTERRUPT);
     LOG_INFO(LOG_NODE, KTH_NODE_STARTING);
+    //TODO(fernando): Log Cryptocurrency
+    //TODO(fernando): Log Microarchitecture
 
-    //Log Cryotocurrency
-    //Log Microarchitecture
     if ( ! verify_directory()) {
         return false;
     }
-
-    bool const testnet = kth::get_network(metadata_.configured.network.identifier) == kth::domain::config::network::testnet;
-
-    //TODO(fernando): see is we can remove this!
-    // metadata_.configured.node.testnet = testnet;
 
     // Now that the directory is verified we can create the node for it.
     node_ = std::make_shared<kth::node::full_node>(metadata_.configured);
@@ -196,11 +198,12 @@ bool executor::run() {
     //TODO(fernando): implement this for spdlog and binlog
 #endif
 
-
     // The callback may be returned on the same thread.
     node_->start(std::bind(&executor::handle_started, this, _1));
 
 #ifdef KTH_WITH_RPC
+    bool const testnet = kth::get_network(metadata_.configured.network.identifier) == kth::domain::config::network::testnet;
+
     std::string message = "RPC port: " + std::to_string(metadata_.configured.node.rpc_port) + ". ZMQ port: " + std::to_string(metadata_.configured.node.subscriber_port);
     LOG_INFO(LOG_NODE, message);
     if (metadata_.configured.node.rpc_allow_all_ips) {
