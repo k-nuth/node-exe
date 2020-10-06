@@ -16,7 +16,7 @@ KTH_USE_MAIN
 static auto const application_name = "kth";
 
 std::string version() {
-    return "Node C lib v" KTH_NODE_EXE_VERSION;
+    return "Node exe v" KTH_NODE_EXE_VERSION;
 }
 
 void do_help(kth::node::parser& metadata, std::ostream& output) {
