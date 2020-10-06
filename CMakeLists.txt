@@ -299,8 +299,7 @@ endif()
 # Build
 #==============================================================================
 add_executable(kth-node-exe
-    src/main.cpp
-    src/user_agent.cpp)
+    src/main.cpp)
 
 # target_link_libraries(kth-node-exe kth-node)
 

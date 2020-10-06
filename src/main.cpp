@@ -33,6 +33,14 @@ void do_settings(kth::node::parser& metadata, std::ostream& output) {
     print.settings(output);
 }
 
+bool run(kth::node::executor& host) {
+    return host.init_run_and_wait_for_signal(version(), [&host](std::error_code const& ec) {
+        if (ec != kth::error::success) {
+            host.signal_stop();
+        }
+    });
+}
+
 bool menu(kth::node::parser& metadata, kth::node::executor& host, std::ostream& output) {
     auto const& config = metadata.configured;
 
@@ -65,7 +73,7 @@ bool menu(kth::node::parser& metadata, kth::node::executor& host, std::ostream& 
 #endif // ! defined(KTH_DB_READONLY)    
 
     // There are no command line arguments, just run the node.
-    return host.init_run_and_wait_for_signal(version(), [](std::error_code const& ec) {});
+    return run(host);
 }
 
 int kth::main(int argc, char* argv[]) {
