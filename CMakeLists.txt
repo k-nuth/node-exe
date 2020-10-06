@@ -80,8 +80,8 @@ message( STATUS "Knuth: Compiling version ${KTH_PROJECT_VERSION}")
 
 set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Microarchitecture (x86_64|...).")
 message( STATUS "Knuth: Compiling for ${MICROARCHITECTURE}")
-add_definitions(-DKTH_MICROARCHITECTURE=${MICROARCHITECTURE})
-add_definitions(-DKTH_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
+# add_definitions(-DKTH_MICROARCHITECTURE=${MICROARCHITECTURE})
+# add_definitions(-DKTH_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
 
 set(MARCH_ID "" CACHE STRING "Specify the Microarchitecture ID (x86_64|...).")
 message( STATUS "Knuth: Compiling for Microarchitecture ID ${MARCH_ID}")
@@ -89,23 +89,14 @@ message( STATUS "Knuth: Compiling for Microarchitecture ID ${MARCH_ID}")
 message( STATUS "Knuth: CONAN_CXX_FLAGS ${CONAN_CXX_FLAGS}")
 message( STATUS "Knuth: CONAN_C_FLAGS ${CONAN_C_FLAGS}")
 
-
-
-
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 
 if (${CURRENCY} STREQUAL "BCH")
   add_definitions(-DKTH_CURRENCY_BCH)
-  add_definitions(-DKTH_CURRENCY_SYMBOL_STR="BCH")
-  add_definitions(-DKTH_CURRENCY_STR="Bitcoin Cash")
 elseif (${CURRENCY} STREQUAL "BTC")
   add_definitions(-DKTH_CURRENCY_BTC)
-  add_definitions(-DKTH_CURRENCY_SYMBOL_STR="BTC")
-  add_definitions(-DKTH_CURRENCY_STR="Bitcoin Legacy")
 elseif (${CURRENCY} STREQUAL "LTC")
   add_definitions(-DKTH_CURRENCY_LTC)
-  add_definitions(-DKTH_CURRENCY_SYMBOL_STR="LTC")
-  add_definitions(-DKTH_CURRENCY_STR="Litecoin")
 else()
   message(FATAL_ERROR "Invalid Cryptocurrency: ${CURRENCY}")
 endif()
@@ -308,13 +299,10 @@ endif()
 # Build
 #==============================================================================
 add_executable(kth-node-exe
-        console/executor.cpp
-        console/executor.hpp
-        console/main.cpp
-        console/user_agent.cpp)
+    src/main.cpp
+    src/user_agent.cpp)
 
 # target_link_libraries(kth-node-exe kth-node)
-
 
 # target_compile_definitions(kth-node-exe PUBLIC -DKTH_BUILD_NUMBER="${KTH_BUILD_NUMBER}")
 
