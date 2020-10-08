@@ -67,7 +67,7 @@ class KnuthNodeExeConan(KnuthConanFile):
 
     generators = "cmake"
     exports = "conan_*", "ci_utils/*"
-    exports_sources = "CMakeLists.txt", "cmake/*", "console/*"
+    exports_sources = "CMakeLists.txt", "cmake/*", "src/*"
 
     # package_files = "build/lkth-node.a"
     build_policy = "missing"
