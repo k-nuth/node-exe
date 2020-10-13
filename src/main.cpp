@@ -89,6 +89,7 @@ int kth::main(int argc, char* argv[]) {
         return console_result::failure;
     }
 
-    executor host(metadata.configured, cout, cerr);
+    // executor host(metadata.configured, cout, cerr);
+    executor host(metadata.configured, true);
     return menu(metadata, host, cout) ? console_result::okay : console_result::failure;
 }
