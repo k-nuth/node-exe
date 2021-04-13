@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2020 Knuth Project developers.
+# Copyright (c) 2016-2021 Knuth Project developers.
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -43,7 +43,7 @@ class KnuthNodeExeConan(KnuthConanFile):
 
     default_options = {
         "currency": "BCH",
-        "rpc": False, 
+        "rpc": False,
         "no_compilation": False,
 
         "microarchitecture": "_DUMMY_",
@@ -111,7 +111,7 @@ class KnuthNodeExeConan(KnuthConanFile):
                 self.output.warn("Keoken mode requires db=full and your configuration is db=%s, it has been changed automatically..." % (self.options.db,))
                 self.options.db = "full"
 
-        
+
         self.options["*"].keoken = self.is_keoken
 
         self.options["*"].db_readonly = self.options.db_readonly
@@ -179,4 +179,4 @@ class KnuthNodeExeConan(KnuthConanFile):
     def deploy(self):
         self.copy("kth.exe", src="bin")     # copy from current package
         self.copy("kth", src="bin")         # copy from current package
-        # self.copy_deps("*.dll") # copy from dependencies        
+        # self.copy_deps("*.dll") # copy from dependencies

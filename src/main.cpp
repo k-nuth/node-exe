@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Knuth Project developers.
+// Copyright (c) 2016-2021 Knuth Project developers.
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -34,7 +34,7 @@ void do_settings(kth::node::parser& metadata, std::ostream& output) {
 }
 
 bool run(kth::node::executor& host) {
-    return host.init_run_and_wait_for_signal(version(), [&host](std::error_code const& ec) {
+    return host.init_run_and_wait_for_signal(version(), kth::node::start_modules::all, [&host](std::error_code const& ec) {
         if (ec != kth::error::success) {
             host.signal_stop();
         }
