@@ -12,7 +12,9 @@ if __name__ == "__main__":
     march_ids = get_base_march_ids()
     filtered_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
-
+        print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+        print(settings)
+        print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
         if settings["build_type"] == "Release" \
                 and (not "compiler.runtime" in settings or not settings["compiler.runtime"] == "MD"):
 
@@ -67,7 +69,7 @@ if __name__ == "__main__":
             #     rpc_on_full = copy.deepcopy(rpc_on)
             #     rpc_off_full["*:db"] = "full"
             #     rpc_on_full["*:db"] = "full"
-                                
+
             #     handle_microarchs("*:march_id", march_ids, filtered_builds, settings, rpc_off_full, env_vars, build_requires)
             #     handle_microarchs("*:march_id", march_ids, filtered_builds, settings, rpc_on_full, env_vars, build_requires)
             #     handle_microarchs("*:march_id", march_ids, filtered_builds, settings, rpc_on, env_vars, build_requires)
