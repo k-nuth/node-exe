@@ -18,6 +18,21 @@ if __name__ == "__main__":
         if settings["build_type"] == "Release" \
                 and (not "compiler.runtime" in settings or not settings["compiler.runtime"] == "MD"):
 
+            if settings.get_safe("compiler.libcxx") is None:
+                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+                print(settings["compiler"])
+                print(settings["compiler.libcxx"])
+                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+
+            if settings["compiler"] == "gcc":
+                settings["compiler.libcxx"] = "libstdc++11"
+
+            if settings.get_safe("compiler.libcxx") is None:
+                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+                print(settings["compiler"])
+                print(settings["compiler.libcxx"])
+                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+
             copy_env_vars(env_vars)
 
             bch = copy.deepcopy(options)
