@@ -12,9 +12,26 @@ if __name__ == "__main__":
     march_ids = get_base_march_ids()
     filtered_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
-
+        print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+        print(settings)
+        print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
         if settings["build_type"] == "Release" \
                 and (not "compiler.runtime" in settings or not settings["compiler.runtime"] == "MD"):
+
+            print(settings["compiler"])
+            print("compiler.libcxx" in settings)
+
+            if settings["compiler"] == "gcc":
+                # if settings.get_safe("compiler.libcxx") is None:
+                # print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+                # print(settings["compiler.libcxx"])
+                # print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+
+                settings["compiler.libcxx"] = "libstdc++11"
+
+                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+                print(settings["compiler.libcxx"])
+                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
 
             copy_env_vars(env_vars)
 
@@ -67,7 +84,7 @@ if __name__ == "__main__":
             #     rpc_on_full = copy.deepcopy(rpc_on)
             #     rpc_off_full["*:db"] = "full"
             #     rpc_on_full["*:db"] = "full"
-                                
+
             #     handle_microarchs("*:march_id", march_ids, filtered_builds, settings, rpc_off_full, env_vars, build_requires)
             #     handle_microarchs("*:march_id", march_ids, filtered_builds, settings, rpc_on_full, env_vars, build_requires)
             #     handle_microarchs("*:march_id", march_ids, filtered_builds, settings, rpc_on, env_vars, build_requires)

@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2020 Knuth Project developers.
+# Copyright (c) 2016-2021 Knuth Project developers.
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -64,7 +64,7 @@ install:
     if [[ "${CHECK_FORMATTING}" != "true" ]]; then
       chmod +x ci_utils/.travis/install.sh
       ./ci_utils/.travis/install.sh
-    fi    
+    fi
 
 script:
   - git fetch --unshallow
@@ -87,7 +87,7 @@ script:
 
   #   fi
 
-  # - conan remote add kth https://api.bintray.com/conan/k-nuth/kth
+  # - conan remote add kth https://knuth.jfrog.io/artifactory/api/conan/knuth
   # - conan info . --only None
   # - conan info . --only None -s compiler=gcc -s compiler.version=5 -s compiler.libcxx=libstdc++
   # - conan remote remove kth
@@ -158,7 +158,7 @@ jobs:
 #       script:
 #         - |
 #           conan user
-#           conan remote add kth_temp https://api.bintray.com/conan/k-nuth/kth
+#           conan remote add kth_temp https://knuth.jfrog.io/artifactory/api/conan/knuth
 #           echo "waiting for secp256k1/0.X@kth/staging ..."
 #           conan search secp256k1/0.X@kth/staging -r kth_temp > /dev/null
 #           while [ $? == 1 ]
@@ -183,7 +183,7 @@ jobs:
       script:
         - |
           conan user
-          conan remote add kth_temp https://api.bintray.com/conan/k-nuth/kth || true
+          conan remote add kth_temp https://knuth.jfrog.io/artifactory/api/conan/knuth || true
           # REPO_NAME=$(echo $TRAVIS_REPO_SLUG| cut -d'/' -f 2)
           # echo $REPO_NAME
           # python ci_utils/wait_for_deps.py $REPO_NAME
@@ -201,7 +201,7 @@ jobs:
         - docker
       # if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
       if: branch =~ /^(release|hotfix|dev).*$/ OR type IN (pull_request)
-      
+
       # install: skip
       install:
 
@@ -212,7 +212,7 @@ jobs:
         # - /usr/bin/docker run --rm -ti -e TRAVIS_BRANCH=$TRAVIS_BRANCH -v ${TRAVIS_BUILD_DIR}:/home/conan/project -v ${TRAVIS_BUILD_DIR}/.travis/ci-run.sh:/tmp/ci-run.sh conanio/gcc9 /bin/bash -c /tmp/ci-run.sh
         # - /usr/bin/docker run --rm -ti -e TRAVIS_BRANCH=$TRAVIS_BRANCH -v ${TRAVIS_BUILD_DIR}:/home/conan/project -v ${TRAVIS_BUILD_DIR}/.travis/ci-run.sh:/tmp/ci-run.sh arceri/buildimage-ubuntu:18.10 /bin/bash -c /tmp/ci-run.sh
         # -e TRAVIS_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION
-        
+
 
 # # Static Checks ------------------------------------------------------
 
@@ -220,7 +220,7 @@ jobs:
 #       os: osx
 #       language: generic
 #       osx_image: xcode10.1
-#       # env: CONAN_APPLE_CLANG_VERSIONS=9.0 
+#       # env: CONAN_APPLE_CLANG_VERSIONS=9.0
 #       if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
 #       # install: skip
 #       install:
@@ -271,7 +271,7 @@ jobs:
 #         - pyenv activate conan
 #         - eval $(python ci_utils/set_envvars_and_files.py)
 #         - conan user
-#         - conan remote add kth_temp https://api.bintray.com/conan/k-nuth/kth
+#         - conan remote add kth_temp https://knuth.jfrog.io/artifactory/api/conan/knuth
 #         - cd ${TRAVIS_BUILD_DIR}
 #         - pwd
 #         - ls -ltra
@@ -343,7 +343,7 @@ jobs:
     #   python: "3.7"
     #   services:
     #     - docker
-    #   env: CONAN_GCC_VERSIONS=9 CONAN_DOCKER_IMAGE=conanio/gcc9 
+    #   env: CONAN_GCC_VERSIONS=9 CONAN_DOCKER_IMAGE=conanio/gcc9
     #   # CONAN_PIP_COMMAND="pip --install-option='--no-remotes=True'"
     #   if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
 
@@ -366,7 +366,7 @@ jobs:
     #   python: "3.7"
     #   services:
     #     - docker
-    #   env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=conanio/gcc7 
+    #   env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=conanio/gcc7
     #        KTH_RUN_TESTS=true
     #   # if: branch =~ /^(release|hotfix|dev|feature).*$/    #Avoid master
     #   if: branch =~ /^(release|hotfix).+$/    #Just releases
@@ -531,14 +531,14 @@ jobs:
     # - stage: build and upload binaries
     #   os: osx
     #   language: generic
-    #   osx_image: xcode9        
+    #   osx_image: xcode9
     #   env: CONAN_APPLE_CLANG_VERSIONS=9.0
     #   if: branch =~ /^(release|hotfix).+$/    #Just releases
 
     # - stage: build and upload binaries
     #   os: osx
     #   language: generic
-    #   osx_image: xcode8.3         
+    #   osx_image: xcode8.3
     #   env: CONAN_APPLE_CLANG_VERSIONS=8.1
     #   if: branch =~ /^(release|hotfix).+$/    #Just releases
 
@@ -571,14 +571,14 @@ jobs:
 
         - eval $(python ci_utils/set_envvars_and_files.py)
         #TODO(fernando): configure the remote and user using environment variables
-        # - conan remote add kthbuild_kth_temp_ https://api.bintray.com/conan/k-nuth/kth
+        # - conan remote add kthbuild_kth_temp_ https://knuth.jfrog.io/artifactory/api/conan/knuth
         - conan user
         - conan user ${CONAN_LOGIN_USERNAME} -r kthbuild_kth_temp_ -p ${CONAN_PASSWORD}
         - conan user
         - echo "conan alias ${REPO_NAME}/0.X@kth/${KTH_CONAN_CHANNEL} ${REPO_NAME}/${KTH_CONAN_VERSION}@kth/${KTH_CONAN_CHANNEL}"
         - conan alias "${REPO_NAME}/0.X@kth/${KTH_CONAN_CHANNEL}" "${REPO_NAME}/${KTH_CONAN_VERSION}@kth/${KTH_CONAN_CHANNEL}"
         - echo "conan upload ${REPO_NAME}/0.X@kth/${KTH_CONAN_CHANNEL} --all -r kthbuild_kth_temp_"
-        - conan upload "${REPO_NAME}/0.X@kth/${KTH_CONAN_CHANNEL}" --all -r kthbuild_kth_temp_        
+        - conan upload "${REPO_NAME}/0.X@kth/${KTH_CONAN_CHANNEL}" --all -r kthbuild_kth_temp_
 
 # Push to repos ------------------------------------------------------
     - stage: push to repos
@@ -590,7 +590,7 @@ jobs:
 
 # Dummy for master ------------------------------------------------------
     - stage: build and upload binaries
-      install: 
+      install:
         - echo "Stable packages are published in Release branches"
       script:
         - echo "Stable packages are published in Release branches"
