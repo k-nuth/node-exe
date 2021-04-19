@@ -18,18 +18,18 @@ if __name__ == "__main__":
         if settings["build_type"] == "Release" \
                 and (not "compiler.runtime" in settings or not settings["compiler.runtime"] == "MD"):
 
+            print(settings["compiler"])
+            print("compiler.libcxx" in settings)
 
             if settings["compiler"] == "gcc":
                 # if settings.get_safe("compiler.libcxx") is None:
-                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
-                print(settings["compiler"])
-                print(settings["compiler.libcxx"])
-                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+                # print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+                # print(settings["compiler.libcxx"])
+                # print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
 
                 settings["compiler.libcxx"] = "libstdc++11"
 
                 print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
-                print(settings["compiler"])
                 print(settings["compiler.libcxx"])
                 print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
 
