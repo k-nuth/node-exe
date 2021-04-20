@@ -76,10 +76,6 @@ $ conan install kth/0.X@kth/stable -o currency=LTC
 3. Run the node:
 
 ```
-# Initialize the database
-$ ./kth -i
-
-# Run the node
 $ ./kth
 ```
 For more more detailed instructions, please refer to our [documentation](https://kth.cash/docs/).
@@ -102,16 +98,10 @@ Our goal is to become a reliable implementation for use in mining and the one wi
 
 ## Donation
 
-We believe that the feature-by-feature funding model proposed by [Bitcoin Verde](https://read.cash/@joshmgreen/bitcoin-verdes-response-to-the-miner-sponsored-development-fund-34028b1e#funding-bitcoin-verde) fits with our project.
-
-Take a look at our [issues](https://github.com/k-nuth/kth/issues) to see if you want to donate towards a specific objective, or you can contact us by [Telegram](https://t.me/knuth_cash), [Slack](https://k-nuth.slack.com/) or info@kth.cash.
+See [fund.kth.cash](https://fund.kth.cash/) for active Flipstarter campaigns.
 
 Our donation address is:
 `bitcoincash:qrlgfg2qkj3na2x9k7frvcmv06ljx5xlnuuwx95zfn`
-
-## Documentation
-
-We are working to improve the documentation, which is [located here](https://kth.cash/docs/).
 
 ## Issues
 
