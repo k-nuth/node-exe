@@ -1,7 +1,6 @@
-# Copyright (c) 2016-2020 Knuth Project developers.
+# Copyright (c) 2016-2021 Knuth Project developers.
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
 
 cmake_minimum_required(VERSION 3.8)
 
@@ -33,6 +32,43 @@ if (WITH_RPC)
   add_definitions(-DKTH_WITH_RPC)
 endif()
 
+# # Implement --binlog.
+# #------------------------------------------------------------------------------
+# option(BINLOG "Uses BinLog logging library." OFF)
+# if (BINLOG)
+#   add_definitions(-DKTH_USE_BINLOG)
+# endif()
+
+set(LOG_LIBRARY "boost" CACHE STRING "Setting for the logging library (boost|spdlog|binlog).")
+
+if (${LOG_LIBRARY} STREQUAL "boost")
+  add_definitions(-DKTH_LOG_LIBRARY_BOOST)
+elseif (${LOG_LIBRARY} STREQUAL "spdlog")
+  add_definitions(-DKTH_LOG_LIBRARY_SPDLOG)
+elseif (${LOG_LIBRARY} STREQUAL "binlog")
+  add_definitions(-DKTH_LOG_LIBRARY_BINLOG)
+else()
+  message(FATAL_ERROR "Invalid Logging Library: ${LOG_LIBRARY}")
+endif()
+
+message(STATUS "Knuth: Logging Library: ${LOG_LIBRARY}")
+
+
+# Implement --use_libmdbx.
+#------------------------------------------------------------------------------
+option(USE_LIBMDBX "Uses libmdbx DB library." OFF)
+if (USE_LIBMDBX)
+  add_definitions(-DKTH_USE_LIBMDBX)
+endif()
+
+# Implement --statistics.
+#------------------------------------------------------------------------------
+option(STATISTICS "Collect statistics." OFF)
+if (STATISTICS)
+  add_definitions(-DKTH_STATISTICS_ENABLED)
+endif()
+
+
 if (NO_CONAN_AT_ALL)
   set(USE_CONAN OFF)
 endif()
@@ -44,8 +80,8 @@ message( STATUS "Knuth: Compiling version ${KTH_PROJECT_VERSION}")
 
 set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Microarchitecture (x86_64|...).")
 message( STATUS "Knuth: Compiling for ${MICROARCHITECTURE}")
-add_definitions(-DKTH_MICROARCHITECTURE=${MICROARCHITECTURE})
-add_definitions(-DKTH_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
+# add_definitions(-DKTH_MICROARCHITECTURE=${MICROARCHITECTURE})
+# add_definitions(-DKTH_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
 
 set(MARCH_ID "" CACHE STRING "Specify the Microarchitecture ID (x86_64|...).")
 message( STATUS "Knuth: Compiling for Microarchitecture ID ${MARCH_ID}")
@@ -53,23 +89,14 @@ message( STATUS "Knuth: Compiling for Microarchitecture ID ${MARCH_ID}")
 message( STATUS "Knuth: CONAN_CXX_FLAGS ${CONAN_CXX_FLAGS}")
 message( STATUS "Knuth: CONAN_C_FLAGS ${CONAN_C_FLAGS}")
 
-
-
-
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 
 if (${CURRENCY} STREQUAL "BCH")
   add_definitions(-DKTH_CURRENCY_BCH)
-  add_definitions(-DKTH_CURRENCY_SYMBOL_STR="BCH")
-  add_definitions(-DKTH_CURRENCY_STR="Bitcoin Cash")
 elseif (${CURRENCY} STREQUAL "BTC")
   add_definitions(-DKTH_CURRENCY_BTC)
-  add_definitions(-DKTH_CURRENCY_SYMBOL_STR="BTC")
-  add_definitions(-DKTH_CURRENCY_STR="Bitcoin Legacy")
 elseif (${CURRENCY} STREQUAL "LTC")
   add_definitions(-DKTH_CURRENCY_LTC)
-  add_definitions(-DKTH_CURRENCY_SYMBOL_STR="LTC")
-  add_definitions(-DKTH_CURRENCY_STR="Litecoin")
 else()
   message(FATAL_ERROR "Invalid Cryptocurrency: ${CURRENCY}")
 endif()
@@ -90,14 +117,6 @@ option(WITH_MEMPOOL "Mempool enabled." OFF)
 if (WITH_MEMPOOL)
   message(STATUS "Knuth: Mempool enabled")
   add_definitions(-DKTH_WITH_MEMPOOL)
-endif()
-
-# Implement --use-domain and declare USE_DOMAIN.
-#------------------------------------------------------------------------------
-option(USE_DOMAIN "Domain enabled." ON)
-if (USE_DOMAIN)
-  message(STATUS "Knuth: Using Domain enabled")
-  add_definitions(-DKTH_USE_DOMAIN)
 endif()
 
 # Implement and declare DB_TRANSACTION_UNCONFIRMED.
@@ -171,6 +190,15 @@ if (DB_NEW_FULL)
   message(STATUS "Knuth: DB New Full enabled")
   add_definitions(-DKTH_DB_NEW_FULL)
 endif()
+
+# Implement --db_readonly_mode and declare KTH_DB_READONLY.
+#------------------------------------------------------------------------------
+option(DB_READONLY_MODE "Readonly DB mode enabled." OFF)
+if (DB_READONLY_MODE)
+  message(STATUS "Knuth: Readonly DB mode enabled")
+  add_definitions(-DKTH_DB_READONLY)
+endif()
+
 
 # Conan infrastructure
 #==============================================================================
@@ -270,39 +298,35 @@ endif()
 
 # Build
 #==============================================================================
-add_executable(console.exe
-        console/executor.cpp
-        console/executor.hpp
-        console/main.cpp
-        console/user_agent.cpp)
+add_executable(kth-node-exe
+    src/main.cpp)
 
-# target_link_libraries(console.exe kth-node)
+# target_link_libraries(kth-node-exe kth-node)
 
+# target_compile_definitions(kth-node-exe PUBLIC -DKTH_BUILD_NUMBER="${KTH_BUILD_NUMBER}")
 
-# target_compile_definitions(console.exe PUBLIC -DKTH_BUILD_NUMBER="${KTH_BUILD_NUMBER}")
-
-target_compile_definitions(console.exe PUBLIC -DKTH_PROJECT_VERSION="${KTH_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
-target_compile_definitions(console.exe PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
+target_compile_definitions(kth-node-exe PUBLIC -DKTH_PROJECT_VERSION="${KTH_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
+target_compile_definitions(kth-node-exe PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
 
 if (NOT USE_CONAN)
-  target_link_libraries(console.exe PUBLIC kth-node)
+  target_link_libraries(kth-node-exe PUBLIC kth-node)
   if(WITH_RPC)
-    target_link_libraries(console.exe PUBLIC kth-rpc)
+    target_link_libraries(kth-node-exe PUBLIC kth-rpc)
   endif()
 endif()
 
 if (NOT NO_CONAN_AT_ALL)
-  target_link_libraries(console.exe PUBLIC ${CONAN_LIBS})
+  target_link_libraries(kth-node-exe PUBLIC ${CONAN_LIBS})
 endif()
 
 if (USE_CONAN)
   if (MINGW)
-    target_link_libraries(console.exe PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
+    target_link_libraries(kth-node-exe PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
   endif()
 endif()
 
 set_target_properties(
-  console.exe PROPERTIES
+    kth-node-exe PROPERTIES
         FOLDER "node"
         OUTPUT_NAME kth)
 
@@ -313,7 +337,7 @@ set_target_properties(
 
 # Install
 #==============================================================================
-install(TARGETS console.exe
+install(TARGETS kth-node-exe
         RUNTIME DESTINATION bin)
 
 # # Export

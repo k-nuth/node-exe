@@ -12,46 +12,63 @@ if __name__ == "__main__":
     march_ids = get_base_march_ids()
     filtered_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
-
+        print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+        print(settings)
+        print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
         if settings["build_type"] == "Release" \
                 and (not "compiler.runtime" in settings or not settings["compiler.runtime"] == "MD"):
+
+            print(settings["compiler"])
+            print("compiler.libcxx" in settings)
+
+            if settings["compiler"] == "gcc":
+                # if settings.get_safe("compiler.libcxx") is None:
+                # print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+                # print(settings["compiler.libcxx"])
+                # print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+
+                settings["compiler.libcxx"] = "libstdc++11"
+
+                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
+                print(settings["compiler.libcxx"])
+                print("****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!****!!!!")
 
             copy_env_vars(env_vars)
 
             bch = copy.deepcopy(options)
-            btc = copy.deepcopy(options)
+            # btc = copy.deepcopy(options)
 
             bch["*:currency"] = 'BCH'
-            btc["*:currency"] = 'BTC'
+            # btc["*:currency"] = 'BTC'
 
-            # bch_rpc_off = copy.deepcopy(bch)
-            bch_rpc_on = copy.deepcopy(bch)
-            # bch_rpc_off["*:rpc"] = "False"
-            bch_rpc_on["*:rpc"] = "True"
+            bch_rpc_off = copy.deepcopy(bch)
+            # bch_rpc_on = copy.deepcopy(bch)
+            bch_rpc_off["*:rpc"] = "False"
+            # bch_rpc_on["*:rpc"] = "True"
 
-            # btc_rpc_off = copy.deepcopy(btc)
-            btc_rpc_on = copy.deepcopy(btc)
-            # btc_rpc_off["*:rpc"] = "False"
-            btc_rpc_on["*:rpc"] = "True"
+            # # btc_rpc_off = copy.deepcopy(btc)
+            # btc_rpc_on = copy.deepcopy(btc)
+            # # btc_rpc_off["*:rpc"] = "False"
+            # btc_rpc_on["*:rpc"] = "True"
 
-            # bch_rpc_off_full = copy.deepcopy(bch_rpc_off)
-            bch_rpc_on_full = copy.deepcopy(bch_rpc_on)
-            # bch_rpc_off_full["*:db"] = "full"
-            bch_rpc_on_full["*:db"] = "full"
+            # # bch_rpc_off_full = copy.deepcopy(bch_rpc_off)
+            # bch_rpc_on_full = copy.deepcopy(bch_rpc_on)
+            # # bch_rpc_off_full["*:db"] = "full"
+            # bch_rpc_on_full["*:db"] = "full"
 
-            # btc_rpc_off_full = copy.deepcopy(btc_rpc_off)
-            btc_rpc_on_full = copy.deepcopy(btc_rpc_on)
-            # btc_rpc_off_full["*:db"] = "full"
-            btc_rpc_on_full["*:db"] = "full"
+            # # btc_rpc_off_full = copy.deepcopy(btc_rpc_off)
+            # btc_rpc_on_full = copy.deepcopy(btc_rpc_on)
+            # # btc_rpc_off_full["*:db"] = "full"
+            # btc_rpc_on_full["*:db"] = "full"
 
             # handle_microarchs("*:march_id", march_ids, filtered_builds, settings, bch_rpc_off_full, env_vars, build_requires)
-            handle_microarchs("*:march_id", march_ids, filtered_builds, settings, bch_rpc_on_full, env_vars, build_requires)
-            handle_microarchs("*:march_id", march_ids, filtered_builds, settings, bch_rpc_on, env_vars, build_requires)
-            # handle_microarchs("*:march_id", march_ids, filtered_builds, settings, bch_rpc_off, env_vars, build_requires)
+            # handle_microarchs("*:march_id", march_ids, filtered_builds, settings, bch_rpc_on_full, env_vars, build_requires)
+            # handle_microarchs("*:march_id", march_ids, filtered_builds, settings, bch_rpc_on, env_vars, build_requires)
+            handle_microarchs("*:march_id", march_ids, filtered_builds, settings, bch_rpc_off, env_vars, build_requires)
 
             # handle_microarchs("*:march_id", march_ids, filtered_builds, settings, btc_rpc_off_full, env_vars, build_requires)
             # handle_microarchs("*:march_id", march_ids, filtered_builds, settings, btc_rpc_on_full, env_vars, build_requires)
-            handle_microarchs("*:march_id", march_ids, filtered_builds, settings, btc_rpc_on, env_vars, build_requires)
+            # handle_microarchs("*:march_id", march_ids, filtered_builds, settings, btc_rpc_on, env_vars, build_requires)
             # handle_microarchs("*:march_id", march_ids, filtered_builds, settings, btc_rpc_off, env_vars, build_requires)
 
             # ci_currency = os.getenv('KTH_CI_CURRENCY', None)
@@ -67,7 +84,7 @@ if __name__ == "__main__":
             #     rpc_on_full = copy.deepcopy(rpc_on)
             #     rpc_off_full["*:db"] = "full"
             #     rpc_on_full["*:db"] = "full"
-                                
+
             #     handle_microarchs("*:march_id", march_ids, filtered_builds, settings, rpc_off_full, env_vars, build_requires)
             #     handle_microarchs("*:march_id", march_ids, filtered_builds, settings, rpc_on_full, env_vars, build_requires)
             #     handle_microarchs("*:march_id", march_ids, filtered_builds, settings, rpc_on, env_vars, build_requires)

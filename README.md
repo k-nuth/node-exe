@@ -55,7 +55,7 @@ Install and run Knuth is very easy:
 ```
 $ pip install kthbuild --user --upgrade
 
-$ conan remote add kth https://api.bintray.com/conan/k-nuth/kth
+$ conan remote add kth https://knuth.jfrog.io/artifactory/api/conan/knuth
 ```
 
 2. Install the appropriate node executable:
@@ -106,7 +106,7 @@ We believe that the feature-by-feature funding model proposed by [Bitcoin Verde]
 
 Take a look at our [issues](https://github.com/k-nuth/kth/issues) to see if you want to donate towards a specific objective, or you can contact us by [Telegram](https://t.me/knuth_cash), [Slack](https://k-nuth.slack.com/) or info@kth.cash.
 
-Our donation address is: 
+Our donation address is:
 `bitcoincash:qrlgfg2qkj3na2x9k7frvcmv06ljx5xlnuuwx95zfn`
 
 ## Documentation
