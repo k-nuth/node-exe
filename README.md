@@ -84,9 +84,7 @@ For more more detailed instructions, please refer to our [documentation](https:/
 
 Our goal is to become a reliable implementation for use in mining and the one with the best APIs, so we need to:
 
-- Implement the Bitcoin Cash Node and Bitcoin Unlimited testing batteries, to ensure compatibility with them.
-
-- Remove the limitation of 25 chained transactions.
+- Implement the Bitcoin Cash Node testing batteries, to ensure compatibility with them.
 
 - Implement a high performance SLP full indexer within the node.
 
