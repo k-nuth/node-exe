@@ -4,6 +4,7 @@
 
 import os
 from conans import CMake
+from conans.errors import ConanInvalidConfiguration
 from kthbuild import option_on_off, march_conan_manip, pass_march_to_compiler
 from kthbuild import KnuthConanFile
 
@@ -87,6 +88,10 @@ class KnuthNodeExeConan(KnuthConanFile):
             if self.options.rpc:
                 self.requires("rpc/0.X@%s/%s" % (self.user, self.channel))
 
+    def validate(self):
+        if self.settings.os == "Linux" and self.settings.compiler == "gcc" and self.settings.compiler.libcxx == "libstdc++":
+            raise ConanInvalidConfiguration("We just support GCC C++11ABI.\n**** Please run `conan profile update settings.compiler.libcxx=libstdc++11 default`")
+
     def config_options(self):
         KnuthConanFile.config_options(self)
 
@@ -111,6 +116,9 @@ class KnuthNodeExeConan(KnuthConanFile):
                 self.output.warn("Keoken mode requires db=full and your configuration is db=%s, it has been changed automatically..." % (self.options.db,))
                 self.options.db = "full"
 
+        # It is not working as expected.
+        # if self.settings.os == "Linux" and self.settings.compiler == "gcc" and self.settings.compiler.libcxx == "libstdc++":
+        #     self.settings.compiler.libcxx = "libstdc++11"
 
         self.options["*"].keoken = self.is_keoken
 
