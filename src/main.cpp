@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2021 Knuth Project developers.
+// Copyright (c) 2016-2022 Knuth Project developers.
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -70,7 +70,7 @@ bool menu(kth::node::parser& metadata, kth::node::executor& host, std::ostream& 
     } else if (config.initchain) {
         return host.do_initchain(version());
     }
-#endif // ! defined(KTH_DB_READONLY)    
+#endif // ! defined(KTH_DB_READONLY)
 
     // There are no command line arguments, just run the node.
     return run(host);
