@@ -78,11 +78,6 @@ set(KTH_PROJECT_VERSION "-" CACHE STRING "Specify the Knuth Project Version.")
 # message(${KTH_PROJECT_VERSION})
 message( STATUS "Knuth: Compiling version ${KTH_PROJECT_VERSION}")
 
-set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Microarchitecture (x86_64|...).")
-message( STATUS "Knuth: Compiling for ${MICROARCHITECTURE}")
-# add_definitions(-DKTH_MICROARCHITECTURE=${MICROARCHITECTURE})
-# add_definitions(-DKTH_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
-
 set(MARCH_ID "" CACHE STRING "Specify the Microarchitecture ID (x86_64|...).")
 message( STATUS "Knuth: Compiling for Microarchitecture ID ${MARCH_ID}")
 
