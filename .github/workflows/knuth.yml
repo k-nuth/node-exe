@@ -287,7 +287,7 @@ jobs:
         run: |
 
           REPO_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')
-          if [ "$1" == "node-exe" ]; then
+          if [ "${REPO_NAME}" == "node-exe" ]; then
             REPO_NAME="kth"
           fi
           echo "My repo name is $REPO_NAME"
