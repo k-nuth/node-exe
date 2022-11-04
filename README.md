@@ -116,7 +116,7 @@ You can contact us through our [Telegram](https://t.me/knuth_cash) and [Slack](h
 [badge.Cirrus]: https://api.cirrus-ci.com/github/k-nuth/node-exe.svg?branch=master
 [badge.GithubActions]: https://github.com/k-nuth/node-exe/workflows/Build%20and%20Test/badge.svg
 [badge.version]: https://badge.fury.io/gh/k-nuth%2Fkth-node-exe.svg
-[badge.release]: https://img.shields.io/github/release/k-nuth/node-exe.svg
+[badge.release]: https://img.shields.io/github/v/release/k-nuth/node-exe?display_name=tag&style=for-the-badge&color=3b009b&logo=bitcoincash
 [badge.cpp]: https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B
 [badge.telegram]: https://img.shields.io/badge/telegram-badge-blue.svg?logo=telegram
 [badge.slack]: https://img.shields.io/badge/slack-badge-orange.svg?logo=slack
