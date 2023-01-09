@@ -3,6 +3,8 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <cstdio>
+
+#include <string_view>
 #include <iostream>
 
 #include <kth/node.hpp>
@@ -15,7 +17,7 @@ KTH_USE_MAIN
 
 static auto const application_name = "kth";
 
-std::string version() {
+std::string_view version() {
     return "Node exe v" KTH_NODE_EXE_VERSION;
 }
 
