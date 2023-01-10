@@ -27,7 +27,6 @@ class KnuthNodeExeConan(KnuthConanFile):
         "march_strategy": ["download_if_possible", "optimized", "download_or_fail"],
 
         "verbose": [True, False],
-        # "keoken": [True, False],
         "mempool": [True, False],
         "db": ['legacy', 'legacy_full', 'pruned', 'default', 'full'],
         "db_readonly": [True, False],
@@ -50,7 +49,6 @@ class KnuthNodeExeConan(KnuthConanFile):
         "march_strategy": "download_if_possible",
 
         "verbose": False,
-        # "keoken": False,
         "mempool": False,
         "db": "default",
         "db_readonly": False,
@@ -70,10 +68,6 @@ class KnuthNodeExeConan(KnuthConanFile):
 
     # package_files = "build/lkth-node.a"
     build_policy = "missing"
-
-    # @property
-    # def is_keoken(self):
-    #     return self.options.currency == "BCH" and self.options.rpc and self.options.get_safe("keoken")
 
     @property
     def dont_compile(self):
@@ -103,21 +97,6 @@ class KnuthNodeExeConan(KnuthConanFile):
         if self.dont_compile:
             self.settings.remove("compiler")
             self.settings.remove("build_type")
-
-        # if self.options.keoken and not self.options.rpc:
-        #     self.output.warn("Keoken is only available building with Json-RPC support. Building without Keoken support...")
-        #     del self.options.keoken
-
-        # if self.is_keoken and self.options.currency != "BCH":
-        #     self.output.warn("For the moment Keoken is only enabled for BCH. Building without Keoken support...")
-        #     del self.options.keoken
-
-        # if self.is_keoken:
-        #     if self.options.db == "pruned" or self.options.db == "default":
-        #         self.output.warn("Keoken mode requires db=full and your configuration is db=%s, it has been changed automatically..." % (self.options.db,))
-        #         self.options.db = "full"
-
-        # self.options["*"].keoken = self.is_keoken
 
         self.options["*"].db_readonly = self.options.db_readonly
         self.output.info("Compiling with read-only DB: %s" % (self.options.db_readonly,))
@@ -164,10 +143,6 @@ class KnuthNodeExeConan(KnuthConanFile):
         cmake = self.cmake_basis()
 
         cmake.definitions["WITH_RPC"] = option_on_off(self.options.rpc)
-
-        # cmake.definitions["WITH_KEOKEN"] = option_on_off(self.is_keoken)
-        cmake.definitions["WITH_KEOKEN"] = option_on_off(False)
-
         cmake.definitions["WITH_MEMPOOL"] = option_on_off(self.options.mempool)
         cmake.definitions["DB_READONLY_MODE"] = option_on_off(self.options.db_readonly)
         cmake.definitions["LOG_LIBRARY"] = self.options.log

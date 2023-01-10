@@ -98,14 +98,6 @@ endif()
 
 message(STATUS "Knuth: Cryptocurrency: ${CURRENCY}")
 
-# Implement --with-keoken and declare WITH_KEOKEN.
-#------------------------------------------------------------------------------
-option(WITH_KEOKEN "Keoken enabled." OFF)
-if (WITH_KEOKEN)
-  message(STATUS "Knuth: Keoken enabled")
-  add_definitions(-DKTH_WITH_KEOKEN)
-endif()
-
 # Implement --with-mempool and declare WITH_MEMPOOL.
 #------------------------------------------------------------------------------
 option(WITH_MEMPOOL "Mempool enabled." OFF)

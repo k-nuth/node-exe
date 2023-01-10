@@ -128,7 +128,6 @@ jobs:
 #         - docker
 #       env: CONAN_GCC_VERSIONS=8 CONAN_DOCKER_IMAGE=conanio/gcc8
 #            KTH_CI_CURRENCY=BCH
-#            KTH_WITH_KEOKEN=true
 #            KTH_COVERITY_SCAN=1
 #       if: branch =~ /^(feature|dev).*$/    #Just development
 #       before_install:
@@ -281,7 +280,7 @@ jobs:
 #         # - cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_TESTS=OFF -DWITH_TESTS=OFF -DWITH_TOOLS=OFF -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" ${BOOST_OPTS}
 #         # - cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_TESTS=OFF -DWITH_TESTS=OFF -DWITH_TOOLS=OFF -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 #         # - cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON                 -DENABLE_TESTS=OFF -DWITH_TESTS=OFF -DWITH_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release
-#         - cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DUSE_CONAN=ON  -DENABLE_TESTS=OFF -DWITH_TESTS=OFF -DWITH_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release -DJUST_KTH_SOURCES=ON -DWITH_KEOKEN=ON
+#         - cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DUSE_CONAN=ON  -DENABLE_TESTS=OFF -DWITH_TESTS=OFF -DWITH_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release -DJUST_KTH_SOURCES=ON
 #         - export PATH=$PATH:/usr/local/opt/llvm/bin/
 #         - clang-tidy --version
 #         # - sudo find / -name "run-clang-tidy.py"
