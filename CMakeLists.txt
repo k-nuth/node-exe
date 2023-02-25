@@ -2,13 +2,9 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.23)
 
-# kth-node-exe
-#==============================================================================
-project(kth-node-exe
-        VERSION 0
-        LANGUAGES CXX C)
+project(kth-node-exe VERSION 0 LANGUAGES CXX C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -22,15 +18,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Implement --use-conan
 #------------------------------------------------------------------------------
-option(USE_CONAN "Use Conan Build Tool." OFF)
-option(NO_CONAN_AT_ALL "Conan totally disabled." OFF)
+# option(USE_CONAN "Use Conan Build Tool." OFF)
+# option(NO_CONAN_AT_ALL "Conan totally disabled." OFF)
 
-# Implement --with_rpc
-#------------------------------------------------------------------------------
-option(WITH_RPC "Compile with RPC-ZMQ support." OFF)
-if (WITH_RPC)
-  add_definitions(-DKTH_WITH_RPC)
-endif()
+# # Implement --with_rpc
+# #------------------------------------------------------------------------------
+# option(WITH_RPC "Compile with RPC-ZMQ support." OFF)
+# if (WITH_RPC)
+#   add_definitions(-DKTH_WITH_RPC)
+# endif()
 
 # # Implement --binlog.
 # #------------------------------------------------------------------------------
@@ -69,9 +65,9 @@ if (STATISTICS)
 endif()
 
 
-if (NO_CONAN_AT_ALL)
-  set(USE_CONAN OFF)
-endif()
+# if (NO_CONAN_AT_ALL)
+#   set(USE_CONAN OFF)
+# endif()
 
 
 set(KTH_PROJECT_VERSION "-" CACHE STRING "Specify the Knuth Project Version.")
@@ -187,13 +183,13 @@ if (DB_READONLY_MODE)
 endif()
 
 
-# Conan infrastructure
-#==============================================================================
-if(EXISTS ${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
-    include(${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
-else()
-    message( STATUS "knuthbuildinfo doent exists")
-endif()
+# # Conan infrastructure
+# #==============================================================================
+# if(EXISTS ${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
+#     include(${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
+# else()
+#     message( STATUS "knuthbuildinfo doent exists")
+# endif()
 
 
 
@@ -205,14 +201,15 @@ if (NOT USE_CONAN)
     find_package(kth-node 0 REQUIRED)
   endif()
 
-  if (WITH_RPC)
-    # Require kth-rpc of at least version 0
-    #------------------------------------------------------------------------------
-    if (NOT TARGET kth-rpc)
-      find_package(kth-rpc 0 REQUIRED)
-    endif()
-  endif()
+  # if (WITH_RPC)
+  #   # Require kth-rpc of at least version 0
+  #   #------------------------------------------------------------------------------
+  #   if (NOT TARGET kth-rpc)
+  #     find_package(kth-rpc 0 REQUIRED)
+  #   endif()
+  # endif()
 endif()
+find_package(kth-node REQUIRED)
 
 
 # Set flags.
@@ -295,32 +292,27 @@ add_executable(kth-node-exe
 target_compile_definitions(kth-node-exe PUBLIC -DKTH_PROJECT_VERSION="${KTH_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
 target_compile_definitions(kth-node-exe PUBLIC -DBCN_STATIC -DBCB_STATIC -DBCD_STATIC -DBCT_STATIC -DBC_STATIC)
 
-if (NOT USE_CONAN)
-  target_link_libraries(kth-node-exe PUBLIC kth-node)
-  if(WITH_RPC)
-    target_link_libraries(kth-node-exe PUBLIC kth-rpc)
-  endif()
-endif()
+# if (NOT USE_CONAN)
+#   target_link_libraries(kth-node-exe PUBLIC kth-node)
+#   # if(WITH_RPC)
+#   #   target_link_libraries(kth-node-exe PUBLIC kth-rpc)
+#   # endif()
+# endif()
 
-if (NOT NO_CONAN_AT_ALL)
-  target_link_libraries(kth-node-exe PUBLIC ${CONAN_LIBS})
-endif()
+# if (NOT NO_CONAN_AT_ALL)
+#   # target_link_libraries(kth-node-exe PUBLIC ${CONAN_LIBS})
+# endif()
 
-if (USE_CONAN)
+target_link_libraries(kth-node-exe PUBLIC kth-node)
+
+
+# if (USE_CONAN)
   if (MINGW)
     target_link_libraries(kth-node-exe PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
   endif()
-endif()
+# endif()
 
-set_target_properties(
-    kth-node-exe PROPERTIES
-        FOLDER "node"
-        OUTPUT_NAME kth)
-
-
-
-
-
+set_target_properties(kth-node-exe PROPERTIES FOLDER "node" OUTPUT_NAME kth)
 
 # Install
 #==============================================================================
