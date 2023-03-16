@@ -3,8 +3,8 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 import os
-from conans import CMake
-from conans.errors import ConanInvalidConfiguration
+from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
+from conan.errors import ConanInvalidConfiguration
 from kthbuild import option_on_off, march_conan_manip, pass_march_to_compiler
 from kthbuild import KnuthConanFile
 
@@ -62,12 +62,11 @@ class KnuthNodeExeConan(KnuthConanFile):
         "statistics": False,
     }
 
-    generators = "cmake"
+    # generators = "cmake"
     exports = "conan_*", "ci_utils/*"
     exports_sources = "CMakeLists.txt", "cmake/*", "src/*"
 
-    # package_files = "build/lkth-node.a"
-    build_policy = "missing"
+    # build_policy = "missing"
 
     @property
     def dont_compile(self):
@@ -86,6 +85,8 @@ class KnuthNodeExeConan(KnuthConanFile):
 
     def validate(self):
         KnuthConanFile.validate(self)
+        if self.info.settings.compiler.cppstd:
+            check_min_cppstd(self, "20")
 
     def config_options(self):
         KnuthConanFile.config_options(self)
@@ -138,19 +139,26 @@ class KnuthNodeExeConan(KnuthConanFile):
 
         self.info.options.no_compilation = "ANY"
 
+    def layout(self):
+        cmake_layout(self)
+
+    def generate(self):
+        tc = self.cmake_toolchain_basis()
+        # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
+        tc.variables["WITH_RPC"] = option_on_off(self.options.rpc)
+        tc.variables["WITH_MEMPOOL"] = option_on_off(self.options.mempool)
+        tc.variables["DB_READONLY_MODE"] = option_on_off(self.options.db_readonly)
+        tc.variables["LOG_LIBRARY"] = self.options.log
+        tc.variables["USE_LIBMDBX"] = option_on_off(self.options.use_libmdbx)
+        tc.variables["STATISTICS"] = option_on_off(self.options.statistics)
+        tc.variables["CONAN_DISABLE_CHECK_COMPILER"] = option_on_off(True)
+        tc.generate()
+        tc = CMakeDeps(self)
+        tc.generate()
 
     def build(self):
-        cmake = self.cmake_basis()
-
-        cmake.definitions["WITH_RPC"] = option_on_off(self.options.rpc)
-        cmake.definitions["WITH_MEMPOOL"] = option_on_off(self.options.mempool)
-        cmake.definitions["DB_READONLY_MODE"] = option_on_off(self.options.db_readonly)
-        cmake.definitions["LOG_LIBRARY"] = self.options.log
-        cmake.definitions["USE_LIBMDBX"] = option_on_off(self.options.use_libmdbx)
-        cmake.definitions["STATISTICS"] = option_on_off(self.options.statistics)
-        cmake.definitions["CONAN_DISABLE_CHECK_COMPILER"] = option_on_off(True)
-
-        cmake.configure(source_dir=self.source_folder)
+        cmake = CMake(self)
+        cmake.configure()
         if not self.options.cmake_export_compile_commands:
             cmake.build()
             # if self.options.tests:
