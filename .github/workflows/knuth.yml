@@ -14,7 +14,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  NAME: node-exe
+  NAME: kth
   CONAN_REMOTE: kth
   CONAN_REMOTE_URL: https://knuth.jfrog.io/artifactory/api/conan/knuth
 
@@ -190,7 +190,7 @@ jobs:
       os: ${{ matrix.config.os }}
       image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
       conan-remote: "kth"
-      recipe-name: "node-exe"
+      recipe-name: "kth"
       compiler: ${{ matrix.config.compiler }}
       compiler-version: ${{ matrix.config.version }}
       version-file: "src/version.hpp"
@@ -212,7 +212,7 @@ jobs:
       upload: ${{ github.event_name == 'push' }} # && needs.check.outputs.permitted == 'true'
       os: ${{ matrix.config.os }}
       conan-remote: "kth"
-      recipe-name: "node-exe"
+      recipe-name: "kth"
       compiler: ${{ matrix.config.compiler }}
       compiler-version: ${{ matrix.config.version }}
       version-file: "src/version.hpp"
