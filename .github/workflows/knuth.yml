@@ -203,4 +203,4 @@ jobs:
       - name: Static Checks
         shell: bash
         run: |
-          echo ${{github.ref}
+          echo ${{github.ref}}
