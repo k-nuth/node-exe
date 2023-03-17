@@ -3,19 +3,14 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 import os
-<<<<<<< Updated upstream
-from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
-from conan.errors import ConanInvalidConfiguration
-=======
 from conan import ConanFile
 from conan.tools.build.cppstd import check_min_cppstd
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
-from conan.tools.files import copy #, apply_conandata_patches, export_conandata_patches, get, rm, rmdir
->>>>>>> Stashed changes
-from kthbuild import option_on_off, march_conan_manip, pass_march_to_compiler
-from kthbuild import KnuthConanFileV2
+from conan.tools.files import copy
+from kthbuild import KnuthConanFileV2, option_on_off
 
 required_conan_version = ">=2.0"
+
 class KnuthNodeExeConan(KnuthConanFileV2):
     name = "kth"
     license = "http://www.boost.org/users/license.html"
@@ -25,17 +20,13 @@ class KnuthNodeExeConan(KnuthConanFileV2):
 
     options = {
         "currency": ['BCH', 'BTC', 'LTC'],
-        "rpc": [True, False],
         "no_compilation": [True, False],
-
         "march_id": ["ANY"],
         "march_strategy": ["download_if_possible", "optimized", "download_or_fail"],
-
         "verbose": [True, False],
         "mempool": [True, False],
         "db": ['legacy', 'legacy_full', 'pruned', 'default', 'full'],
         "db_readonly": [True, False],
-
         "cxxflags": ["ANY"],
         "cflags": ["ANY"],
         "cmake_export_compile_commands": [True, False],
@@ -46,62 +37,59 @@ class KnuthNodeExeConan(KnuthConanFileV2):
 
     default_options = {
         "currency": "BCH",
-        "rpc": False,
         "no_compilation": False,
-
         "march_strategy": "download_if_possible",
-
         "verbose": False,
         "mempool": False,
         "db": "default",
         "db_readonly": False,
-
         "cmake_export_compile_commands": False,
         "log": "spdlog",
         "use_libmdbx": False,
         "statistics": False,
     }
 
-    # generators = "cmake"
-<<<<<<< Updated upstream
-    exports = "conan_*", "ci_utils/*"
-    exports_sources = "CMakeLists.txt", "cmake/*", "src/*"
-
-    # build_policy = "missing"
-=======
-    # exports = "conan_*", "ci_utils/*"
     exports_sources = "CMakeLists.txt", "ci_utils/cmake/*", "cmake/*", "src/*"
-    # package_files = "build/lkth-node.a"
-    # build_policy = "missing"
 
-    # @property
-    # def is_keoken(self):
-    #     return self.options.currency == "BCH" and self.options.rpc and self.options.get_safe("keoken")
->>>>>>> Stashed changes
+    def _is_legacy_db(self):
+        return self.options.db == "legacy" or self.options.db == "legacy_full"
 
-    @property
-    def dont_compile(self):
-        return self.options.no_compilation or (self.settings.compiler == None and self.settings.arch == 'x86_64' and self.settings.os in ('Linux', 'Windows', 'Macos'))
+    def dont_compile(self, options, settings):
+        return options.no_compilation or (settings.compiler == None and settings.arch == 'x86_64' and settings.os in ('Linux', 'Windows', 'Macos'))
 
     def requirements(self):
         if not self.options.no_compilation and self.settings.get_safe("compiler") is not None:
-            self.requires("node/0.X@%s/%s" % (self.user, self.channel))
+            self.requires("infrastructure/0.24.0")
+            self.requires("domain/0.29.0")
+            self.requires("database/0.28.0")
+            # if self.options.consensus:
+            self.requires("consensus/0.23.0")
 
-            if self.options.rpc:
-                self.requires("rpc/0.X@%s/%s" % (self.user, self.channel))
+            self.requires("blockchain/0.27.0")
+            self.requires("network/0.32.0@")
+            self.requires("node/0.33.0")
 
-    # def validate(self):
-    #     if self.settings.os == "Linux" and self.settings.compiler == "gcc" and self.settings.compiler.libcxx == "libstdc++":
-    #         raise ConanInvalidConfiguration("We just support GCC C++11ABI.\n**** Please run `conan profile update settings.compiler.libcxx=libstdc++11 default`")
+            self.requires("boost/1.81.0")
+            self.requires("fmt/9.1.0")
+            self.requires("spdlog/1.11.0")
+
+            if not self._is_legacy_db():
+                if self.options.use_libmdbx:
+                    self.requires("libmdbx/0.7.0@kth/stable")
+                    self.output.info("Using libmdbx for DB management")
+                else:
+                    self.requires("lmdb/0.9.29")
+                    self.output.info("Using lmdb for DB management")
+            else:
+                self.output.info("Using legacy DB")
+
+            if self.options.statistics:
+                self.requires("tabulate/1.0@")
 
     def validate(self):
-<<<<<<< Updated upstream
-        KnuthConanFile.validate(self)
+        KnuthConanFileV2.validate(self)
         if self.info.settings.compiler.cppstd:
             check_min_cppstd(self, "20")
-=======
-        KnuthConanFileV2.validate(self)
->>>>>>> Stashed changes
 
     def config_options(self):
         KnuthConanFileV2.config_options(self)
@@ -110,7 +98,7 @@ class KnuthNodeExeConan(KnuthConanFileV2):
         KnuthConanFileV2.configure(self)
 
         # if self.options.no_compilation or (self.settings.compiler == None and self.settings.arch == 'x86_64' and self.settings.os in ('Linux', 'Windows', 'Macos')):
-        if self.dont_compile:
+        if self.dont_compile(self.options, self.settings):
             self.settings.remove("compiler")
             self.settings.remove("build_type")
 
@@ -119,9 +107,6 @@ class KnuthNodeExeConan(KnuthConanFileV2):
 
         self.options["*"].mempool = self.options.mempool
         self.output.info("Compiling with mempool: %s" % (self.options.mempool,))
-
-        self.options["*"].rpc = self.options.rpc
-        self.output.info("Compiling with RPC support: %s" % (self.options.rpc,))
 
         #TODO(fernando): move to kthbuild
         self.options["*"].log = self.options.log
@@ -136,15 +121,15 @@ class KnuthNodeExeConan(KnuthConanFileV2):
     def package_id(self):
         KnuthConanFileV2.package_id(self)
 
-        if self.dont_compile:
+        if self.dont_compile(self.info.options, self.info.settings):
             self.info.requires.clear()
 
-            self.output.info("package_id - self.channel: %s" % (self.channel,))
-            self.output.info("package_id - self.options.no_compilation: %s" % (self.options.no_compilation,))
-            self.output.info("package_id - self.settings.compiler: %s" % (self.settings.compiler,))
-            self.output.info("package_id - self.settings.arch: %s" % (self.settings.arch,))
-            self.output.info("package_id - self.settings.os: %s" % (self.settings.os,))
-            self.output.info("package_id - is_development_branch_internal: %s" % (is_development_branch_internal(self.channel),))
+            # self.output.info("package_id - self.channel: %s" % (self.channel,))
+            # self.output.info("package_id - self.options.no_compilation: %s" % (self.options.no_compilation,))
+            # self.output.info("package_id - self.settings.compiler: %s" % (self.settings.compiler,))
+            # self.output.info("package_id - self.settings.arch: %s" % (self.settings.arch,))
+            # self.output.info("package_id - self.settings.os: %s" % (self.settings.os,))
+            # self.output.info("package_id - is_development_branch_internal: %s" % (is_development_branch_internal(self.channel),))
 
             # if not is_development_branch_internal(self.channel):
                 # self.info.settings.compiler = "ANY"
@@ -159,26 +144,13 @@ class KnuthNodeExeConan(KnuthConanFileV2):
 
     def generate(self):
         tc = self.cmake_toolchain_basis()
-<<<<<<< Updated upstream
         # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
-        tc.variables["WITH_RPC"] = option_on_off(self.options.rpc)
-=======
-
-        # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
-        tc.variables["WITH_RPC"] = option_on_off(self.options.rpc)
-        # tc.variables["WITH_KEOKEN"] = option_on_off(self.is_keoken)
-        tc.variables["WITH_KEOKEN"] = option_on_off(False)
->>>>>>> Stashed changes
         tc.variables["WITH_MEMPOOL"] = option_on_off(self.options.mempool)
         tc.variables["DB_READONLY_MODE"] = option_on_off(self.options.db_readonly)
         tc.variables["LOG_LIBRARY"] = self.options.log
         tc.variables["USE_LIBMDBX"] = option_on_off(self.options.use_libmdbx)
         tc.variables["STATISTICS"] = option_on_off(self.options.statistics)
         tc.variables["CONAN_DISABLE_CHECK_COMPILER"] = option_on_off(True)
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
         tc.generate()
         tc = CMakeDeps(self)
         tc.generate()
@@ -186,18 +158,19 @@ class KnuthNodeExeConan(KnuthConanFileV2):
     def build(self):
         cmake = CMake(self)
         cmake.configure()
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
         if not self.options.cmake_export_compile_commands:
             cmake.build()
             # if self.options.tests:
             #     cmake.test()
 
+
     def package(self):
-        self.copy("kth.exe", dst="bin", src="bin")  # Windows
-        self.copy("kth", dst="bin", src="bin")      # Unixes
+        cmake = CMake(self)
+        cmake.install()
+
+    # def package(self):
+    #     self.copy("kth.exe", dst="bin", src="bin")  # Windows
+    #     self.copy("kth", dst="bin", src="bin")      # Unixes
 
     def deploy(self):
         self.copy("kth.exe", src="bin")     # copy from current package
