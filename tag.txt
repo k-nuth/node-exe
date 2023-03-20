@@ -1,5 +1,0 @@
-Use Git annotated tags to work with `git describe` 
-
-Example
-    git tag -a v0.3.3 -m 'annotated tag for v0.3.3'
-    git push --tags
