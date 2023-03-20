@@ -7,17 +7,6 @@
 
 Knuth is a high performance implementation of the Bitcoin protocol focused on users requiring extra performance and flexibility, what makes it the best platform for wallets, exchanges, block explorers and miners.
 
-## Multiple cryptos
-
-Knuth supports the following cryptocurrencies in the same code base:
-- [Bitcoin Cash (BCH)](https://www.bitcoincash.org/)
-- [Bitcoin (BTC)](https://bitcoin.org/)
-- [Litecoin (LTC)](https://litecoin.org/)
-
-Choosing a cryptocurrency is just as simple as changing a switch in our build system, [take a look here](#getting-started).
-
-Also, given its modular design and beautiful code, Knuth allows you to implement other cryptocurrencies with very few code changes.
-
 ## Not just a node
 
 Knuth is a multi-crypto full node, but it is also a development platform.
@@ -61,14 +50,8 @@ $ conan remote add kth https://knuth.jfrog.io/artifactory/api/conan/knuth
 2. Install the appropriate node executable:
 
 ```
-# For Bitcoin Cash (default)
-$ conan install kth/0.X@kth/stable -o currency=BCH
+$ conan install kth/0.X@kth/stable
 
-# For Bitcoin
-$ conan install kth/0.X@kth/stable -o currency=BTC
-
-# For Litecoin
-$ conan install kth/0.X@kth/stable -o currency=LTC
 ```
 
 (`0.X` is an alias for our latest uploaded package)
@@ -79,20 +62,6 @@ $ conan install kth/0.X@kth/stable -o currency=LTC
 $ ./kth
 ```
 For more more detailed instructions, please refer to our [documentation](https://kth.cash/docs/).
-
-## Roadmap
-
-Our goal is to become a reliable implementation for use in mining and the one with the best APIs, so we need to:
-
-- Implement the Bitcoin Cash Node testing batteries, to ensure compatibility with them.
-
-- Implement a high performance SLP full indexer within the node.
-
-- Improve libraries and APIs of languages.
-
-- Create a high performance mining API (a high performance API should not be on top of HTTP).
-
-- Improve our APIs documentation.
 
 ## Donation
 
