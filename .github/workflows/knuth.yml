@@ -17,7 +17,7 @@ env:
   NAME: kth
 
   CONAN_REMOTE: kth
-  CONAN_REMOTE_URL: https://knuth.jfrog.io/artifactory/api/conan/knuth
+  CONAN_REMOTE_URL: https://packages.kth.cash/api/
   CONAN_REMOTE_2: kth2
   CONAN_REMOTE_2_URL: https://kthnode.jfrog.io/artifactory/api/conan/knuth
 
