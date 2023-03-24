@@ -70,7 +70,7 @@ jobs:
       - uses: ./ci_utils/.github/actions/setup-conan
       - uses: ./ci_utils/.github/actions/setup-kthbuild
       - name: conan login
-        run: conan remote login -p ${{ secrets.CONAN_2_PASSWORD }} $CONAN_REMOTE_2 ${{ secrets.CONAN_LOGIN_2_USERNAME }}
+        run: conan remote login -p ${{ secrets.CONAN_3_PASSWORD }} $CONAN_REMOTE_2 ${{ secrets.CONAN_LOGIN_2_USERNAME }}
 
       - name: build order
         working-directory: .
@@ -107,7 +107,7 @@ jobs:
       conan-remote: "kth2"
     secrets:
       conan-user: ${{ secrets.CONAN_LOGIN_2_USERNAME }}
-      conan-password: ${{ secrets.CONAN_2_PASSWORD }}
+      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
 
   build-deps-without-container:
     needs: [calc-deps]
@@ -122,7 +122,7 @@ jobs:
       conan-remote: "kth2"
     secrets:
       conan-user: ${{ secrets.CONAN_LOGIN_2_USERNAME }}
-      conan-password: ${{ secrets.CONAN_2_PASSWORD }}
+      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
 
   generate-matrix:
     name: Generate Job Matrix
@@ -167,7 +167,7 @@ jobs:
 
     secrets:
       CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_2_USERNAME }}
-      CONAN_PASSWORD: ${{ secrets.CONAN_2_PASSWORD }}
+      CONAN_PASSWORD: ${{ secrets.CONAN_3_PASSWORD }}
 
   build-without-container:
     needs: [setup, generate-matrix]
@@ -188,7 +188,7 @@ jobs:
       build-version: "${{ needs.setup.outputs.build-version }}"
     secrets:
       CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_2_USERNAME }}
-      CONAN_PASSWORD: ${{ secrets.CONAN_2_PASSWORD }}
+      CONAN_PASSWORD: ${{ secrets.CONAN_3_PASSWORD }}
 
   static-checks:
     # needs: wait-for-dependencies
