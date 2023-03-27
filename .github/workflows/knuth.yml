@@ -15,11 +15,8 @@ on:
 
 env:
   NAME: kth
-
   CONAN_REMOTE: kth
   CONAN_REMOTE_URL: https://packages.kth.cash/api/
-  CONAN_REMOTE_2: kth2
-  CONAN_REMOTE_2_URL: https://kthnode.jfrog.io/artifactory/api/conan/knuth
 
 jobs:
 
@@ -49,84 +46,37 @@ jobs:
           github-ref: ${{ github.ref }}
           run-number: ${{ github.run_number }}
 
-  calc-deps:
-    name: Dependencies Calculation
-    needs: [setup, check]
-    if: needs.check.outputs.permitted == 'true'
-    runs-on: ubuntu-latest
-    container:
-      image: "kthnode/gcc12-ubuntu18.04"
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-
-      - uses: actions/cache@v3
-        with:
-          path: ~/.conan/data
-          key: alpine-${{ hashFiles('**/conan.lock') }}
-      - uses: ./ci_utils/.github/actions/setup-conan
-      - uses: ./ci_utils/.github/actions/setup-kthbuild
-      - name: conan login
-        run: conan remote login -p ${{ secrets.CONAN_3_PASSWORD }} $CONAN_REMOTE_2 ${{ secrets.CONAN_LOGIN_2_USERNAME }}
-
-      - name: build order
-        working-directory: .
-        run: |
-          conan lock create conanfile.py --version ${{ needs.setup.outputs.build-version }} --lockfile=conan.lock --lockfile-out=build/conan.lock -pr linux-ci-cd -s build_type=Release
-          # conan lock build-order build/conan.lock --json=build_order.json
-          conan graph build-order conanfile.py --lockfile=build/conan.lock -f json > build_order.json
-      - uses: actions/upload-artifact@v3
-        with:
-          name: conan-lockfile
-          path: build/conan.lock
-      - id: set-matrix
-        name: output
-        run: |
-          cp ./ci_utils/.github/matrix.json platform.json
-          echo $(cat build_order.json)
-          # cd backend
-          python3 ./ci_utils/build-order-to-matrix.py
-          MATRIX=$(cat matrix.json)
-          echo "${MATRIX}"
-          echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
-
-  build-deps-with-container:
-    needs: [calc-deps]
-    strategy:
-      matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
-    name: ${{ matrix.config.name }}
-    uses: k-nuth/ci-utils/.github/workflows/build-deps-with-container.yml@master
-    with:
-      if: ${{ matrix.config.compiler == 'GCC' }}
-      os: ${{ matrix.config.os }}
-      image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
-      reference: ${{ matrix.config.reference }}
-      conan-remote: "kth2"
-    secrets:
-      conan-user: ${{ secrets.CONAN_LOGIN_2_USERNAME }}
-      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
-
-  build-deps-without-container:
-    needs: [calc-deps]
-    strategy:
-      matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
-    name: ${{ matrix.config.name }}
-    uses: k-nuth/ci-utils/.github/workflows/build-deps-without-container.yml@master
-    with:
-      if: ${{ matrix.config.compiler != 'GCC' }}
-      os: ${{ matrix.config.os }}
-      reference: ${{ matrix.config.reference }}
-      conan-remote: "kth2"
-    secrets:
-      conan-user: ${{ secrets.CONAN_LOGIN_2_USERNAME }}
-      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
+  # build-base-docker-image:
+  #   name: Builds Alpine Docker image
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     # name: docker.pkg.github.com/${{ github.repository }}/alpine-image:${{ steps.version.outputs.version }}
+  #     name: docker.pkg.github.com/k-nuth/kth/alpine-image:${{ steps.version.outputs.version }}
+  #   env:
+  #     # name: docker.pkg.github.com/${{ github.repository }}/alpine-image
+  #     name: docker.pkg.github.com/k-nuth/kth/alpine-image
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         submodules: true
+  #     - id: version
+  #       run: echo "version=${{ hashFiles('./ci_utils/Dockerfile.build') }}" >> $GITHUB_OUTPUT
+  #     - uses: docker/login-action@v2
+  #       with:
+  #         registry: docker.pkg.github.com
+  #         username: ${{ github.repository_owner }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+  #     - id: check
+  #       name: check existence
+  #       run: |
+  #         docker pull ${{ env.name }}:${{ steps.version.outputs.version }} > /dev/null && echo "exists=true" >> $GITHUB_OUTPUT || echo "exists=false" >> $GITHUB_OUTPUT
+  #     - if: ${{ steps.check.outputs.exists == 'false' }}
+  #       run: docker build . --file ./ci_utils/Dockerfile.build --tag ${{ env.name }}:${{ steps.version.outputs.version }}
+  #     - if: ${{ steps.check.outputs.exists == 'false' }}
+  #       run: docker push ${{ env.name }}:${{ steps.version.outputs.version }}
 
   generate-matrix:
     name: Generate Job Matrix
-    # needs: wait-for-dependencies
     runs-on: ubuntu-20.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -134,7 +84,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-
       - name: Generate Job Matrix
         id: set-matrix
         run: |
@@ -142,9 +91,67 @@ jobs:
           echo "${MATRIX}"
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
-          # echo "::set-output name=matrix::${MATRIX}"
-          # # JSON=$(cat ./ci_utils/.github/matrix.json)
-          # # echo "::set-output name=${JSON//'%'/'%25'}"
+  calc-deps-with-container:
+    needs: [setup, generate-matrix]
+    strategy:
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    name: ${{ matrix.config.name }}
+    uses: k-nuth/ci-utils/.github/workflows/calc-deps-with-container.yml@master
+    with:
+      if: ${{ matrix.config.compiler == 'GCC' }}
+      os: ${{ matrix.config.os }}
+      image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+      conan-remote: "kth"
+      build-version: ${{ needs.setup.outputs.build-version }}
+    secrets:
+      conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
+      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
+
+  calc-deps-without-container:
+    needs: [setup, generate-matrix]
+    strategy:
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    name: ${{ matrix.config.name }}
+    uses: k-nuth/ci-utils/.github/workflows/calc-deps-without-container.yml@master
+    with:
+      if: ${{ matrix.config.compiler != 'GCC' }}
+      os: ${{ matrix.config.os }}
+      conan-remote: "kth"
+      build-version: ${{ needs.setup.outputs.build-version }}
+    secrets:
+      conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
+      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
+
+  build-deps-with-container:
+    needs: [calc-deps-with-container]
+    strategy:
+      matrix: ${{ fromJson(needs.calc-deps-with-container.outputs.matrix) }}
+    name: ${{ matrix.config.name }}
+    uses: k-nuth/ci-utils/.github/workflows/build-deps-with-container.yml@master
+    with:
+      if: ${{ matrix.config.compiler == 'GCC' }}
+      os: ${{ matrix.config.os }}
+      image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+      reference: ${{ matrix.config.reference }}
+      conan-remote: "kth"
+    secrets:
+      conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
+      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
+
+  build-deps-without-container:
+    needs: [calc-deps-without-container]
+    strategy:
+      matrix: ${{ fromJson(needs.calc-deps-without-container.outputs.matrix) }}
+    name: ${{ matrix.config.name }}
+    uses: k-nuth/ci-utils/.github/workflows/build-deps-without-container.yml@master
+    with:
+      if: ${{ matrix.config.compiler != 'GCC' }}
+      os: ${{ matrix.config.os }}
+      reference: ${{ matrix.config.reference }}
+      conan-remote: "kth"
+    secrets:
+      conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
+      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
 
   build-with-container:
     needs: [setup, generate-matrix]
@@ -158,7 +165,7 @@ jobs:
       upload: ${{ github.event_name == 'push' }} # && needs.check.outputs.permitted == 'true'
       os: ${{ matrix.config.os }}
       image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
-      conan-remote: "kth2"
+      conan-remote: "kth"
       recipe-name: "kth"
       compiler: ${{ matrix.config.compiler }}
       compiler-version: ${{ matrix.config.version }}
@@ -166,7 +173,7 @@ jobs:
       build-version: "${{ needs.setup.outputs.build-version }}"
 
     secrets:
-      CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_2_USERNAME }}
+      CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
       CONAN_PASSWORD: ${{ secrets.CONAN_3_PASSWORD }}
 
   build-without-container:
@@ -180,14 +187,14 @@ jobs:
       if: ${{ matrix.config.compiler != 'GCC' }}
       upload: ${{ github.event_name == 'push' }} # && needs.check.outputs.permitted == 'true'
       os: ${{ matrix.config.os }}
-      conan-remote: "kth2"
+      conan-remote: "kth"
       recipe-name: "kth"
       compiler: ${{ matrix.config.compiler }}
       compiler-version: ${{ matrix.config.version }}
       version-file: "src/version.hpp"
       build-version: "${{ needs.setup.outputs.build-version }}"
     secrets:
-      CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_2_USERNAME }}
+      CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
       CONAN_PASSWORD: ${{ secrets.CONAN_3_PASSWORD }}
 
   static-checks:
@@ -204,3 +211,4 @@ jobs:
         shell: bash
         run: |
           echo ${{github.ref}}
+
