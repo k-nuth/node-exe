@@ -25,6 +25,9 @@ option(DB_READONLY_MODE "Readonly DB mode enabled." OFF)
 option(USE_LIBMDBX "Uses libmdbx DB library." OFF)
 option(STATISTICS "Collect statistics." OFF)
 
+option(GLOBAL_BUILD "" OFF)
+
+
 if (WITH_MEMPOOL)
   message(STATUS "Knuth: Mempool enabled")
   add_definitions(-DKTH_WITH_MEMPOOL)
@@ -123,7 +126,10 @@ endif()
 
 message(STATUS "Knuth: Cryptocurrency: ${CURRENCY}")
 
-find_package(node REQUIRED)
+if (NOT GLOBAL_BUILD)
+  find_package(node REQUIRED)
+endif()
+
 
 include(CheckCXXCompilerFlag)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/ci_utils/cmake)
