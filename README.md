@@ -50,7 +50,7 @@ $ conan config install https://github.com/k-nuth/ci-utils/raw/master/conan/confi
 2. Install the appropriate node executable:
 
 ```
-$ conan install --requires=kth/0.44.0 --update --deploy=direct_deploy
+$ conan install --requires=kth/0.45.0 --update --deploy=direct_deploy
 
 ```
 
