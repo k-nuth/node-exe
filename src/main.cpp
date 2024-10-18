@@ -18,7 +18,7 @@ KTH_USE_MAIN
 static auto const application_name = "kth";
 
 std::string_view version() {
-    return "Node exe v" KTH_NODE_EXE_VERSION;
+    return "Node exe v" KTH_NODE_EXE_VERSION ". Build time: " KTH_BUILD_TIME;
 }
 
 void do_help(kth::node::parser& metadata, std::ostream& output) {

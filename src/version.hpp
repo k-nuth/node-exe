@@ -6,5 +6,6 @@
 #define KTH_NODE_EXE_VERSION_HPP_
 
 #define KTH_NODE_EXE_VERSION "0.0.0-dev.1";
+#define KTH_BUILD_TIME "xxxxxxxxxxxx"
 
 #endif /*KTH_NODE_EXE_VERSION_HPP_*/
