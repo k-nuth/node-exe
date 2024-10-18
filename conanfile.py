@@ -17,6 +17,7 @@ class KnuthNodeExeConan(KnuthConanFileV2):
     url = "https://github.com/k-nuth/kth"
     description = "Bitcoin full node executable"
     settings = "os", "compiler", "build_type", "arch"
+    package_type = "application"
 
     options = {
         "currency": ['BCH', 'BTC', 'LTC'],
