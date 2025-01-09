@@ -10,6 +10,7 @@
 #include <kth/node.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <kth/node/executor/executor.hpp>
+#include <kth/node/executor/executor_info.hpp>
 
 #include "version.hpp"
 
